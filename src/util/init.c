@@ -6,9 +6,28 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 12:02:08 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/08/14 12:59:33 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/08/19 17:01:44 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "minishell.h"
+
+static char *try_strdup(char *dst, char *src, char **env)
+{
+	int i;
+
+	dst = ft_strdup(dst, src);
+	if (!dst)
+	{
+		perror("try_strdup");
+		i = 0;
+		while (env[i])
+			free(env[i]);
+		free(env);
+		return (NULL);
+	}
+	return (dst);
+}
 
 static char	**envdup(char **env)
 {
@@ -27,26 +46,21 @@ static char	**envdup(char **env)
 	}
 	i = 0;
 	while (i < len)
-	{
-		new[i] = ft_strdup(env[i]);
-		if (!new[i])
-		{
-			perror(ft_printf("init_context: new[%d]", i));
-			free(new);
+	qq	if(!try_strdup(new[i], env[i], env));
 			return (NULL);
-		}
-	}
 	return (new);
 }
 
-void	init_context(int argc, char **argv, char **env, t_context *context)
+/* need to status of context->env immediately after */
+bool	init_context(int argc, char **argv, char **env, t_context *context)
 {
 	context->argc = argc;
 	context->argv = argv;
 	context->env = envdup(env);
-	if (!context->env)
-		exit(1);
+	if (!contenxt->env)
+		return (false);
 	context->status = 0;
 	context->tokens = NULL;
 	context->tree = NULL;
+	return (true);
 }

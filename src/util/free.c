@@ -6,9 +6,11 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 11:49:07 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/08/18 12:37:33 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/08/19 14:47:33 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "minishell.h"
 
 void	free_token(t_token *token)
 {
@@ -18,7 +20,7 @@ void	free_token(t_token *token)
 	free(token);
 }
 
-void	free_node(t_node *node);
+void	free_node(t_node *node)
 {
 	if (!node->is_terminal)
 	{

@@ -6,9 +6,11 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 15:13:10 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/08/14 15:21:46 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/08/19 13:39:41 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "minishell.h"
 
 /* @brief expand positional parameters
  * the positional parameters are the parameters actually passed to minishell 

@@ -1,4 +1,4 @@
-#include "lex.h"
+#include "minishell.h"
 
 /*
 enum e_toktype token_type(t_token *token)
@@ -65,6 +65,7 @@ static bool	is_special(char c)
  * @param s the input string (including \n for multiline)
  * @param delim ' ' for outermost invocation, '"' and '\'' for quoted token
  */
+/*
 t_token *lex(char *s, char delim, t_context *context)
 {
 	char	*p;
@@ -94,6 +95,20 @@ t_token *lex(char *s, char delim, t_context *context)
 		token->next = NULL;
 	return (token);
 }
+*/
+
+static char	*try_dup_txt(t_token *token, char *s, size_t len)
+{
+	token->txt = malloc(len + 1);
+	if (!token->txt)
+	{
+		perror("try_dup_txt");
+		free_token(token);
+		return (NULL);
+	}
+	ft_strlcpy(token->txt, s, len + 1);
+	return (p);
+}
 
 char	*consume_quote(char *s, t_token *token)
 {
@@ -105,46 +120,88 @@ char	*consume_quote(char *s, t_token *token)
 		len++;
 	if (!s[len])
 	{
-		perror("consume_quote: unclosed quote");
+		perror("unclosed quote");
 		free_token(token);
 		return (NULL);
 	}
-	token->txt = malloc(len);
-	if (!token->txt)
-	{
-		perror("consume_quote: token->txt");
+	if (!try_dup_txt(token, s, len))
 		return (NULL);
-	}
-	ft_strncpy(token->txt, s, len);
 	token->type = WORD;
 	return (s + len + 1);
 }
 
-size_t	consume_redirect(char *s, t_token *token)
+char	*consume_word(char *s, t_token *token)
 {
-	size_t len;
+	size_t	len;
+
+	len = 0;
+	while (s[len] && s[len] != ' ' && !is_special(s[len]))
+		if (s[len] == '\\')
+			len++;
+		len++;
+	if (!try_dup_txt(token, s, len))
+		return (NULL);
+	return (s + len);
+}
+
+char	*consume_redirect(char *s, t_token *token)
+{
+	size_t 		len;
+	e_toktype	type;
 	
 	if (*s == '<' && *(s + 1) == '<')
 		return (consume_heredoc(s, token));
-	token->type = FILE_IN;
+	type = FILE_IN;
 	while (*s++ == '>')
-		token->type++;
-	s = consume_whitespace(s)
-		
+		type++;
+	s = consume_whitespace(s);
+	if (*s == '"' || *s == '\'')
+		s = consume_quote(s, token);
+	else
+		s = consume_word(s, token);
+	token->type = type;
+	return (s);
+}
+
+char	*consume_operator(char *s, t_token *token)
+{
+	token->txt = NULL;
+	if (*s == '&' && *(s + 1) == '&')
+	{
+		token->type = AND;
+		return (s + 2);
+	}
+	if (*s == '|' && *(s + 1) == '|')
+	{
+		token->type = OR;
+		return (s + 2);
+	}
+	if (*s == '|' && *(s + 1) != '|')
+	{
+		token->type = PIPE;
+		return (s + 1);
+	}
+	perror("unknown operator");
+	return (NULL);
+}
 
 t_token *lex(char *s, t_context	*context)
 {
 	t_token *const token = malloc(sizeof(t_token));
 	if (!token)
 		return (null);
+	init_t
 	if (*s == '"' || *s == '\'')
 		s = consume_quote(s, token);
 	else if (*s == '<' || *s == '>')
 		s = consume_redirect(s, token);
+	else if (*s == '|' || (*s == '&' && *(s + 1) == '&'))
+		s = consume_operator(s, token);
 	else
 		s = consume_word(s, token);
-	if (!token)
-		return (null);
+	if (!s)
+		return (NULL);
+	s = consume_whitespace(s);
 	token->next = lex(s, context);
 }
 
