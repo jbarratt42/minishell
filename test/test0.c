@@ -10,7 +10,7 @@ int	main(int argc, char **argv, char **env)
 		return (1);
 	if(!init_context(argc, argv, env, &context))
 		return (1);
-	context.line = argv[1];
+	context.line = ft_strdup(argv[1]);
 	expand_all(&context);
 	context.tokens = lex(&context);
 	print_tokens(context.tokens);
