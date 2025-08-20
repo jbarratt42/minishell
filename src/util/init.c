@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 12:02:08 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/08/19 17:01:44 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/08/20 12:32:30 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ static char *try_strdup(char *dst, char *src, char **env)
 	return (dst);
 }
 
+
+/*
 static char	**envdup(char **env)
 {
 	size_t	i;
@@ -50,17 +52,23 @@ static char	**envdup(char **env)
 			return (NULL);
 	return (new);
 }
+*/
 
 /* need to status of context->env immediately after */
 bool	init_context(int argc, char **argv, char **env, t_context *context)
 {
+	int i;
+
 	context->argc = argc;
 	context->argv = argv;
-	context->env = envdup(env);
+	context->env = copy_env(env);
 	if (!contenxt->env)
 		return (false);
 	context->status = 0;
 	context->tokens = NULL;
 	context->tree = NULL;
+	i = 0;
+	while (i < 3)
+		context->open[i++] = -1;
 	return (true);
 }

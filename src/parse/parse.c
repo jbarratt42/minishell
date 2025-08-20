@@ -59,8 +59,8 @@ static t_node	*parse_operator(t_token *op, t_node *left, t_node *right)
 
 
 /* take the address of a token list and create a parse tree.
- * - all pipes are treated as right-associative.  this means we only need to keep
- *   3 open fds at any given time.
+ * - all pipes are treated as right-associative.  this means we only need to 
+ *   keep 3 open fds at any given time.
  * - all other operators are left-associative
  */
 t_node	*parse(t_token **token, int min_precedence)
@@ -74,7 +74,8 @@ t_node	*parse(t_token **token, int min_precedence)
 		return (NULL);
 	*token = next_operator(*token);
 
-	while (*token && (*token)->type >= PIPE && precedence(*token) >= min_precedence)
+	while (*token && (*token)->type >= PIPE 
+			&& precedence(*token) >= min_precedence)
 	{
 		op = *token;
 		*token = (*token)->next;

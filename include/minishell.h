@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 10:46:56 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/08/19 13:17:36 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/08/20 14:33:56 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # include <stdbool.h>
 # include "../libft/libft.h"
 
-enum e_toktype
+typedef enum e_toktype
 {
 	WORD,
 	FILE_IN,
@@ -32,14 +32,23 @@ enum e_toktype
 	OR,
 	SEMICOLON,
 	MAX_TOKTYPE
-};
+} t_toktype;
 
 typedef struct s_token
 {
 	char			*txt;
-	e_tokype		type;
+	enum e_toktype	type;
 	struct s_token	*next;
 }	t_token;
+
+typedef struct s_node	t_node;
+
+typedef struct s_operator
+{
+	enum e_toktype	type;
+	t_node		*left;
+	t_node		*right;
+}	t_operator;
 
 union u_data
 {
@@ -47,19 +56,10 @@ union u_data
 	t_token		*tokens;
 };
 
-typedef struct s_node	t_node;
-
-typedef struct s_operator
-{
-	e_toktype	type;
-	t_node		*left;
-	t_node		*right;
-}	t_operator;
-
 typedef struct s_node
 {
 	bool	is_terminal;
-	u_data	data;
+	union	u_data	data;
 }	t_node;
 
 /* env is a modifiable duplicate of main's env */
@@ -89,7 +89,7 @@ char	*consume_quote(char *s, t_token *token);
 char	*consume_word(char *s, t_token *token);
 char	*consume_redirect(char *s, t_token *token);
 char	*consume_operator(char *s, t_token *token);
-t_token	*lex(char *s, t_context *context);
+t_token	*lex(t_context *context);
 int		print_tokens(t_token *token);
 /* src/parse/parse.c */
 t_node	*parse(t_token **token, int min_precedence);
@@ -102,12 +102,18 @@ t_node	*parse_command(t_token *token, char *path, char **argv, int *fd);
 int		exec(t_token *tokens, int fd[3], char **env);
 void	try_pipe(int fd[2]);
 int		traverse(t_node *node, int fd[3], char **env);
+/* src/util/env.c */
+char	**copy_env(char **env);
+char	**push_env(char **env, char *str);
 /* src/util/free.c */
 void	free_token(t_token *token);
 void	free_node(t_node *node);
-void	free_context(t_context context);
+void	free_context(t_context *context);
 /* src/util/init.c */
 bool	init_context(int argc, char **argv, char **env, t_context *context);
+/* src/util/print_tree.c */
+void	print_indentation(int depth);
+void	print_tree_structure(t_node *node, int depth);
 /* src/exec/exec.c */
 int		collect_process(pid_t pid);
 pid_t	exec_terminal(t_token *tokens, t_context *context);

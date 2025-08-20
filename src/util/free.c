@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 11:49:07 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/08/19 14:47:33 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/08/20 12:54:51 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	free_node(t_node *node)
 	free(node);
 }
 
-void	free_context(t_context context)
+void	free_context(t_context *context)
 {
 	if (context->env)
 		while (*context->env)

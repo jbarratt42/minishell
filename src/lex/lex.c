@@ -185,7 +185,7 @@ char	*consume_operator(char *s, t_token *token)
 	return (NULL);
 }
 
-t_token *lex(char *s, t_context	*context)
+t_token *lex(t_context	*context)
 {
 	t_token *const token = malloc(sizeof(t_token));
 	if (!token)
