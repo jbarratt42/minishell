@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/20 12:06:22 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/08/20 12:27:34 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/08/23 21:41:21 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static char **cleanup(char **env)
 {
-	size_t	i;
+	size_t i;
 
 	i = 0;
 	while (env[i])
@@ -23,11 +23,11 @@ static char **cleanup(char **env)
 	return (NULL);
 }
 
-char	**copy_env(char **env)
+char **copy_env(char **env)
 {
-	size_t	i;
-	size_t	len;
-	char **	new;
+	size_t i;
+	size_t len;
+	char **new;
 
 	len = 0;
 	while (*env[len])
@@ -47,11 +47,11 @@ char	**copy_env(char **env)
 	return (new);
 }
 
-char	**push_env(char **env, char *str)
+char **push_env(char **env, char *str)
 {
-	char	**new;
-	size_t	len;
-	size_t	i;
+	char **new;
+	size_t len;
+	size_t i;
 
 	len = 0;
 	while (env[len])
@@ -62,8 +62,8 @@ char	**push_env(char **env, char *str)
 	i = 0;
 	while (i < len)
 		new[i] = env[i];
-	new[len] = strdup(str);
-	if (!new(len))
+	new[len] = ft_strdup(str);
+	if (!new[len])
 	{
 		free(new);
 		return (cleanup(env));

@@ -6,7 +6,7 @@ EXEC = $(NAME)
 CC = cc -O3
 CFLAGS = -Wall -Wextra -Werror
 CPPFLAGS = -Iinclude -Ilibft
-LDFLAGS = -Llib -lft
+LDFLAGS = -Llibft -lft
 
 # Define the source and object directories
 SRCDIR = src
@@ -19,7 +19,7 @@ VPATH = $(SRCDIR)
 SRCDIRS = $(shell find $(SRCDIR) -mindepth 1 -type d)
 
 # Use wildcard and patsubst to build the lists of files.
-SRCS = $(wildcard $(addsuffix /*.c,$(SRCDIRS)))
+SRCS = $(wildcard $(addsuffix /*.c,$(SRCDIRS))) $(SRCDIR)/main.c
 OBJS = $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SRCS))
 OBJDIRS = $(sort $(dir $(OBJS)))
 HEAD = include/$(NAME).h
@@ -27,7 +27,7 @@ HEAD = include/$(NAME).h
 # The main rule to build the executable
 all: $(EXEC)
 
-$(EXEC): $(OBJS) lib/libft.a
+$(EXEC): $(OBJS) libft/libft.a
 	$(CC) $(OBJS) $(LDFLAGS) -o $(EXEC)
 
 # The static pattern rule to build each object file
@@ -36,7 +36,7 @@ $(OBJS): $(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIRS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 # Rule to build the libft library
-lib/libft.a:
+libft/libft.a:
 	make -C libft
 
 # Rule to create object directories if they don't exist

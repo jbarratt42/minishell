@@ -3,103 +3,115 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 15:13:10 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/08/19 13:39:41 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/08/23 21:35:18 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 /* @brief expand positional parameters
- * the positional parameters are the parameters actually passed to minishell 
+ * the positional parameters are the parameters actually passed to minishell
  * ($1, $2, etc) (not sure if these are required, holding off on confirmation)
  * UPDATE: we need to expand $0, so we might as well expand the rest.
  */
-int	expand_pos_param(char **ret, char **str, int argc, char **argv)
+int expand_pos_param(char **ret, char **str, int argc, char **argv)
 {
-	char	tmp;
-	int		i;
-	size_t	varlen;
+	char tmp;
+	int i;
+	size_t varlen;
 
-	*str++;
+	(void)*str++;
 	i = 0;
-	while (**str && is_numeric(**str))
+	while (**str && ft_isdigit(**str))
 		i++;
 	tmp = *str[i];
-	*str[i] = 0; // null-terminate the position string.
-	varlen = strlen(*str) + 1; // one more for the '$'
-	pos = atoi(*str);
-	str[i] = tmp;
+	*str[i] = 0;				  // null-terminate the position string.
+	varlen = ft_strlen(*str) + 1; // one more for the '$'
+	int pos = ft_atoi(*str);
+	str[i] = &tmp;
 	if (pos >= argc)
 		return (-varlen);
-	strcpy(*ret, argv[pos]);
-	return (strlen(argv[pos]) - varlen);
+	ft_strcpy(*ret, argv[pos]);
+	return (ft_strlen(argv[pos]) - varlen);
 }
 
-char	*shell_getenv(char *name, char **env)
+char *shell_getenv(char *name, char **env)
 {
-	const size_t	len = strlen(name);
+	const size_t len = ft_strlen(name);
 
 	while (*env)
 	{
-		if (!strncmp(name, *env, len) && (*env)[len] == '=')
+		if (!ft_strncmp(name, *env, len) && (*env)[len] == '=')
 			return (*env + len + 1);
 		(*env)++;
 	}
 	return (NULL);
 }
 
-/* @brief copy the value of the variable pointed to in str to ret and advance 
+/* @brief copy the value of the variable pointed to in str to ret and advance
  *  both
  * @param ret a p2ptr to the beginning of the expanded string. if *ret == NULL,
- * 	just return the difference between the value and varname lengths 
+ * 	just return the difference between the value and varname lengths
  * 	(including '$')
  * @param str a p2ptr to the '$' character before the variable name
  */
-int	expand_variable(char **ret, char **line, char **env)
+int expand_variable(char **ret, char **line, char **env)
 {
-	size_t	len;
+	size_t len;
+	char tmp;
+	int varlen = 0;
+	char *val;
 
 	(*line)++;
+	(void)env;
 	len = 0;
 	while (*line[len] && (ft_isalnum(*line[len]) || *line[len] == '_'))
 		len++;
 	tmp = *line[len];
 	*line[len] = '\0'; // null-terminate the variable name
-	val = ft_getenv(*line, env);
+	val = getenv(*line);
 	*line[len] = tmp;
 	if (!val) // NULL env vars get expanded to empty string
 		return (-varlen);
 	if (*ret)
 	{
-		ft_strlcpy(*ret, val);
-		*ret += strlen(val);
+		ft_strlcpy(*ret, val, varlen);
+		*ret += ft_strlen(val);
 	}
 	(*line) += len;
 	return (ft_strlen(val) - (len + 1));
 }
 
-int	expand_special(char **ret, char **line, t_context *context)
+int expand_history(char **str, char **s)
 {
-	char	tmp;
-	int		i;
-	char	*val;
-	size_t	varlen;
+	(void)str;
+	(void)s;
+	return 0;
+}
+
+int expand_special(char **ret, char **line, t_context *context)
+{
+	// char tmp;
+	// int i;
+	// char *val;
+	// size_t varlen;
 
 	if (**line == '!')
 		return (expand_history(ret, line));
 	// *line == '$'
 	if (ft_isdigit(**line))
-		return (expand_pos_param(ret, line));
+		return (expand_pos_param(ret, line, context->argc, context->argv));
 	return (expand_variable(ret, line, context->env));
 }
 
-static char	*try_new_line(t_context *context)
+static char *try_new_line(t_context *context)
 {
-	char	*ret;
+	char *ret;
 
+	int len = 0;
 	ret = malloc(len);
 	if (!ret)
 	{
@@ -112,16 +124,16 @@ static char	*try_new_line(t_context *context)
 
 /* @brief get the (length of the) new context->lineing with expanded variables
  * @param context->line context->lineing with variables
- * @param len length of new context->lineing.  if this is 0, just return the 
+ * @param len length of new context->lineing.  if this is 0, just return the
  * length of the expanded context->lineing
  * NOTE: context->lineing must not end with '\'!
  */
-static size_t	count_or_expand(size_t len, t_context *context)
+static size_t count_or_expand(size_t len, t_context *context)
 {
-	const bool	expand = len > 0;
-	bool		quoted;
-	char		*line;
-	char		*ret;
+	const bool expand = len > 0;
+	bool quoted;
+	char *line;
+	char *ret;
 
 	line = context->line;
 	ret = NULL;
@@ -139,7 +151,7 @@ static size_t	count_or_expand(size_t len, t_context *context)
 		else if (!expand && !quoted && (*line == '$' | *line == '!'))
 		{
 			len += expand_special(&ret, &line, context);
-			continue ;
+			continue;
 		}
 		*ret++ = *line++;
 	}
@@ -154,11 +166,11 @@ static size_t	count_or_expand(size_t len, t_context *context)
 /* a valid input string does not end with '\' and has no unclosed quotes
  * and no unclosed unquoted parentheses
  */
-bool	is_valid_input(char *str)
+bool is_valid_input(char *str)
 {
-	bool	quoted;
-	bool	qquoted;
-	int		level;
+	bool quoted;
+	bool qquoted;
+	int level;
 
 	quoted = false;
 	qquoted = false;
@@ -174,7 +186,7 @@ bool	is_valid_input(char *str)
 			if (!*(str + 1)) // escaped NULL terminator
 				return (false);
 			str += 2;
-			continue ;
+			continue;
 		}
 		if (*str == '{' && (!quoted && !qquoted))
 			level++;
@@ -196,20 +208,20 @@ bool	is_valid_input(char *str)
  * @param argc number of arguments to minishell
  * @param argv argument array from main
  */
-void	expand_all(t_context *context)
+char *expand_all(t_context *context)
 {
-	int		len;
-	char	*new;
+	int len = 0;
+	char *new = NULL;
 
 	if (!*context->line) // str is empty
-		return ;
-	if (!is_valid_input(str))
+		return NULL;
+	if (!is_valid_input(context->line))
 	{
 		free_context(context);
 		perror("invalid input string");
 		return (NULL);
 	}
 	len = count_or_expand(len, context);
-	new = count_or_expand(len, context);
-	return (str);
+	count_or_expand(len, context);
+	return (new);
 }

@@ -3,32 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 12:02:08 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/08/20 12:32:30 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/08/23 21:42:35 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char *try_strdup(char *dst, char *src, char **env)
-{
-	int i;
+// static char *try_strdup(char *dst, char *src, char **env)
+// {
+// 	int i;
 
-	dst = ft_strdup(dst, src);
-	if (!dst)
-	{
-		perror("try_strdup");
-		i = 0;
-		while (env[i])
-			free(env[i]);
-		free(env);
-		return (NULL);
-	}
-	return (dst);
-}
-
+// 	dst = ft_strdup(dst);
+// 	if (!dst)
+// 	{
+// 		perror("try_strdup");
+// 		i = 0;
+// 		while (env[i])
+// 			free(env[i]);
+// 		free(env);
+// 		return (NULL);
+// 	}
+// 	return (dst);
+// }
 
 /*
 static char	**envdup(char **env)
@@ -55,20 +54,20 @@ static char	**envdup(char **env)
 */
 
 /* need to status of context->env immediately after */
-bool	init_context(int argc, char **argv, char **env, t_context *context)
+bool init_context(int argc, char **argv, char **env, t_context *context)
 {
 	int i;
 
 	context->argc = argc;
 	context->argv = argv;
 	context->env = copy_env(env);
-	if (!contenxt->env)
+	if (!context->env)
 		return (false);
 	context->status = 0;
 	context->tokens = NULL;
 	context->tree = NULL;
 	i = 0;
 	while (i < 3)
-		context->open[i++] = -1;
+		context->fds[i++] = -1;
 	return (true);
 }
