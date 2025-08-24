@@ -6,14 +6,13 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 10:46:56 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/08/24 18:54:09 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/08/24 21:08:15 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 #define MINISHELL_H
 
-#define DEBUG 1
 #define MINSHELL_DIRECTORY ".minishell"
 
 #include <unistd.h>

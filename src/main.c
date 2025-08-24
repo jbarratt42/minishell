@@ -15,8 +15,10 @@ bool minishell_init(t_context *context, int argc, char **argv, char **env)
     printf("████╗ ████║██║████╗  ██║██║██╔════╝██║  ██║██╔════╝██║     ██║\n");
     printf("██╔████╔██║██║██╔██╗ ██║██║███████╗███████║█████╗  ██║     ██║\n");
     printf("██║╚██╔╝██║██║██║╚██╗██║██║╚════██║██╔══██║██╔══╝  ██║     ██║\n");
-    printf("██║ ╚═╝ ██║██║██║ ╚████║██║███████║██║  ██║███████╗███████╗███████╗\n");
-    printf("╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝\n");
+    printf(
+        "██║ ╚═╝ ██║██║██║ ╚████║██║███████║██║  ██║███████╗███████╗███████╗\n");
+    printf(
+        "╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝\n");
 
     return (true);
 }
@@ -32,8 +34,6 @@ int main(int argc, char **argv, char **env)
     context.input = readline("$ ");
     while (context.input)
     {
-        if (!*context.input)
-            continue;
         // Tokenize input
         t_token *tokens = lex(context.input);
         if (!tokens)

@@ -5,6 +5,12 @@ EXEC = $(NAME)
 # Define compiler and flags
 CC = cc -O3
 CFLAGS = -Wall -Wextra -Werror
+
+# Check if DEBUG is defined (make DEBUG=1 or simply make debug)
+ifdef DEBUG
+CFLAGS += -g -DDEBUG=1
+endif
+
 CPPFLAGS = -Iinclude -Ilibft 
 LDFLAGS = -Llibft -lft -lreadline
 
@@ -54,6 +60,11 @@ clean:
 fclean: clean
 	$(RM) $(NAME)
 
+# Add debug target that forces rebuild
+debug:
+	$(MAKE) fclean
+	$(MAKE) all DEBUG=1
+
 head: $(SRCS)
 	util/update_proto.sh $(HEAD) $(SRCS)
 
@@ -63,4 +74,4 @@ re: fclean all
 test0:
 	$(CC) $(CPPFLAGS) $(LDFLAGS) $(OBJS) test/test0.c -o $@
 
-.PHONY: all clean
+.PHONY: all clean debug
