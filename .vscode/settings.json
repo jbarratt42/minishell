@@ -7,7 +7,10 @@
     "libft.h": "c",
     "locale": "c",
     "repl.h": "c",
-    "history.h": "c"
+    "history.h": "c",
+    "stdio.h": "c",
+    "prel.h": "c",
+    "stdbool.h": "c"
   },
-  "cSpell.words": ["MINISHELL"]
+  "cSpell.words": ["chuezeri", "MINISHELL", "prel", "PRLH"]
 }

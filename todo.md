@@ -3,8 +3,9 @@
 ### M1 — Bootstrap & CI
 
 - [x] Makefile rules & fast rebuilds.&#x20;
+- [ ] REPL (read, exec, prompt, loop) baseline with prompt + history.
+  - [-] History
 - [ ] Logging & error module.
-- [ ] REPL baseline with prompt + history.
 
 ### M2 — Lexer + Parser
 

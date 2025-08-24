@@ -32,7 +32,7 @@ minishell/
 │  └─ utils.h
 ├─ src/
 │  ├─ main.c
-│  ├─ repl/         (readline loop, prompt, history)
+│  ├─ prel/         (prompt, read, exec, loop, +history)
 │  ├─ lexer/        (tokenization, quote handling)
 │  ├─ parser/       (AST builder, syntax errors)
 │  ├─ expander/     (env + `$?`, quote removal)

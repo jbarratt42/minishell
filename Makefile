@@ -5,8 +5,8 @@ EXEC = $(NAME)
 # Define compiler and flags
 CC = cc -O3
 CFLAGS = -Wall -Wextra -Werror
-CPPFLAGS = -Iinclude -Ilibft
-LDFLAGS = -Llibft -lft
+CPPFLAGS = -Iinclude -Ilibft 
+LDFLAGS = -Llibft -lft -lreadline
 
 # Define the source and object directories
 SRCDIR = src
@@ -28,6 +28,7 @@ HEAD = include/$(NAME).h
 all: $(EXEC)
 
 $(EXEC): $(OBJS) libft/libft.a
+	mkdir -p .$(NAME)
 	$(CC) $(OBJS) $(LDFLAGS) -o $(EXEC)
 
 # The static pattern rule to build each object file
@@ -46,6 +47,7 @@ $(OBJDIRS):
 # A clean rule to remove generated files
 clean:
 	$(RM) $(EXEC)
+	$(RM) -rf .$(NAME)
 	$(RM) -r $(OBJDIRS)
 	$(MAKE) -C libft clean
 
