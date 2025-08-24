@@ -184,7 +184,10 @@ t_token *lex(const char *input)
             cur = cur->next;
         }
     }
-    cur->next = token_new(EOF_T, NULL, i);
+    // Add EOF token at the end with proper type
+    t_token *eof_token = token_new(EOF_T, NULL, i);
+    if (eof_token)
+        cur->next = eof_token;
 
     return (head.next);
 }
