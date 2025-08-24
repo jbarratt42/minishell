@@ -1,24 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   repl.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/14 10:46:56 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/08/24 13:14:45 by chuezeri         ###   ########.fr       */
+/*   Created: 2025/08/24 13:13:51 by chuezeri          #+#    #+#             */
+/*   Updated: 2025/08/24 13:17:20 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-#define MINISHELL_H
+// readline loop prompt history
+#ifndef REPL_H
+#define REPL_H
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/wait.h>
-#include <stdio.h>
-#include <stdbool.h>
-#include "../libft/libft.h"
-#include "repl.h"
+#include <readline/readline.h>
+#include <readline/history.h>
+#define BUFFER_SIZE 1024
 
 #endif

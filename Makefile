@@ -49,8 +49,14 @@ clean:
 	$(RM) -r $(OBJDIRS)
 	$(MAKE) -C libft clean
 
+fclean: clean
+	$(RM) $(NAME)
+
 head: $(SRCS)
 	util/update_proto.sh $(HEAD) $(SRCS)
+
+# Rebuild the project
+re: fclean all
 
 test0:
 	$(CC) $(CPPFLAGS) $(LDFLAGS) $(OBJS) test/test0.c -o $@
