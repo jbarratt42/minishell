@@ -1,38 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   ft_strndup.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/14 10:46:56 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/08/24 18:54:09 by chuezeri         ###   ########.fr       */
+/*   Created: 2025/08/24 17:25:50 by chuezeri          #+#    #+#             */
+/*   Updated: 2025/08/24 17:26:00 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-#define MINISHELL_H
-
-#define DEBUG 1
-#define MINSHELL_DIRECTORY ".minishell"
-
-#include <unistd.h>
 #include <stdlib.h>
-#include <sys/wait.h>
-#include <stdio.h>
-#include <stdbool.h>
 
-#include "prlh.h"
-#include "lex.h"
-#include "../libft/libft.h"
-
-extern int g_status;
-
-typedef struct s_minishell
+char *ft_strndup(const char *s, size_t n)
 {
-    t_context *context;
-    bool interactive;
-} t_minishell;
+    char *dup;
+    size_t i = 0;
 
-char *ft_strndup(const char *s, size_t n);
-#endif
+    dup = malloc(n + 1);
+    if (!dup)
+        return NULL;
+    while (i < n && s[i])
+    {
+        dup[i] = s[i];
+        i++;
+    }
+    dup[i] = '\0';
+    return dup;
+}

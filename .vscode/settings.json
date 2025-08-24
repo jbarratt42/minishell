@@ -10,7 +10,8 @@
     "history.h": "c",
     "stdio.h": "c",
     "prel.h": "c",
-    "stdbool.h": "c"
+    "stdbool.h": "c",
+    "lex.h": "c"
   },
-  "cSpell.words": ["chuezeri", "MINISHELL", "prel", "PRLH"]
+  "cSpell.words": ["chuezeri", "MINISHELL", "PRLH"]
 }

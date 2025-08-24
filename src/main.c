@@ -1,5 +1,7 @@
 #include "minishell.h"
 
+int g_status = 0;
+
 bool minishell_init(t_context *context, int argc, char **argv, char **env)
 {
     if (!context)
@@ -30,12 +32,20 @@ int main(int argc, char **argv, char **env)
     context.input = readline("$ ");
     while (context.input)
     {
+        if (!*context.input)
+            continue;
+        // Tokenize input
+        t_token *tokens = lex(context.input);
+        if (!tokens)
+            (free(context.input), g_status = EXIT_FAILURE);
 
-        if (*context.input)
-            add_history(context.input);
+#ifdef DEBUG
+        if (tokens)
+            print_tokens(tokens);
+#endif
 
+        add_history(context.input);
         ft_write_history(MINSHELL_DIRECTORY "/history", context.input);
-
         if (ft_strncmp(context.input, "exit", 4) == 0)
         {
             free(context.input);
