@@ -32,9 +32,12 @@ int main(int argc, char **argv, char **env)
 
     // prompt readline loop +history
     context.input = readline("$ ");
+
     while (context.input)
     {
         // Tokenize input
+        add_history(context.input);
+		expand(0, &context);
         t_token *tokens = lex(context.input);
         if (!tokens)
             (free(context.input), g_status = EXIT_FAILURE);
@@ -44,7 +47,7 @@ int main(int argc, char **argv, char **env)
             print_tokens(tokens);
 #endif
 
-        add_history(context.input);
+        // add_history(context.input);
         ft_write_history(MINSHELL_DIRECTORY "/history", context.input);
         if (ft_strncmp(context.input, "exit", 4) == 0)
         {
