@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 15:13:10 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/08/26 12:08:29 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/08/26 12:52:21 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int expand_pos_param(char **ret, char **str, t_context *context)
 	return (ft_strlen(context->argv[pos]) - (i + 1));
 }
 
-char *shell_getenv(char *name, char **env)
+static char *ft_getenv(char *name, char **env)
 {
 	const size_t len = ft_strlen(name);
 
@@ -52,7 +52,7 @@ char *shell_getenv(char *name, char **env)
 	{
 		if (!ft_strncmp(name, *env, len) && (*env)[len] == '=')
 			return (*env + len + 1);
-		(*env)++;
+		env++;
 	}
 	return (NULL);
 }
@@ -86,8 +86,9 @@ int expand_variable(char **ret, char **line, char **env)
 		return (pass_literal_special(ret, line));
 	tmp = (*line)[len];
 	(*line)[len] = '\0'; // null-terminate the variable name
-	val = getenv(*line);
+	val = ft_getenv(*line, env);
 	(*line)[len] = tmp;
+	*line += len;
 	if (!val) // NULL env vars get expanded to empty string
 		return (-(len + 1));
 	if (ret && *ret)
