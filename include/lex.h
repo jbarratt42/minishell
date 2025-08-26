@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 17:16:07 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/08/25 13:04:31 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/08/26 10:44:51 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void free_context(t_context *context);
  * @brief expand all variables and positional parameters and store the
  * updated input line in a new string, freeing the original
  */
-size_t	expand(size_t len, t_context *context);
+bool	expand(t_context *context);
 
 /**
  * @brief Get the string representation of a token type.

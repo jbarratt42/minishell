@@ -37,7 +37,7 @@ int main(int argc, char **argv, char **env)
     {
         // Tokenize input
         add_history(context.input);
-		expand(0, &context);
+		expand(&context);
         t_token *tokens = lex(context.input);
         if (!tokens)
             (free(context.input), g_status = EXIT_FAILURE);
