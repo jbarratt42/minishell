@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 15:13:10 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/08/26 12:52:21 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/08/26 15:58:06 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,6 @@ int expand_variable(char **ret, char **line, char **env)
 		ft_strcpy(*ret, val);
 		*ret += ft_strlen(val);
 	}
-	(*line) += len;
 	return (ft_strlen(val) - (len + 1));
 }
 
