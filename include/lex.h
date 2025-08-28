@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 17:16:07 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/08/26 10:44:51 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/08/28 12:08:27 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,16 @@
 typedef enum e_token_type
 {
     WORD,
+    REDIR_IN,     // <  (input redirection)
+    REDIR_OUT,    // >  (output redirection)
+    REDIR_APPEND, // >> (output append)
+    HEREDOC,      // << (here document)
     SQUOTE,       // '  (single quote)
     DQUOTE,       // "  (double quote)
     PIPE,         // |  (pipe)
     AND,          // &  (AND)
     OR,           // ||  (OR)
     SEMICOLON,    // ;  (statement separator)
-    REDIR_IN,     // <  (input redirection)
-    REDIR_OUT,    // >  (output redirection)
-    REDIR_APPEND, // >> (output append)
-    HEREDOC,      // << (here document)
     EOF_T,
     ERROR
 } t_token_type;
@@ -58,7 +58,7 @@ void free_tokens(t_token *tok);
 void print_tokens(const t_token *tok);
 
 /**
- * @brief free all malloc'd elements of context.  should include a 
+ * @brief free all malloc'd elements of context.  should include a
  * readline'd line, a token list and a parse tree;
  */
 void free_context(t_context *context);
@@ -67,7 +67,7 @@ void free_context(t_context *context);
  * @brief expand all variables and positional parameters and store the
  * updated input line in a new string, freeing the original
  */
-bool	expand(t_context *context);
+bool expand(t_context *context);
 
 /**
  * @brief Get the string representation of a token type.
