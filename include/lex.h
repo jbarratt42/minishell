@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 17:16:07 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/08/24 20:07:29 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/08/26 10:44:51 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,18 @@ void free_tokens(t_token *tok);
  * @param tok The token list to print.
  */
 void print_tokens(const t_token *tok);
+
+/**
+ * @brief free all malloc'd elements of context.  should include a 
+ * readline'd line, a token list and a parse tree;
+ */
+void free_context(t_context *context);
+
+/**
+ * @brief expand all variables and positional parameters and store the
+ * updated input line in a new string, freeing the original
+ */
+bool	expand(t_context *context);
 
 /**
  * @brief Get the string representation of a token type.

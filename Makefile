@@ -3,7 +3,10 @@ NAME = minishell
 EXEC = $(NAME)
 
 # Define compiler and flags
-CC = cc -O3
+CC = cc
+ifndef DEBUG
+CC += -O3
+endif
 CFLAGS = -Wall -Wextra -Werror
 
 # Check if DEBUG is defined (make DEBUG=1 or simply make debug)

@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 17:16:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/08/24 19:43:02 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/08/25 13:11:18 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,10 @@ static void lexer_error(const char *msg, int pos, char *token)
 {
     (void)msg;
     (void)pos;
+	(void)token;
     // perror("minishell");
-    fprintf(stderr, "minishell: %s %s\n", msg, token);
+    // fprintf(stderr, "minishell: %s %s\n", msg, token);
+    fprintf(stderr, "minishell: %s %s\n", msg, "");
 }
 
 static t_token *token_new(t_token_type type, const char *val, int pos)
