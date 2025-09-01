@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 10:46:56 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/08/25 11:13:35 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/01 09:49:05 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 
 #include "prlh.h"
 #include "lex.h"
+#include "parse.h"
 #include "../libft/libft.h"
 
 extern int g_status;

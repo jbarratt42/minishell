@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 17:16:07 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/08/28 12:08:27 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/01 13:42:39 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 typedef enum e_token_type
 {
+    EOF_T,
+    ERROR,
     WORD,
     REDIR_IN,     // <  (input redirection)
     REDIR_OUT,    // >  (output redirection)
@@ -26,8 +28,7 @@ typedef enum e_token_type
     AND,          // &  (AND)
     OR,           // ||  (OR)
     SEMICOLON,    // ;  (statement separator)
-    EOF_T,
-    ERROR
+	MAX_TOKEN_TYPE
 } t_token_type;
 
 typedef struct s_token

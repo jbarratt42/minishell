@@ -13,7 +13,7 @@ static void free_node(t_node *node)
 
 static t_token *next_operator(t_token *token)
 {
-	while (token->next && token->type < PIPE)
+	while (token && token->type < PIPE)
 		token = token->next;
 	return (token);
 }
@@ -74,7 +74,8 @@ t_node *parse(t_token **token, int min_precedence)
 		return (NULL);
 	*token = next_operator(*token);
 
-	while (*token && (*token)->type >= PIPE && precedence(*token) >= min_precedence)
+	while (*token && (*token)->type >= PIPE
+			&& precedence(*token) >= min_precedence)
 	{
 		op = *token;
 		*token = (*token)->next;
@@ -97,12 +98,12 @@ t_node *parse(t_token **token, int min_precedence)
 int is_builtin(t_token *token)
 {
 	const char builtins[][10] = {"echo", "cd", "pwd", "export", "unset",
-								 "env", "exit"};
+								 "env", "exit", ""};
 	int i;
 
 	i = 0;
-	while (builtins[i])
-		if (!ft_strncmp(token->txt, builtins[i++], 10))
+	while (*builtins[i])
+		if (!ft_strncmp(token->value, builtins[i++], 10))
 			return (1);
 	return (0);
 }
@@ -117,7 +118,7 @@ int exec_builtin(t_token *token, t_context *context)
 
 int is_arg(t_token *token)
 {
-	if (*token->txt == '<' || *token->txt == '>')
+	if (*token->value == '<' || *token->value == '>')
 		return (0);
 	return (1);
 }
@@ -134,7 +135,7 @@ int try_open(char *path, int flags)
 
 void parse_redirect(t_token *token, int fd[2])
 {
-	const int ind = *token->txt == '>';
+	const int ind = *token->value == '>';
 	int mode;
 
 	// if <, close fd[0] if necessary, open filename,
@@ -145,12 +146,12 @@ void parse_redirect(t_token *token, int fd[2])
 	mode = O_WRONLY;
 	if (!ind)
 		mode = O_RDONLY;
-	if (mode == O_WRONLY && token->txt[1] == '>')
+	if (mode == O_WRONLY && token->value[1] == '>')
 		mode = mode & O_APPEND;
 	token = token->next;
 	if (!token)
 		exit(1);
-	fd[ind] = try_open(token->txt, mode);
+	fd[ind] = try_open(token->value, mode);
 }
 
 char *expand_vars(t_token *token)
@@ -163,7 +164,7 @@ t_node *parse_command(t_token *token, char *path, char **argv, int *fd)
 {
 	int i;
 
-	path = token->txt;
+	path = token->value;
 	token = token->next;
 	i = 0;
 	(void)path;
@@ -180,13 +181,13 @@ t_node *parse_command(t_token *token, char *path, char **argv, int *fd)
 	return NULL;
 }
 
-int get_return_code(int wstatus);
 
 /* execute the command or builtin specified by tokens
  * - the child (if any) should close each element of fd that is greater than 2
  * 		(not stdout, stdin, or stderr)
  * - the parent should only close fd[1] and fd[2] after waitpid().
  */
+/*
 int exec(t_token *tokens, int fd[3], char **env)
 {
 	char *path = NULL;
@@ -223,6 +224,7 @@ int exec(t_token *tokens, int fd[3], char **env)
 		close(fd[1]);
 	return (get_return_code(wstatus));
 }
+*/
 
 int try_pipe(int fd[2])
 {
