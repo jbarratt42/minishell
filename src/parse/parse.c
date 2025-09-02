@@ -79,7 +79,7 @@ t_node *parse(t_token **token, int min_precedence)
 	{
 		op = *token;
 		*token = (*token)->next;
-		if ((*token)->type == PIPE)
+		if (op->type == PIPE)
 			right = parse(token, precedence(op)); // right-associative for pipes
 		else
 			right = parse(token, precedence(op) + 1);

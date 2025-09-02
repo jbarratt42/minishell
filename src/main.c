@@ -49,6 +49,8 @@ int main(int argc, char **argv, char **env)
 #ifdef DEBUG
         if (context.tokens)
             print_tokens(context.tokens);
+		printf("\nParse Tree:\n");
+		print_tree_structure(context.tree, 0);
 #endif
 
         // add_history(context.input);
