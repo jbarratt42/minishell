@@ -95,27 +95,6 @@ t_node *parse(t_token **token, int min_precedence)
 	return (left);
 }
 
-int is_builtin(t_token *token)
-{
-	const char builtins[][10] = {"echo", "cd", "pwd", "export", "unset",
-								 "env", "exit", ""};
-	int i;
-
-	i = 0;
-	while (*builtins[i])
-		if (!ft_strncmp(token->value, builtins[i++], 10))
-			return (1);
-	return (0);
-}
-
-int exec_builtin(t_token *token, t_context *context)
-{
-	(void)token;
-	(void)context;
-	// builtin if-else ladder
-	return (1);
-}
-
 int is_arg(t_token *token)
 {
 	if (*token->value == '<' || *token->value == '>')
@@ -225,7 +204,7 @@ int exec(t_token *tokens, int fd[3], char **env)
 	return (get_return_code(wstatus));
 }
 */
-
+/*
 int try_pipe(int fd[2])
 {
 	int ret;
@@ -238,6 +217,7 @@ int try_pipe(int fd[2])
 	}
 	return (ret);
 }
+*/
 
 /* @brief recursively traverse a node in an AST, left to right
  * @param node the node to traverse

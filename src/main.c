@@ -10,6 +10,9 @@ bool minishell_init(t_context *context, int argc, char **argv, char **env)
     context->argc = argc;
     context->argv = argv;
     context->env = env;
+	context->open[0] = 0;
+	context->open[1] = 1;
+	context->open[2] = -1;
 
     printf("███╗   ███╗██╗███╗   ██╗██╗███████╗██╗  ██╗███████╗██╗     ██╗\n");
     printf("████╗ ████║██║████╗  ██║██║██╔════╝██║  ██║██╔════╝██║     ██║\n");
@@ -45,6 +48,7 @@ int main(int argc, char **argv, char **env)
             (free(context.input), g_status = EXIT_FAILURE);
 		token = context.tokens;
 		context.tree = parse(&token, 0);
+		traverse(context.tree, &context);
 
 #ifdef DEBUG
         if (context.tokens)

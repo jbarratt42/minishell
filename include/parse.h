@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 10:46:56 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/01 09:51:37 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/03 12:56:14 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,15 +83,11 @@ typedef struct s_context
 /* prototypes */
 /* src/parse/parse.c */
 t_node *parse(t_token **token, int min_precedence);
-int is_builtin(t_token *token);
-int exec_builtin(t_token *token, t_context *context);
 int is_arg(t_token *token);
 int try_open(char *path, int flags);
 void parse_redirect(t_token *token, int fd[2]);
 t_node *parse_command(t_token *token, char *path, char **argv, int *fd);
 int exec(t_token *tokens, int fd[3], char **env);
-int try_pipe(int fd[2]);
-int traverse(t_node *node, int fd[3], char **env);
 // /* src/util/env.c */
 // char **copy_env(char **env);
 // char **push_env(char **env, char *str);
