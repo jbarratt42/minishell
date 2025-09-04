@@ -30,6 +30,7 @@ int main(int argc, char **argv, char **env)
 {
     t_context	context;
 	t_token		*token;
+	pid_t		pid;
 
     if (!minishell_init(&context, argc, argv, env))
         return (EXIT_FAILURE);
@@ -48,7 +49,14 @@ int main(int argc, char **argv, char **env)
             (free(context.input), g_status = EXIT_FAILURE);
 		token = context.tokens;
 		context.tree = parse(&token, 0);
-		traverse(context.tree, &context);
+		pid = traverse(context.tree, &context);
+		if (pid)
+		{
+			if(waitpid(pid, &context.status, 0) == -1
+					|| !WIFEXITED(context.status))
+				perror("main");
+			context.status = WEXITSTATUS(pid);
+		}
 
 #ifdef DEBUG
         if (context.tokens)
