@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:31:14 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/04 11:07:53 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/04 12:56:17 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,53 @@ static bool	try_pipe(int fds[2])
 	fds[0] = tmp[1];
 	fds[1] = tmp[0];
 	return (true);
+}
+
+char	*append_path(char *a, char *b)
+{
+	char	*c;
+	const size_t	len = ft_strlen(a) + ft_strlen(b) + 2;
+
+	c = malloc(len);
+	if (!c)
+		return (NULL);
+	ft_strcpy(c, a);
+	ft_strlcat(c, "/", len);
+	ft_strlcat(c, b, len);
+	return (c);
+}
+
+char	*search_path(char *s, char **env)
+{
+	char	*paths;
+	char	*try_path;
+	char	*end;
+
+	paths = ft_getenv("PATH", env);
+	if (!paths || !*paths)
+		return (NULL);
+	end = paths;
+	while (end)
+	{
+		end = ft_strchr(paths, ':');
+		if (end)
+			*end = '\0';
+		try_path = append_path(paths, s);
+		if (access(try_path, F_OK) == 0)
+		{
+			if (access(try_path, R_OK) != 0 || access(try_path, X_OK))
+			{
+				perror("search_path");
+				free(try_path);
+				return (NULL);
+			}
+			return (try_path);
+		}
+		free(try_path);
+		paths = end + 1;
+	}
+	perror("search_path");
+	return (NULL);
 }
 
 static int	collect(int pids[2])
@@ -113,9 +160,14 @@ char	**get_args(t_token *tokens)
 	return (args);
 }
 
-char	*get_path(t_token *tokens)
+char	*get_path(t_token *tokens, char **env)
 {
-	return (tokens->value);
+	char	*path;
+
+	path = tokens->value;
+	if (!ft_strchr(tokens->value, '/'))
+		path = search_path(path, env);
+	return (path);
 }
 
 bool	is_builtin(t_token *token)
@@ -147,9 +199,11 @@ pid_t	exec_terminal(t_token *tokens, t_context *context)
 	if (pid)
 		return (pid);
 	try_dup2(context->open);
+	/*
 	if (is_builtin(tokens))
 		exec_builtin(tokens, context);
-	execve(get_path(tokens), get_args(tokens), context->env);
+		*/
+	execve(get_path(tokens, context->env), get_args(tokens), context->env);
 	perror("exec_terminal");
 	exit(1);
 }

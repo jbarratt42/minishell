@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 17:16:07 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/02 12:37:40 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/04 12:28:05 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,5 +78,7 @@ bool expand(t_context *context);
  * @return A string representation of the token type.
  */
 const char *token_type_str(t_token_type type);
+
+char *ft_getenv(char *name, char **env);
 
 #endif

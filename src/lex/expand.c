@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 15:13:10 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/08/26 15:58:06 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/04 12:27:31 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int expand_pos_param(char **ret, char **str, t_context *context)
 	return (ft_strlen(context->argv[pos]) - (i + 1));
 }
 
-static char *ft_getenv(char *name, char **env)
+char *ft_getenv(char *name, char **env)
 {
 	const size_t len = ft_strlen(name);
 
