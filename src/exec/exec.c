@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:31:14 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/03 14:46:22 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/04 11:07:53 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,9 @@ bool	try_dup2(int open[3])
 	i = 0;
 	while (i < 2)
 	{
-		if(dup2(i, open[i]) == -1)
-			return (false);
+		if(open[i] != i)
+			if(dup2(open[i], i) == -1)
+				return (false);
 		i++;
 	}
 	i = 0;
@@ -92,7 +93,7 @@ char	**get_args(t_token *tokens)
 	t_token	*pos;
 
 	i = 0;
-	pos = tokens->next;
+	pos = tokens;
 	while (pos && pos->type < PIPE && pos->type != EOF_T)
 	{
 		pos = pos->next;
@@ -102,7 +103,7 @@ char	**get_args(t_token *tokens)
 	if (!args)
 		return (NULL);
 	i = 0;
-	pos = tokens->next;
+	pos = tokens;
 	while (pos && pos->type < PIPE && pos->type != EOF_T)
 	{
 		args[i++] = pos->value;
