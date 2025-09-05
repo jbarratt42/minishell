@@ -3,3 +3,4 @@ obj/
 order.md
 .minishell/
 minishell
+*.swp

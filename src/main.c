@@ -5,15 +5,9 @@ int g_status = 0;
 bool minishell_init(t_context *context, int argc, char **argv, char **env)
 {
     if (!context)
-        return (false);
+		return (false);
 
-    context->argc = argc;
-    context->argv = argv;
-    context->env = env;
-	context->open[0] = 0;
-	context->open[1] = 1;
-	context->open[2] = -1;
-
+	init_context(context, argc, argv, env);
     printf("███╗   ███╗██╗███╗   ██╗██╗███████╗██╗  ██╗███████╗██╗     ██╗\n");
     printf("████╗ ████║██║████╗  ██║██║██╔════╝██║  ██║██╔════╝██║     ██║\n");
     printf("██╔████╔██║██║██╔██╗ ██║██║███████╗███████║█████╗  ██║     ██║\n");
@@ -43,7 +37,7 @@ int main(int argc, char **argv, char **env)
         // Tokenize input
         add_history(context.input);
 		// maybe do expand at the token level
-		expand(&context);
+		//expand(&context);
         context.tokens = lex(context.input);
         if (!context.tokens)
             (free(context.input), g_status = EXIT_FAILURE);
