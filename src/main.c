@@ -25,7 +25,8 @@ bool minishell_init(t_context *context, int argc, char **argv, char **env)
 
 int main(int argc, char **argv, char **env)
 {
-    t_context context;
+    t_context	context;
+	t_token		*token;
 
     if (!minishell_init(&context, argc, argv, env))
         return (EXIT_FAILURE);
@@ -37,14 +38,19 @@ int main(int argc, char **argv, char **env)
     {
         // Tokenize input
         add_history(context.input);
+		// maybe do expand at the token level
 		expand(&context);
-        t_token *tokens = lex(context.input);
-        if (!tokens)
+        context.tokens = lex(context.input);
+        if (!context.tokens)
             (free(context.input), g_status = EXIT_FAILURE);
+		token = context.tokens;
+		context.tree = parse(&token, 0);
 
 #ifdef DEBUG
-        if (tokens)
-            print_tokens(tokens);
+        if (context.tokens)
+            print_tokens(context.tokens);
+		printf("\nParse Tree:\n");
+		print_tree_structure(context.tree, 0);
 #endif
 
         // add_history(context.input);

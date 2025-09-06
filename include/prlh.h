@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 13:13:51 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/08/25 13:02:22 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/01 09:58:43 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,25 @@
 #define PRLH_H
 
 #define BUFFER_SIZE 1024
+#define	MAX_OPEN_FDS 3
 
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <sys/fcntl.h>
 
+typedef struct s_token t_token;
+
+typedef struct s_node t_node;
+
 typedef struct s_context
 {
-    char **env;
-    char *input;
-    char **argv;
-    int argc;
+    int		argc;
+    char	**argv;
+    char	**env;
+    char 	*input;
+	t_token	*tokens;
+	t_node	*tree;
+	int		open[MAX_OPEN_FDS];
 } t_context;
 
 /**
