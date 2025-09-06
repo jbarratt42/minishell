@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 10:46:56 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/05 13:45:18 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/06 13:25:55 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,9 @@
 #include "exec.h"
 #include "util.h"
 #include "../libft/libft.h"
+#ifdef DEBUG
+#include "print_tree.h"
+#endif
 #ifdef DEBUG
 #include "print_tree.h"
 #endif

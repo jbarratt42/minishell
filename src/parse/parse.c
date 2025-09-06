@@ -74,8 +74,7 @@ t_node *parse(t_token **token, int min_precedence)
 		return (NULL);
 	*token = next_operator(*token);
 
-	while (*token && (*token)->type >= PIPE
-			&& precedence(*token) >= min_precedence)
+	while (*token && (*token)->type >= PIPE && precedence(*token) >= min_precedence)
 	{
 		op = *token;
 		*token = (*token)->next;
@@ -159,7 +158,6 @@ t_node *parse_command(t_token *token, char *path, char **argv, int *fd)
 	}
 	return NULL;
 }
-
 
 /* execute the command or builtin specified by tokens
  * - the child (if any) should close each element of fd that is greater than 2
