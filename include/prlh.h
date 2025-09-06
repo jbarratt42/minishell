@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 13:13:51 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/08/25 13:02:22 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/08/30 15:47:43 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,9 @@ typedef struct s_context
     char *input;
     char **argv;
     int argc;
+
+    // signal
+    int status;
 } t_context;
 
 /**

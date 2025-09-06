@@ -10,6 +10,7 @@ bool minishell_init(t_context *context, int argc, char **argv, char **env)
     context->argc = argc;
     context->argv = argv;
     context->env = env;
+    context->status = EXIT_SUCCESS;
 
     printf("███╗   ███╗██╗███╗   ██╗██╗███████╗██╗  ██╗███████╗██╗     ██╗\n");
     printf("████╗ ████║██║████╗  ██║██║██╔════╝██║  ██║██╔════╝██║     ██║\n");
@@ -26,10 +27,15 @@ bool minishell_init(t_context *context, int argc, char **argv, char **env)
 int main(int argc, char **argv, char **env)
 {
     t_context context;
+    printf("Size of void*: %zu\n", sizeof(void *));
 
     if (!minishell_init(&context, argc, argv, env))
         return (EXIT_FAILURE);
 
+    handle_signals(&context);
+    signal(SIGINT, signal_handler);
+    signal(SIGQUIT, signal_handler);
+    // signal(SIGTERM, signal_handler);
     // prompt readline loop +history
     context.input = readline("$ ");
 
@@ -37,7 +43,7 @@ int main(int argc, char **argv, char **env)
     {
         // Tokenize input
         add_history(context.input);
-		expand(&context);
+        expand(&context);
         t_token *tokens = lex(context.input);
         if (!tokens)
             (free(context.input), g_status = EXIT_FAILURE);
