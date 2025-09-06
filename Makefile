@@ -3,10 +3,19 @@ NAME = minishell
 EXEC = $(NAME)
 
 # Define compiler and flags
-CC = cc -O3
+CC = cc
+ifndef DEBUG
+CC += -O3
+endif
 CFLAGS = -Wall -Wextra -Werror
-CPPFLAGS = -Iinclude -Ilibft
-LDFLAGS = -Llibft -lft
+
+# Check if DEBUG is defined (make DEBUG=1 or simply make debug)
+ifdef DEBUG
+CFLAGS += -g -DDEBUG=1
+endif
+
+CPPFLAGS = -Iinclude -Ilibft 
+LDFLAGS = -Llibft -lft -lreadline
 
 # Define the source and object directories
 SRCDIR = src
@@ -28,6 +37,7 @@ HEAD = include/$(NAME).h
 all: $(EXEC)
 
 $(EXEC): $(OBJS) libft/libft.a
+	mkdir -p .$(NAME)
 	$(CC) $(OBJS) $(LDFLAGS) -o $(EXEC)
 
 # The static pattern rule to build each object file
@@ -46,13 +56,25 @@ $(OBJDIRS):
 # A clean rule to remove generated files
 clean:
 	$(RM) $(EXEC)
+	$(RM) -rf .$(NAME)
 	$(RM) -r $(OBJDIRS)
 	$(MAKE) -C libft clean
+
+fclean: clean
+	$(RM) $(NAME)
+
+# Add debug target that forces rebuild
+debug:
+	$(MAKE) fclean
+	$(MAKE) all DEBUG=1
 
 head: $(SRCS)
 	util/update_proto.sh $(HEAD) $(SRCS)
 
+# Rebuild the project
+re: fclean all
+
 test0:
 	$(CC) $(CPPFLAGS) $(LDFLAGS) $(OBJS) test/test0.c -o $@
 
-.PHONY: all clean
+.PHONY: all clean debug

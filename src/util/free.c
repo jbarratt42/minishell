@@ -6,12 +6,13 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 11:49:07 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/08/23 21:41:39 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/08/25 13:12:10 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/*
 void free_token(t_token *token)
 {
 	if (token->next)
@@ -29,16 +30,18 @@ void free_node(t_node *node)
 	}
 	free(node);
 }
+*/
 
 void free_context(t_context *context)
 {
 	if (context->env)
 		while (*context->env)
 			free(*context->env++);
-	if (context->line)
-		free(context->line);
-	if (context->tokens)
+	/*
+	if (context->input)
+		free(context->input);	if (context->tokens)
 		free_token(context->tokens);
 	if (context->tree)
 		free_node(context->tree);
+		*/
 }

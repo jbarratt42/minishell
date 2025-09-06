@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 15:13:10 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/08/23 21:35:18 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/08/26 15:58:06 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,28 +17,34 @@
  * ($1, $2, etc) (not sure if these are required, holding off on confirmation)
  * UPDATE: we need to expand $0, so we might as well expand the rest.
  */
-int expand_pos_param(char **ret, char **str, int argc, char **argv)
+int expand_pos_param(char **ret, char **str, t_context *context)
 {
-	char tmp;
-	int i;
-	size_t varlen;
+	char	tmp;
+	int		i;
+	int		pos;
+	size_t	vallen;
 
-	(void)*str++;
+	(*str)++;
 	i = 0;
-	while (**str && ft_isdigit(**str))
+	while ((*str)[i] && ft_isdigit((*str)[i]))
 		i++;
-	tmp = *str[i];
-	*str[i] = 0;				  // null-terminate the position string.
-	varlen = ft_strlen(*str) + 1; // one more for the '$'
-	int pos = ft_atoi(*str);
-	str[i] = &tmp;
-	if (pos >= argc)
-		return (-varlen);
-	ft_strcpy(*ret, argv[pos]);
-	return (ft_strlen(argv[pos]) - varlen);
+	tmp = (*str)[i];
+	(*str)[i] = '\0';				  // null-terminate tcohe position string.
+	pos = ft_atoi(*str);
+	(*str)[i] = tmp;
+	*str += i;
+	if (pos >= context->argc)
+		return (-(i + 1));
+	vallen = ft_strlen(context->argv[pos]);
+	if (ret && *ret)
+	{
+		ft_strcpy(*ret, context->argv[pos]);
+		*ret += vallen;
+	}
+	return (ft_strlen(context->argv[pos]) - (i + 1));
 }
 
-char *shell_getenv(char *name, char **env)
+static char *ft_getenv(char *name, char **env)
 {
 	const size_t len = ft_strlen(name);
 
@@ -46,9 +52,16 @@ char *shell_getenv(char *name, char **env)
 	{
 		if (!ft_strncmp(name, *env, len) && (*env)[len] == '=')
 			return (*env + len + 1);
-		(*env)++;
+		env++;
 	}
 	return (NULL);
+}
+
+static int	pass_literal_special(char **ret, char **line)
+{
+	if (ret && *ret)
+		*(*ret)++ = *(*line - 1);
+	return (0);
 }
 
 /* @brief copy the value of the variable pointed to in str to ret and advance
@@ -62,26 +75,27 @@ int expand_variable(char **ret, char **line, char **env)
 {
 	size_t len;
 	char tmp;
-	int varlen = 0;
 	char *val;
 
 	(*line)++;
 	(void)env;
 	len = 0;
-	while (*line[len] && (ft_isalnum(*line[len]) || *line[len] == '_'))
+	while ((*line)[len] && (ft_isalnum((*line)[len]) || (*line)[len] == '_'))
 		len++;
-	tmp = *line[len];
-	*line[len] = '\0'; // null-terminate the variable name
-	val = getenv(*line);
-	*line[len] = tmp;
+	if (!len)
+		return (pass_literal_special(ret, line));
+	tmp = (*line)[len];
+	(*line)[len] = '\0'; // null-terminate the variable name
+	val = ft_getenv(*line, env);
+	(*line)[len] = tmp;
+	*line += len;
 	if (!val) // NULL env vars get expanded to empty string
-		return (-varlen);
-	if (*ret)
+		return (-(len + 1));
+	if (ret && *ret)
 	{
-		ft_strlcpy(*ret, val, varlen);
+		ft_strcpy(*ret, val);
 		*ret += ft_strlen(val);
 	}
-	(*line) += len;
 	return (ft_strlen(val) - (len + 1));
 }
 
@@ -99,25 +113,43 @@ int expand_special(char **ret, char **line, t_context *context)
 	// char *val;
 	// size_t varlen;
 
-	if (**line == '!')
-		return (expand_history(ret, line));
+	//if (**line == '!')
+	//	return (expand_history(ret, line));
 	// *line == '$'
-	if (ft_isdigit(**line))
-		return (expand_pos_param(ret, line, context->argc, context->argv));
+	if (ft_isdigit(*(*line + 1)))
+		return (expand_pos_param(ret, line, context));
 	return (expand_variable(ret, line, context->env));
 }
 
-static char *try_new_line(t_context *context)
+/*
+static char *try_new_line(size_t len, t_context *context)
 {
 	char *ret;
 
-	int len = 0;
 	ret = malloc(len);
 	if (!ret)
 	{
 		free_context(context);
 		perror("try_new_line");
 		exit(1);
+	}
+	return (ret);
+}
+*/
+
+static size_t	compute_length(t_context *context)
+{
+	size_t	ret;
+	char	*pos;
+
+	ret = ft_strlen(context->input);
+	pos = context->input;
+	while (*pos)
+	{
+		if (*pos == '$')
+			ret += expand_special(NULL, &pos, context);
+		else
+			pos++;
 	}
 	return (ret);
 }
@@ -128,39 +160,37 @@ static char *try_new_line(t_context *context)
  * length of the expanded context->lineing
  * NOTE: context->lineing must not end with '\'!
  */
-static size_t count_or_expand(size_t len, t_context *context)
+bool	expand(t_context *context)
 {
-	const bool expand = len > 0;
 	bool quoted;
-	char *line;
 	char *ret;
+	char *p;
+	char *q;
 
-	line = context->line;
-	ret = NULL;
-	if (expand)
-		ret = try_new_line(context);
-	else
-		len = ft_strlen(line);
+	ret = malloc(compute_length(context) + 1);
+	if (!ret)
+		return (false);
+	p = context->input;
+	q = ret;
 	quoted = false;
-	while (*line)
+	while (*p)
 	{
-		if (*line == '\\')
-			*ret++ = *line++;
-		else if (*line == '\'')
+		if (*p == '\\')
+			*q++ = *p++;
+		else if (*p == '\'')
 			quoted = !quoted;
-		else if (!expand && !quoted && (*line == '$' | *line == '!'))
+		//else if (!quoted && (*line == '$' || *line == '!'))
+		else if (!quoted && *p == '$')
 		{
-			len += expand_special(&ret, &line, context);
+			expand_special(&q, &p, context);
 			continue;
 		}
-		*ret++ = *line++;
+		*q++ = *p++;
 	}
-	if (expand)
-	{
-		free(context->line);
-		context->line = ret;
-	}
-	return (len);
+	*q = '\0';
+	free(context->input);
+	context->input = ret;
+	return (true);
 }
 
 /* a valid input string does not end with '\' and has no unclosed quotes
@@ -208,6 +238,7 @@ bool is_valid_input(char *str)
  * @param argc number of arguments to minishell
  * @param argv argument array from main
  */
+/*
 char *expand_all(t_context *context)
 {
 	int len = 0;
@@ -225,3 +256,4 @@ char *expand_all(t_context *context)
 	count_or_expand(len, context);
 	return (new);
 }
+*/

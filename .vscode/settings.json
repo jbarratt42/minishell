@@ -1,8 +1,17 @@
 {
   "files.associations": {
+    "*.dbclient-js": "javascript",
+    "*.css": "tailwindcss",
     "fcntl.h": "c",
     "minishell.h": "c",
     "libft.h": "c",
-    "locale": "c"
-  }
+    "locale": "c",
+    "repl.h": "c",
+    "history.h": "c",
+    "stdio.h": "c",
+    "prel.h": "c",
+    "stdbool.h": "c",
+    "lex.h": "c"
+  },
+  "cSpell.words": ["chuezeri", "MINISHELL", "PRLH"]
 }
