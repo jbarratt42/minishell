@@ -162,15 +162,18 @@ bool	expand_tokens(t_token **token, t_context *context)
 {
 	bool	squoted;
 	bool	dquoted;
+	char	*tmp;
 
 	squoted = false;
 	dquoted = false;
 	while (*token)
 		if ((*token)->type == WORD && !squoted)
-		{
+		{	
+			tmp = context->input;
 			context->input = (*token)->value;
 			if(!expand(context))
 				return (false);
+			context->input = tmp;
 			if (!dquoted)
 				separate_words(*token);
 		}
