@@ -1,54 +1,52 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   parse.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 10:46:56 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/09 11:25:22 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/06 13:13:23 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-#define MINISHELL_H
-
-#define MINSHELL_DIRECTORY ".minishell"
-
+#ifndef PARSE_H
+#define PARSE_H
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <stdio.h>
 #include <stdbool.h>
-
-#include "prlh.h"
-#include "lex.h"
-#include "signals.h"
-#include "parse.h"
 #include "../libft/libft.h"
-#ifdef DEBUG
-#include "print_tree.h"
-#endif
 
-extern int g_status;
+typedef struct s_node t_node;
 
-typedef struct s_minishell
+typedef struct s_operator
 {
-    t_context *context;
-    bool interactive;
-} t_minishell;
+	enum e_token_type type;
+	t_node *left;
+	t_node *right;
+} t_operator;
 
-char *ft_strndup(const char *s, size_t n);
+union u_data
+{
+	t_operator op;
+	t_token *tokens;
+};
 
-/**
- * Copies the first n characters of src to dst.
- **Returns the number of characters copied.
- */
-char *ft_strcpy(char *dest, const char *src);
+typedef struct s_node
+{
+	bool is_terminal;
+	union u_data data;
+} t_node;
 
-/**
- * Checks for a whitespace character.
- ** Returns non zero if the character is a whitespace, and zero if not.
- */
-int ft_isspace(int c);
+t_node *parse(t_token **token, int min_precedence);
+int is_builtin(t_token *token);
+int exec_builtin(t_token *token, t_context *context);
+int is_arg(t_token *token);
+int try_open(char *path, int flags);
+void parse_redirect(t_token *token, int fd[2]);
+t_node *parse_command(t_token *token, char *path, char **argv, int *fd);
+int try_pipe(int fd[2]);
+
 #endif

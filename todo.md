@@ -9,8 +9,8 @@
 
 ### M2 — Lexer + Parser
 
-- [ ] All token types; quote correctness.
-- [ ] AST builder with diagnostics.
+- [x] All token types; quote correctness.
+- [x] AST builder with diagnostics.
 
 ### M3 — Expander + Env
 
@@ -19,7 +19,7 @@
 
 ### M4 — Exec Core
 
-- [ ] PATH resolution; external exec.
+- [x] PATH resolution; external exec.
 - [ ] Built-ins in parent/child correctly.
 
 ### M5 — Redirs + Pipes + Heredoc
