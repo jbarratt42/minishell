@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 10:46:56 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/06 13:13:23 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/06 13:40:54 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,12 +41,9 @@ typedef struct s_node
 } t_node;
 
 t_node *parse(t_token **token, int min_precedence);
-int is_builtin(t_token *token);
-int exec_builtin(t_token *token, t_context *context);
 int is_arg(t_token *token);
 int try_open(char *path, int flags);
 void parse_redirect(t_token *token, int fd[2]);
 t_node *parse_command(t_token *token, char *path, char **argv, int *fd);
-int try_pipe(int fd[2]);
 
 #endif
