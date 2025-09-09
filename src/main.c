@@ -44,6 +44,7 @@ int main(int argc, char **argv, char **env)
         token = context.tokens;
 		// we'll reuse context->input in expand_tokens() so free it here.
 		free(context.input);
+		context.input = NULL;
         context.tree = parse(&token, 0);
         pid = traverse(context.tree, &context);
         if (pid)
@@ -54,10 +55,6 @@ int main(int argc, char **argv, char **env)
         }
 
 #ifdef DEBUG
-        if (context.tokens)
-            print_tokens(context.tokens);
-        printf("\nParse Tree:\n");
-        print_tree_structure(context.tree, 0);
         if (context.tokens)
             print_tokens(context.tokens);
         printf("\nParse Tree:\n");
