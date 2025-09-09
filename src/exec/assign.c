@@ -1,49 +1,62 @@
 #include "minishell.h"
 
-t_token	*delete_tokens(t_token *begin, int num)
+/* delete len tokens starting with the token pointed to by token */
+void	delete_tokens(t_token **token, size_t len)
 {
-	t_token **tail;
-	t_token *ret;
+	t_token			*tmp;
+	t_token			*end;
 
-	tail = &begin;
-	while (num--)
-		tail = *tail->next;
-	ret = *tail;
-	*tail = NULL;
-	free_token(begin);
-	return (ret);
+	tmp = *token;
+	if (!len)
+		return ;
+	end = *token;
+	while (len--)
+		end = end->next;
+	*token = end;
+	end = NULL;
+	free (tmp);
 }
 
-
-
-char	**assign(t_token **tokens, t_context context)
+/* check if a token list contains a command */
+bool	is_command(t_token *token)
 {
-	char	**env;
-	t_token	**token;
-	t_token	*tmp;
-
-	token = tokens;
-	env = copy_env(context->env);
-	while (**token && !is_command(*token))
-	{
-		if (*token->type == WORD && ft_strchr(token->value, '='))
+	while (token)
+		if (token->type >= REDIR_IN && token->type <= REDIR_APPEND)
+			token = token->next->next;
+		else if (token->type == WORD && ft_strchr(token->value, '='))
+			token = token->next;
+		else
+			return (true);
+	return (false);
+}
+		
+/* implement and delete assignment tokens from left to right */
+void	assign(t_token **token, t_context *context)
+{
+   
+	while (*token)
+		if ((*token)->type == WORD && ft_strchr((*token)->value, '='))
 		{
-			env = set_env(token->value, env);
-			if (!env)
-			{
-				perror("assign");
-				return (NULL);
-			}
-			*token = delete_tokens(*token, 1);
+			set_env((*token)->value, context->local);
+			delete_tokens(token, 1);
 		}
 		else
-			*token = *token->next;
-	}
+			token = &((*token)->next->next);
 }
 
-bool	reassign_fd(t_token *token, context)
+/* process a heredoc */
+bool	heredoc(t_token *token, t_context *context)
 {
-	const int	fd = toke->type > REDIR_OUT;
+	(void)token;
+	(void)context;
+	return (true);
+}
+
+/* open the file in token->next->value, setting the file desciptor in 
+ * context open, and closing fds as required */
+bool	reassign_fd(t_token *token, t_context *context)
+{
+	const int	fd = token->type > REDIR_OUT;
 	int			mode;
 
 	if (token->type == REDIR_IN)
@@ -53,8 +66,8 @@ bool	reassign_fd(t_token *token, context)
 	else if (token->type == REDIR_APPEND)
 		mode = O_APPEND;
 	else
-		return (heredoc(token, context))
-	if(!try_close(context->open[fd]))
+		return (heredoc(token, context));
+	if(context->open[fd] > 2 && close(context->open[fd]) == -1)
 		return (false);
 	context->open[fd] = open(token->next->value, mode);
 	if (!context->open[fd])
@@ -62,80 +75,114 @@ bool	reassign_fd(t_token *token, context)
 	return (true);
 }
 
-bool	redirect(t_token **tokens, t_context context)
+/* redirect file descriptors left to right and delete the corresponding tokens*/
+bool	redirect(t_token **token, t_context *context)
 {
-	t_token **token;
-	t_token *tmp;
-	
-	token = tokens;
-	while (**token)
-		if(*token->type >= REDIR_IN && *token->type <= REDIR_APPEND)
+	while (*token)
+		if((*token)->type >= REDIR_IN && (*token)->type <= REDIR_APPEND)
 		{
-			if(!reassign_fd(token, context))
+			if(!reassign_fd(*token, context))
 				return (false);
-			*token = delete_tokens(*token, 2);
+			delete_tokens(token, 2);
 		}
 		else
-			*token = *token->next;
+			token = &((*token)->next);
 	return (true);
 }
 
-t_token	*relex(t_token *token)
+static t_token	*try_word(size_t size)
 {
-	char 			*pos;
-	const t_token	*next = token->next;
-	const t_token	*head = token;
-	size_t			len;
+	t_token *token;
 
-	pos = str_chr(token->value, ' ')
-	while (pos)
+	token = malloc(sizeof(t_token));
+	if (!token)
+		return (NULL);
+	token->value = malloc(size);
+	if (!token->value)
 	{
-		*pos++ = '\0';
-		while (*pos == ' ')
-			pos++;
-		token->next = malloc(sizeof(t_token));
-		if (!token->next)
-		{
-			free_token(head);
-			return (NULL);
-		}
-		token = token->next;
-		token->value = ft_strdup(pos);
-		if (!token->value)
-		{
-			free_token(head);
-			return (NULL);
-		}
-		pos = str_chr(token->value, ' ');
+		free(token);
+		return (NULL);
 	}
-	token->next = next;
-	return (next);
+	return (token);
 }
 
-bool	expand_tokens(t_token **tokens, t_context context)
+static char	*next_unquoted_space(char *str)
 {
-	t_token **token;
+	char	delim;
+	bool	quoted;
+
+	delim = '\0';
+	quoted = false;
+	while (*str && !(!quoted && *str == ' '))
+	{
+		if (*str == '\'' || *str == '"')
+		{
+			if (!quoted)
+			{
+				delim = *str;
+				quoted = true;
+			}
+			if (quoted && delim == *str)
+				quoted = false;
+			str++;
+		}
+	}
+	return (str);
+}
+
+
+bool	separate_words(t_token *token)
+{
+	char 	*p;
+	char	*q;
+	t_token	*next;
+
+	next = token->next;
+	p = next_unquoted_space(token->value);
+	while (*p)
+	{
+		*p++ = '\0';
+		while (*p == ' ')
+			p++;
+		q = next_unquoted_space(p);
+		token->next = try_word(q - p + 1);
+		if (!token->next)
+			return (false);
+		token = token->next;
+		ft_memcpy(token->value, p, q - p);
+		token->value[q-p] = 0;
+		p = q;
+	}
+	token->next = next;
+	return (true);
+}
+
+/* expand variables in tokens */
+bool	expand_tokens(t_token **token, t_context *context)
+{
 	bool	squoted;
 	bool	dquoted;
 
 	squoted = false;
 	dquoted = false;
-	token = tokens;
 	while (*token)
-		if (*token->type == WORD && !squoted)
+		if ((*token)->type == WORD && !squoted)
 		{
-			expand(*token, context);
+			context->input = (*token)->value;
+			if(!expand(context))
+				return (false);
 			if (!dquoted)
-				*token = relex(*token);
+				separate_words(*token);
 		}
-		else if (*token->type == SQUOTE || *token->type == DQUOTE)
+		else if ((*token)->type == SQUOTE || (*token)->type == DQUOTE)
 		{
-			if (*token->type == SQUOTE)
+			if ((*token)->type == SQUOTE)
 				squoted = !squoted;
-			if (*token->type == DQUOTE)
+			if ((*token)->type == DQUOTE)
 				dquoted = !dquoted;
-			*token = delete_tokens(*token, 1);
+			delete_tokens(token, 1);
 		}
 		else
-			*token = *token->next;
+			token = &((*token)->next);
+	return (true);
 }
