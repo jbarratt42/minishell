@@ -23,7 +23,6 @@ bool minishell_init(t_context *context, int argc, char **argv, char **env)
 int main(int argc, char **argv, char **env)
 {
     t_context context;
-    t_token *token;
     pid_t pid;
 
     if (!minishell_init(&context, argc, argv, env))
@@ -41,8 +40,15 @@ int main(int argc, char **argv, char **env)
         context.tokens = lex(context.input);
         if (!context.tokens)
             (free(context.input), g_status = EXIT_FAILURE);
-        token = context.tokens;
-        context.tree = parse(&token, 0);
+#ifdef DEBUG
+        if (context.tokens)
+            print_tokens(context.tokens);
+#endif
+		context.tree = parse(&context.tokens, 0);
+#ifdef DEBUG
+        printf("\nParse Tree:\n");
+        print_tree_structure(context.tree, 0);
+#endif
         pid = traverse(context.tree, &context);
         if (pid)
         {
@@ -50,15 +56,6 @@ int main(int argc, char **argv, char **env)
                 perror("main");
             context.status = WEXITSTATUS(pid);
         }
-
-#ifdef DEBUG
-        if (context.tokens)
-            print_tokens(context.tokens);
-        printf("\nParse Tree:\n");
-        print_tree_structure(context.tree, 0);
-#endif
-
-        // add_history(context.input);
         ft_write_history(MINSHELL_DIRECTORY "/history", context.input);
         if (ft_strncmp(context.input, "exit", 4) == 0)
         {

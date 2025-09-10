@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:31:14 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/04 12:56:17 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/10 09:19:14 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,6 +172,7 @@ char	*get_path(t_token *tokens, char **env)
 
 bool	is_builtin(t_token *token)
 {
+#ifndef DEBUG
 	const char builtins[][10] = {"echo", "cd", "pwd", "export", "unset",
 								 "env", "exit", ""};
 	int i;
@@ -180,30 +181,71 @@ bool	is_builtin(t_token *token)
 	while (*builtins[i])
 		if (!ft_strncmp(token->value, builtins[i++], 10))
 			return (true);
+#else
+	(void)token;
+#endif
 	return (false);
 }
 
-void	exec_builtin(t_token *token, t_context *context)
+bool	exec_builtin(t_token *tokens, t_context *context)
 {
-	(void)token;
+	(void)tokens;
 	(void)context;
 	// builtin if-else ladder
-	exit(0);
+	return (true);
 }
 
-pid_t	exec_terminal(t_token *tokens, t_context *context)
+bool	exec_preprocess(t_token **tokens, t_context *context)
+{
+	if (!expand_tokens(tokens, context))
+		return (false);
+	if (!is_command(*tokens))
+		if (!assign(tokens, context))
+			return (false);
+	if (!redirect(tokens, context))
+		return (false);
+	return (true);
+}
+
+bool	set_exp_vars(t_token **tokens, t_context *context)
+{
+	while (ft_strchr((*tokens)->value, '='))
+	{
+		if(!set_env((*tokens)->value, context->env))
+			return (false);
+		delete_tokens(tokens, 1);
+	}
+	return (true);
+}
+
+pid_t	exec_terminal(t_token **tokens, t_context *context)
 {
 	pid_t	pid;
 
+	if (!context->is_pipeline)
+	{
+		exec_preprocess(tokens, context);
+		if (!is_command(*tokens))
+			return (0);
+		if (is_builtin(*tokens))
+			return (exec_builtin(*tokens, context));
+	}	
 	pid = fork();
 	if (pid)
 		return (pid);
+	if (context->is_pipeline)
+	{
+		exec_preprocess(tokens, context);
+		if (!is_command(*tokens))
+			return (0);
+		if (is_builtin(*tokens))
+			return (exec_builtin(*tokens, context));
+	}
+	if(!set_exp_vars(tokens, context))
+		return (-1);
 	try_dup2(context->open);
-	/*
-	if (is_builtin(tokens))
-		exec_builtin(tokens, context);
-		*/
-	execve(get_path(tokens, context->env), get_args(tokens), context->env);
+	execve(get_path(*tokens, context->env), get_args(*tokens), 
+			context->env);
 	perror("exec_terminal");
 	exit(1);
 }
@@ -239,12 +281,14 @@ pid_t	traverse(t_node *node, t_context *context)
 {
 	pid_t	pids[2];
 	if (node->is_terminal)
-		return (exec_terminal(node->data.tokens, context));
+		return (exec_terminal(&node->data.tokens, context));
 	if (node->data.op.type != PIPE)
 	{
+		context->is_pipeline = false;
 		exec_sequential(node, context);
 		return (0);
 	}
+	context->is_pipeline = true;
 	if (!try_pipe(&context->open[1]))
 		return (-1);
 	pids[0] = traverse(node->data.op.left, context);

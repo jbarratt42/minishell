@@ -20,7 +20,7 @@ void	delete_tokens(t_token **token, size_t len)
 /* check if a token list contains a command */
 bool	is_command(t_token *token)
 {
-	while (token)
+	while (token && token->type != EOF_T)
 		if (token->type >= REDIR_IN && token->type <= REDIR_APPEND)
 			token = token->next->next;
 		else if (token->type == WORD && ft_strchr(token->value, '='))
@@ -31,17 +31,19 @@ bool	is_command(t_token *token)
 }
 		
 /* implement and delete assignment tokens from left to right */
-void	assign(t_token **token, t_context *context)
+bool	assign(t_token **token, t_context *context)
 {
-   
-	while (*token)
+	while (*token && (*token)->type != EOF_T)
 		if ((*token)->type == WORD && ft_strchr((*token)->value, '='))
 		{
-			set_env((*token)->value, context->local);
+			context->local = set_env((*token)->value, context->local);
+			if(!context->local)
+				return (false);
 			delete_tokens(token, 1);
 		}
 		else
 			token = &((*token)->next->next);
+	return (true);
 }
 
 /* process a heredoc */
@@ -124,14 +126,14 @@ static char	*next_unquoted_space(char *str)
 			}
 			if (quoted && delim == *str)
 				quoted = false;
-			str++;
 		}
+		str++;
 	}
 	return (str);
 }
 
 
-bool	separate_words(t_token *token)
+t_token	**separate_words(t_token *token)
 {
 	char 	*p;
 	char	*q;
@@ -147,14 +149,14 @@ bool	separate_words(t_token *token)
 		q = next_unquoted_space(p);
 		token->next = try_word(q - p + 1);
 		if (!token->next)
-			return (false);
+			return (NULL);
 		token = token->next;
 		ft_memcpy(token->value, p, q - p);
 		token->value[q-p] = 0;
 		p = q;
 	}
 	token->next = next;
-	return (true);
+	return (&token->next);
 }
 
 /* expand variables in tokens */
@@ -162,20 +164,17 @@ bool	expand_tokens(t_token **token, t_context *context)
 {
 	bool	squoted;
 	bool	dquoted;
-	char	*tmp;
 
 	squoted = false;
 	dquoted = false;
-	while (*token)
+	while (*token && (*token)->type < PIPE && (*token)->type != EOF_T)
 		if ((*token)->type == WORD && !squoted)
 		{	
-			tmp = context->input;
-			context->input = (*token)->value;
-			if(!expand(context))
+			(*token)->value = expand((*token)->value, context);
+			if(!*token)
 				return (false);
-			context->input = tmp;
 			if (!dquoted)
-				separate_words(*token);
+				token = separate_words(*token);
 		}
 		else if ((*token)->type == SQUOTE || (*token)->type == DQUOTE)
 		{

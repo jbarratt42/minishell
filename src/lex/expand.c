@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 15:13:10 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/09 09:55:57 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/09 16:21:38 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,10 +48,16 @@ char *ft_getenv(char *name, char **env)
 {
 	const size_t len = ft_strlen(name);
 
+	if (!env)
+		return (NULL);
 	while (*env)
 	{
 		if (!ft_strncmp(name, *env, len) && (*env)[len] == '=')
+		{
+			if (!(*env)[len + 1])
+				return (NULL);
 			return (*env + len + 1);
+		}
 		env++;
 	}
 	return (NULL);
@@ -71,14 +77,13 @@ static int	pass_literal_special(char **ret, char **line)
  * 	(including '$')
  * @param str a p2ptr to the '$' character before the variable name
  */
-int expand_variable(char **ret, char **line, char **env)
+int expand_variable(char **ret, char **line, t_context *context)
 {
 	size_t len;
 	char tmp;
 	char *val;
 
 	(*line)++;
-	(void)env;
 	len = 0;
 	while ((*line)[len] && (ft_isalnum((*line)[len]) || (*line)[len] == '_'))
 		len++;
@@ -86,7 +91,9 @@ int expand_variable(char **ret, char **line, char **env)
 		return (pass_literal_special(ret, line));
 	tmp = (*line)[len];
 	(*line)[len] = '\0'; // null-terminate the variable name
-	val = ft_getenv(*line, env);
+	val = ft_getenv(*line, context->env);
+	if (!val)
+		val = ft_getenv(*line, context->local);
 	(*line)[len] = tmp;
 	*line += len;
 	if (!val) // NULL env vars get expanded to empty string
@@ -118,7 +125,7 @@ int expand_special(char **ret, char **line, t_context *context)
 	// *line == '$'
 	if (ft_isdigit(*(*line + 1)))
 		return (expand_pos_param(ret, line, context));
-	return (expand_variable(ret, line, context->env));
+	return (expand_variable(ret, line, context));
 }
 
 /*
@@ -137,13 +144,13 @@ static char *try_new_line(size_t len, t_context *context)
 }
 */
 
-static size_t	compute_length(t_context *context)
+static size_t	compute_length(char *str, t_context *context)
 {
 	size_t	ret;
 	char	*pos;
 
-	ret = ft_strlen(context->input);
-	pos = context->input;
+	ret = ft_strlen(str);
+	pos = str;
 	while (*pos)
 	{
 		if (*pos == '$')
@@ -160,17 +167,17 @@ static size_t	compute_length(t_context *context)
  * length of the expanded context->lineing
  * NOTE: context->lineing must not end with '\'!
  */
-bool	expand(t_context *context)
+char	*expand(char *str, t_context *context)
 {
 	bool quoted;
 	char *ret;
 	char *p;
 	char *q;
 
-	ret = malloc(compute_length(context) + 1);
+	ret = malloc(compute_length(str, context) + 1);
 	if (!ret)
 		return (false);
-	p = context->input;
+	p = str;
 	q = ret;
 	quoted = false;
 	while (*p)
@@ -188,9 +195,8 @@ bool	expand(t_context *context)
 		*q++ = *p++;
 	}
 	*q = '\0';
-	free(context->input);
-	context->input = ret;
-	return (true);
+	free(str);
+	return (ret);
 }
 
 /* a valid input string does not end with '\' and has no unclosed quotes

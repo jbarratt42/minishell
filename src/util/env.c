@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 13:16:48 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/08 15:08:40 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/09 16:55:11 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,16 @@ void	free_env(char **env)
 	free(env);
 }
 
+char	**init_env(void)
+{
+	char **env;
+	env = malloc(sizeof(char *));
+	if (!env)
+		return (NULL);
+	env[0] = NULL;
+	return (env);
+}
+
 /* @param var malloc'd string of the form VAR=value
  */
 char	**push_env(char *var, char **env)
@@ -53,6 +63,8 @@ char	**push_env(char *var, char **env)
 	size_t	len;
 	size_t	i;
 
+	if (!env)
+		env = init_env();
 	len = 0;
 	p = env;
 	while (*p++)
@@ -79,6 +91,8 @@ char	**set_env(char *var, char **env)
 	const char		*pos = ft_strchr(var, '=');
 	char			**p;
 
+	if (!env)
+		return(push_env(var, env));
 	if (!pos)
 	{
 		perror("set_env");
