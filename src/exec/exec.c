@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:31:14 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/10 09:19:14 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/10 10:18:14 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,24 +218,39 @@ bool	set_exp_vars(t_token **tokens, t_context *context)
 	return (true);
 }
 
+bool	cleanup_parent(t_context *context)
+{
+	if(!try_close2(context->open))
+		return (false);
+	context->open[0] = 0;
+	context->open[1] = 1;
+	return (true);
+}
+
 pid_t	exec_terminal(t_token **tokens, t_context *context)
 {
 	pid_t	pid;
 
 	if (!context->is_pipeline)
 	{
-		exec_preprocess(tokens, context);
+		if (!exec_preprocess(tokens, context))
+			return (-1);
 		if (!is_command(*tokens))
 			return (0);
 		if (is_builtin(*tokens))
 			return (exec_builtin(*tokens, context));
-	}	
+	}
 	pid = fork();
 	if (pid)
+	{
+		if (!cleanup_parent(context))
+			return (-1);
 		return (pid);
+	}
 	if (context->is_pipeline)
 	{
-		exec_preprocess(tokens, context);
+		if (!exec_preprocess(tokens, context))
+			return (-1);
 		if (!is_command(*tokens))
 			return (0);
 		if (is_builtin(*tokens))

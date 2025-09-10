@@ -58,21 +58,22 @@ bool	heredoc(t_token *token, t_context *context)
  * context open, and closing fds as required */
 bool	reassign_fd(t_token *token, t_context *context)
 {
-	const int	fd = token->type > REDIR_OUT;
+	const int	fd = token->type >= REDIR_OUT;
 	int			mode;
 
 	if (token->type == REDIR_IN)
 		mode = O_RDONLY;
 	else if (token->type == REDIR_OUT)
-		mode = O_WRONLY;
+		mode = O_WRONLY | O_CREAT;
 	else if (token->type == REDIR_APPEND)
-		mode = O_APPEND;
+		mode = O_APPEND | O_CREAT;
 	else
 		return (heredoc(token, context));
 	if(context->open[fd] > 2 && close(context->open[fd]) == -1)
 		return (false);
-	context->open[fd] = open(token->next->value, mode);
-	if (!context->open[fd])
+	context->open[fd] = open(token->next->value, mode,
+			S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+	if (context->open[fd] == -1)
 		return (false);
 	return (true);
 }
