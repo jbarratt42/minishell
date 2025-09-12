@@ -33,12 +33,11 @@ int main(int argc, char **argv, char **env)
     if (!minishell_init(&context, argc, argv, env))
         return (EXIT_FAILURE);
 
-    handle_signals(&context);
     signal(SIGINT, signal_handler);
     signal(SIGQUIT, SIG_IGN);
     // signal(SIGTERM, signal_handler);
     // prompt readline loop +history
-    context.input = readline("minishell$ ");
+    context.input = readline(MINISHELL_PROMPT);
 
     while (context.input)
     {
@@ -69,7 +68,7 @@ int main(int argc, char **argv, char **env)
         if (ft_strncmp(context.input, "history", 7) == 0)
             print_history(MINSHELL_DIRECTORY "/history");
 
-        context.input = readline("minishell$ ");
+        context.input = readline(MINISHELL_PROMPT);
     }
 
     return (EXIT_SUCCESS);
