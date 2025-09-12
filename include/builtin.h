@@ -21,6 +21,7 @@ int builtin_export(t_token *tokens, t_context *context);
 int builtin_unset(t_token *tokens, t_context *context);
 int builtin_env(t_token *tokens, t_context *context);
 int builtin_exit(t_token *tokens, t_context *context);
+int builtin_history(t_token *tokens, t_context *context);
 
 // Helper functions
 bool is_builtin_command(const char *cmd);

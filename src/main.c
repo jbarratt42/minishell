@@ -63,15 +63,32 @@ int main(int argc, char **argv, char **env)
                 perror("main");
             context.status = WEXITSTATUS(context.status);
         }
-        ft_write_history(MINSHELL_DIRECTORY "/history", context.input);
-        if (ft_strcmp(context.input, "exit") == 0)
+        char *project_root = get_project_root();
+        char *history_path = NULL;
+        if (project_root)
         {
-            free(context.input);
-            free_context(&context);
-            exit(EXIT_SUCCESS);
+            history_path = malloc(ft_strlen(project_root) + ft_strlen(MINSHELL_DIRECTORY) + 10);
+            if (history_path)
+            {
+                ft_strcpy(history_path, project_root);
+                ft_strlcat(history_path, "/", ft_strlen(project_root) + ft_strlen(MINSHELL_DIRECTORY) + 10);
+                ft_strlcat(history_path, MINSHELL_DIRECTORY, ft_strlen(project_root) + ft_strlen(MINSHELL_DIRECTORY) + 10);
+                ft_strlcat(history_path, "/history", ft_strlen(project_root) + ft_strlen(MINSHELL_DIRECTORY) + 10);
+            }
         }
-        if (ft_strcmp(context.input, "history") == 0)
-            print_history(MINSHELL_DIRECTORY "/history");
+        
+        if (history_path)
+        {
+            ft_write_history(history_path, context.input);
+            if (ft_strcmp(context.input, "exit") == 0)
+            {
+                free(history_path);
+                free(context.input);
+                free_context(&context);
+                exit(EXIT_SUCCESS);
+            }
+            free(history_path);
+        }
 
         context.input = readline(MINISHELL_PROMPT);
     }
