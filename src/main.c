@@ -64,13 +64,13 @@ int main(int argc, char **argv, char **env)
             context.status = WEXITSTATUS(context.status);
         }
         ft_write_history(MINSHELL_DIRECTORY "/history", context.input);
-        if (ft_strncmp(context.input, "exit", 4) == 0)
+        if (ft_strcmp(context.input, "exit") == 0)
         {
             free(context.input);
             free_context(&context);
             exit(EXIT_SUCCESS);
         }
-        if (ft_strncmp(context.input, "history", 7) == 0)
+        if (ft_strcmp(context.input, "history") == 0)
             print_history(MINSHELL_DIRECTORY "/history");
 
         context.input = readline(MINISHELL_PROMPT);
