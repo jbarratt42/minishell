@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <sys/stat.h>
 
 char *read_file(int fd)
 {
@@ -57,10 +58,27 @@ int ft_write_history(const char *filename, char *history)
 {
     int fd;
     int len;
+    char *dir_path;
+    char *last_slash;
 
+
+
+    
     len = ft_strlen((const char *)history);
     if (!filename)
         return (perror("Invalid filename"), -EXIT_FAILURE);
+
+    // Create directory if it doesn't exist
+    last_slash = ft_strrchr(filename, '/');
+    if (last_slash)
+    {
+        dir_path = ft_strndup(filename, last_slash - filename);
+        if (dir_path)
+        {
+            mkdir(dir_path, 0755);
+            free(dir_path);
+        }
+    }
 
     fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
     if (fd == -1)

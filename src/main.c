@@ -28,10 +28,8 @@ int main(int argc, char **argv, char **env)
 {
     pid_t pid;
     t_context context;
-    t_token *token;
 
-    if (!minishell_init(&context, argc, argv, env))
-        return (EXIT_FAILURE);
+    init_context(&context, argc, argv, env);
 
     signal(SIGINT, signal_handler);
     signal(SIGQUIT, SIG_IGN);
@@ -48,35 +46,53 @@ int main(int argc, char **argv, char **env)
         context.tokens = lex(context.input);
         if (!context.tokens)
             (free(context.input), g_status = EXIT_FAILURE);
-        token = context.tokens;
-        context.tree = parse(&token, 0);
-        pid = traverse(context.tree, &context);
-        if (pid)
-        {
-            if (waitpid(pid, &context.status, 0) == -1 || !WIFEXITED(context.status))
-                perror("main");
-            context.status = WEXITSTATUS(pid);
-        }
-
 #ifdef DEBUG
         if (context.tokens)
             print_tokens(context.tokens);
+#endif
+		context.tree = parse(&context.tokens, 0);
+#ifdef DEBUG
         printf("\nParse Tree:\n");
         print_tree_structure(context.tree, 0);
 #endif
-
-        // add_history(context.input);
-        ft_write_history(MINSHELL_DIRECTORY "/history", context.input);
-        if (ft_strncmp(context.input, "exit", 4) == 0)
+        pid = traverse(context.tree, &context);
+        if (pid)
         {
-            free(context.input);
-            exit(EXIT_SUCCESS);
+            if (waitpid(pid, &context.status, 0) == -1
+					|| !WIFEXITED(context.status))
+                perror("main");
+            context.status = WEXITSTATUS(context.status);
         }
-        if (ft_strncmp(context.input, "history", 7) == 0)
-            print_history(MINSHELL_DIRECTORY "/history");
+        char *project_root = get_project_root();
+        char *history_path = NULL;
+        if (project_root)
+        {
+            history_path = malloc(ft_strlen(project_root) + ft_strlen(MINSHELL_DIRECTORY) + 10);
+            if (history_path)
+            {
+                ft_strcpy(history_path, project_root);
+                ft_strlcat(history_path, "/", ft_strlen(project_root) + ft_strlen(MINSHELL_DIRECTORY) + 10);
+                ft_strlcat(history_path, MINSHELL_DIRECTORY, ft_strlen(project_root) + ft_strlen(MINSHELL_DIRECTORY) + 10);
+                ft_strlcat(history_path, "/history", ft_strlen(project_root) + ft_strlen(MINSHELL_DIRECTORY) + 10);
+            }
+        }
+        
+        if (history_path)
+        {
+            ft_write_history(history_path, context.input);
+            if (ft_strcmp(context.input, "exit") == 0)
+            {
+                free(history_path);
+                free(context.input);
+                free_context(&context);
+                exit(EXIT_SUCCESS);
+            }
+            free(history_path);
+        }
 
         context.input = readline(MINISHELL_PROMPT);
     }
 
+    free_context(&context);
     return (EXIT_SUCCESS);
 }

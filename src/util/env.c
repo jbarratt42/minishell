@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 13:16:48 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/08 15:08:40 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/09 16:55:11 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,11 @@ char	**copy_env(char **env)
 
 	p = env;
 	len = 0;
-	while (*p++)
+	while (*p)
+	{
 		len++;
+		p++;
+	}
 	p = malloc((len + 1) * sizeof(char *));
 	if (!p)
 		return (NULL);
@@ -39,10 +42,22 @@ void	free_env(char **env)
 {
 	char	**p;
 
+	if (!env)
+		return;
 	p = env;
-	while (*p++)
-		free(p);
+	while (*p)
+		free(*p++);
 	free(env);
+}
+
+char	**init_env(void)
+{
+	char **env;
+	env = malloc(sizeof(char *));
+	if (!env)
+		return (NULL);
+	env[0] = NULL;
+	return (env);
 }
 
 /* @param var malloc'd string of the form VAR=value
@@ -52,21 +67,36 @@ char	**push_env(char *var, char **env)
 	char	**p;
 	size_t	len;
 	size_t	i;
+	bool	should_free_env;
 
+	should_free_env = false;
+	if (!env)
+	{
+		env = init_env();
+		should_free_env = true;
+	}
 	len = 0;
 	p = env;
-	while (*p++)
+	while (*p)
+	{
 		len++;
+		p++;
+	}
 	p = malloc((len + 2) * sizeof(char *));
 	if (!p)
+	{
+		if (should_free_env)
+			free(env);
 		return (NULL);
+	}
 	i = 0;
 	while(i < len)
 	{
 		p[i] = env[i];
 		i++;
 	}
-	free(env);
+	if (should_free_env)
+		free(env);
 	p[len] = var;
 	p[len + 1] = NULL;
 	return (p);
@@ -79,20 +109,24 @@ char	**set_env(char *var, char **env)
 	const char		*pos = ft_strchr(var, '=');
 	char			**p;
 
+	if (!env)
+		return(push_env(var, env));
 	if (!pos)
 	{
 		perror("set_env");
 		return (NULL);
 	}
 	p = env;
-	while (*p++)
+	while (*p)
+	{
 		if(!ft_strncmp(var, *p, pos - var))
 		{
 			free(*p);
-			*p = var;
-			continue;
+			*p = ft_strdup(var);
+			free(var);
+			return (env);
 		}
-	if (!*p)
-		return (push_env(var, env));
-	return (env);
+		p++;
+	}
+	return (push_env(var, env));
 }
