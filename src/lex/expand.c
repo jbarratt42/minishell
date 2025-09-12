@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 15:13:10 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/09 16:21:38 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/12 11:38:22 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,23 @@ int expand_pos_param(char **ret, char **str, t_context *context)
 		*ret += vallen;
 	}
 	return (ft_strlen(context->argv[pos]) - (i + 1));
+}
+
+int	expand_status(char **ret, char **str, t_context *context)
+{
+	char	*tmp;
+	int		len;
+
+	tmp = ft_itoa(context->status);
+	len = ft_strlen(tmp);
+	(*str) += 2;
+	if (ret && *ret)
+	{
+		ft_memcpy(*ret, tmp, len);
+		*ret += len;
+	}
+	free(tmp);
+	return (len - 2);
 }
 
 char *ft_getenv(char *name, char **env)
@@ -123,6 +140,8 @@ int expand_special(char **ret, char **line, t_context *context)
 	//if (**line == '!')
 	//	return (expand_history(ret, line));
 	// *line == '$'
+	if (*(*line + 1) == '?')
+		return (expand_status(ret, line, context));
 	if (ft_isdigit(*(*line + 1)))
 		return (expand_pos_param(ret, line, context));
 	return (expand_variable(ret, line, context));

@@ -52,9 +52,10 @@ int main(int argc, char **argv, char **env)
         pid = traverse(context.tree, &context);
         if (pid)
         {
-            if (waitpid(pid, &context.status, 0) == -1 || !WIFEXITED(context.status))
+            if (waitpid(pid, &context.status, 0) == -1
+					|| !WIFEXITED(context.status))
                 perror("main");
-            context.status = WEXITSTATUS(pid);
+            context.status = WEXITSTATUS(context.status);
         }
         ft_write_history(MINSHELL_DIRECTORY "/history", context.input);
         if (ft_strncmp(context.input, "exit", 4) == 0)
