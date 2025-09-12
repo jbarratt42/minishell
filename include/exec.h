@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:30:37 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/09 16:02:10 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/12 12:23:48 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,6 @@ _Bool exec_builtin(t_token *tokens, t_context *context);
 _Bool exec_preprocess(t_token **tokens, t_context *context);
 _Bool set_exp_vars(t_token **tokens, t_context *context);
 pid_t exec_terminal(t_token **tokens, t_context *context);
-void exec_sequential(t_node *node, t_context *context);
+bool exec_sequential(t_node *node, t_context *context);
 pid_t traverse(t_node *node, t_context *context);
 #endif
