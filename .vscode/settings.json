@@ -11,7 +11,9 @@
     "stdio.h": "c",
     "prel.h": "c",
     "stdbool.h": "c",
-    "lex.h": "c"
+    "lex.h": "c",
+    "print_tree.h": "c",
+    "signals.h": "c"
   },
   "cSpell.words": ["chuezeri", "MINISHELL", "PRLH"]
 }
