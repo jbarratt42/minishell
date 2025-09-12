@@ -26,6 +26,7 @@ bool minishell_init(t_context *context, int argc, char **argv, char **env)
 
 int main(int argc, char **argv, char **env)
 {
+    pid_t pid;
     t_context context;
     t_token *token;
 
