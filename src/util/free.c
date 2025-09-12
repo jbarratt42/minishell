@@ -6,20 +6,20 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 11:49:07 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/08/25 13:12:10 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/06 13:33:59 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/*
 void free_token(t_token *token)
 {
 	if (token->next)
 		free_token(token->next);
-	free(token->txt);
+	free(token->value);
 	free(token);
 }
+/*
 
 void free_node(t_node *node)
 {

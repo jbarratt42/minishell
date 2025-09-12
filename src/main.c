@@ -28,7 +28,6 @@ int main(int argc, char **argv, char **env)
 {
     t_context context;
     t_token *token;
-    printf("Size of void*: %zu\n", sizeof(void *));
 
     if (!minishell_init(&context, argc, argv, env))
         return (EXIT_FAILURE);
@@ -44,12 +43,19 @@ int main(int argc, char **argv, char **env)
         // Tokenize input
         add_history(context.input);
         // maybe do expand at the token level
-        expand(&context);
+        // expand(&context);
         context.tokens = lex(context.input);
         if (!context.tokens)
             (free(context.input), g_status = EXIT_FAILURE);
         token = context.tokens;
         context.tree = parse(&token, 0);
+        pid = traverse(context.tree, &context);
+        if (pid)
+        {
+            if (waitpid(pid, &context.status, 0) == -1 || !WIFEXITED(context.status))
+                perror("main");
+            context.status = WEXITSTATUS(pid);
+        }
 
 #ifdef DEBUG
         if (context.tokens)

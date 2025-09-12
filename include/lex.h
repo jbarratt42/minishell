@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 17:16:07 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/02 12:37:40 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/06 13:25:32 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,18 +19,18 @@ typedef enum e_token_type
     ERROR,
     WORD,
     REDIR_IN,     // <  (input redirection)
+    HEREDOC,      // << (here document)
     REDIR_OUT,    // >  (output redirection)
     REDIR_APPEND, // >> (output append)
-    HEREDOC,      // << (here document)
     SQUOTE,       // '  (single quote)
     DQUOTE,       // "  (double quote)
     PIPE,         // |  (pipe)
     AND,          // &  (AND)
     OR,           // ||  (OR)
     SEMICOLON,    // ;  (statement separator)
-	OPEN,
-	CLOSE,
-	MAX_TOKEN_TYPE
+    OPEN,
+    CLOSE,
+    MAX_TOKEN_TYPE
 } t_token_type;
 
 typedef struct s_token
@@ -78,5 +78,7 @@ bool expand(t_context *context);
  * @return A string representation of the token type.
  */
 const char *token_type_str(t_token_type type);
+
+char *ft_getenv(char *name, char **env);
 
 #endif

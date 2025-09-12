@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 10:46:56 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/12 18:25:57 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/12 18:42:32 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,12 @@
 #include "lex.h"
 #include "signals.h"
 #include "parse.h"
+#include "exec.h"
+#include "util.h"
 #include "../libft/libft.h"
+#ifdef DEBUG
+#include "print_tree.h"
+#endif
 #ifdef DEBUG
 #include "print_tree.h"
 #endif
