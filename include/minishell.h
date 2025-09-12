@@ -6,13 +6,14 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 10:46:56 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/06 13:25:55 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/12 18:42:32 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 #define MINISHELL_H
 
+#define MINISHELL_PROMPT "minishell$ "
 #define MINSHELL_DIRECTORY ".minishell"
 
 #include <unistd.h>
@@ -23,6 +24,7 @@
 
 #include "prlh.h"
 #include "lex.h"
+#include "signals.h"
 #include "parse.h"
 #include "exec.h"
 #include "util.h"

@@ -14,8 +14,15 @@ ifdef DEBUG
 CFLAGS += -g -DDEBUG=1
 endif
 
-CPPFLAGS = -Iinclude -Ilibft 
-LDFLAGS = -Llibft -lft -lreadline
+# Set flags based on OS
+ifeq ($(shell uname),Darwin)
+	CPPFLAGS = -Iinclude -Ilibft -I/opt/homebrew/opt/readline/include
+	LDFLAGS  = -Llibft -lft -L/opt/homebrew/opt/readline/lib -lreadline
+else
+	CPPFLAGS = -Iinclude -Ilibft 
+	LDFLAGS  = -Llibft -lft -lreadline
+endif
+
 
 # Define the source and object directories
 SRCDIR = src

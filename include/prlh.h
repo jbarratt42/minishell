@@ -29,8 +29,8 @@ typedef struct s_context
 {
     int argc;
     char **argv;
-    char **env; // exported vars
-	char **local; // unexported vars
+    char **env;   // exported vars
+    char **local; // unexported vars
     char *input;
     t_token *tokens;
     t_node *tree;

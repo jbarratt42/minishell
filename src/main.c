@@ -7,7 +7,11 @@ bool minishell_init(t_context *context, int argc, char **argv, char **env)
     if (!context)
         return (false);
 
-    init_context(context, argc, argv, env);
+    context->argc = argc;
+    context->argv = argv;
+    context->env = env;
+    context->status = EXIT_SUCCESS;
+
     printf("███╗   ███╗██╗███╗   ██╗██╗███████╗██╗  ██╗███████╗██╗     ██╗\n");
     printf("████╗ ████║██║████╗  ██║██║██╔════╝██║  ██║██╔════╝██║     ██║\n");
     printf("██╔████╔██║██║██╔██╗ ██║██║███████╗███████║█████╗  ██║     ██║\n");
@@ -22,14 +26,17 @@ bool minishell_init(t_context *context, int argc, char **argv, char **env)
 
 int main(int argc, char **argv, char **env)
 {
-    t_context context;
     pid_t pid;
+    t_context context;
 
     if (!minishell_init(&context, argc, argv, env))
         return (EXIT_FAILURE);
 
+    signal(SIGINT, signal_handler);
+    signal(SIGQUIT, SIG_IGN);
+    // signal(SIGTERM, signal_handler);
     // prompt readline loop +history
-    context.input = readline("$ ");
+    context.input = readline(MINISHELL_PROMPT);
 
     while (context.input)
     {
@@ -66,7 +73,7 @@ int main(int argc, char **argv, char **env)
         if (ft_strncmp(context.input, "history", 7) == 0)
             print_history(MINSHELL_DIRECTORY "/history");
 
-        context.input = readline("$ ");
+        context.input = readline(MINISHELL_PROMPT);
     }
 
     return (EXIT_SUCCESS);
