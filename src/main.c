@@ -29,8 +29,7 @@ int main(int argc, char **argv, char **env)
     pid_t pid;
     t_context context;
 
-    if (!minishell_init(&context, argc, argv, env))
-        return (EXIT_FAILURE);
+    init_context(&context, argc, argv, env);
 
     signal(SIGINT, signal_handler);
     signal(SIGQUIT, SIG_IGN);
@@ -68,6 +67,7 @@ int main(int argc, char **argv, char **env)
         if (ft_strncmp(context.input, "exit", 4) == 0)
         {
             free(context.input);
+            free_context(&context);
             exit(EXIT_SUCCESS);
         }
         if (ft_strncmp(context.input, "history", 7) == 0)
@@ -76,5 +76,6 @@ int main(int argc, char **argv, char **env)
         context.input = readline(MINISHELL_PROMPT);
     }
 
+    free_context(&context);
     return (EXIT_SUCCESS);
 }

@@ -11,6 +11,7 @@ void free_context(t_context *context);
 int ft_isspace(int c);
 /* src/util/ft_strcpy.c */
 char *ft_strcpy(char *dest, const char *src);
+int ft_strcmp(const char *s1, const char *s2);
 /* src/util/ft_strndup.c */
 char *ft_strndup(const char *s, size_t n);
 /* src/util/init.c */

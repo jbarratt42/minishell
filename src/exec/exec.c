@@ -62,31 +62,40 @@ char	*search_path(char *s, char **env)
 	char	*paths;
 	char	*try_path;
 	char	*end;
+	char	*path_copy;
 
 	paths = ft_getenv("PATH", env);
 	if (!paths || !*paths)
 		return (NULL);
-	end = paths;
-	while (end)
+	
+	// Make a copy since we'll be modifying the string
+	path_copy = ft_strdup(paths);
+	if (!path_copy)
+		return (NULL);
+	
+	paths = path_copy;
+	while (*paths)
 	{
 		end = ft_strchr(paths, ':');
 		if (end)
 			*end = '\0';
+		
 		try_path = append_path(paths, s);
-		if (access(try_path, F_OK) == 0)
+		if (try_path && access(try_path, F_OK) == 0)
 		{
-			if (access(try_path, R_OK) != 0 || access(try_path, X_OK))
-			{
-				perror("search_path");
-				free(try_path);
-				return (NULL);
-			}
-			return (try_path);
+			if (access(try_path, R_OK) == 0 && access(try_path, X_OK) == 0)
+				return (free(path_copy), try_path);
+			free(try_path);
 		}
-		free(try_path);
-		paths = end + 1;
+		else if (try_path)
+			free(try_path);
+		
+		if (end)
+			paths = end + 1;
+		else
+			break;
 	}
-	perror("search_path");
+	free(path_copy);
 	return (NULL);
 }
 
@@ -181,27 +190,21 @@ char	*get_path(t_token *tokens, char **env)
 
 bool	is_builtin(t_token *token)
 {
-#ifndef DEBUG
-	const char builtins[][10] = {"echo", "cd", "pwd", "export", "unset",
-								 "env", "exit", ""};
-	int i;
-
-	i = 0;
-	while (*builtins[i])
-		if (!ft_strncmp(token->value, builtins[i++], 10))
-			return (true);
-#else
-	(void)token;
-#endif
-	return (false);
+	if (!token || token->type != WORD)
+		return (false);
+	return (is_builtin_command(token->value));
 }
 
 bool	exec_builtin(t_token *tokens, t_context *context)
 {
-	(void)tokens;
-	(void)context;
-	// builtin if-else ladder
-	return (true);
+	int	status;
+
+	if (!tokens || tokens->type != WORD)
+		return (false);
+	
+	status = execute_builtin(tokens->value, tokens, context);
+	context->status = status;
+	return (status == 0);
 }
 
 bool	exec_preprocess(t_token **tokens, t_context *context)
@@ -240,36 +243,59 @@ pid_t	exec_terminal(t_token **tokens, t_context *context)
 {
 	pid_t	pid;
 
-	if (!context->is_pipeline)
+	if (!exec_preprocess(tokens, context))
+		return (-1);
+	if (!is_command(*tokens))
+		return (0);
+	
+	// Handle builtins
+	if (is_builtin(*tokens))
 	{
-		if (!exec_preprocess(tokens, context))
-			return (-1);
-		if (!is_command(*tokens))
+		if (!context->is_pipeline)
+		{
+			// Builtins that affect parent state run in parent when not in pipeline
+			exec_builtin(*tokens, context);
 			return (0);
-		if (is_builtin(*tokens))
-			return (exec_builtin(*tokens, context));
+		}
+		else
+		{
+			// Builtins in pipeline run in child
+			pid = fork();
+			if (pid == 0)
+			{
+				exec_builtin(*tokens, context);
+				exit(context->status);
+			}
+			if (pid > 0)
+			{
+				if (!cleanup_parent(context))
+					return (-1);
+				return (pid);
+			}
+			return (-1);
+		}
 	}
+	
+	// Handle external commands
 	pid = fork();
-	if (pid)
+	if (pid > 0)
 	{
 		if (!cleanup_parent(context))
 			return (-1);
 		return (pid);
 	}
-	if (context->is_pipeline)
-	{
-		if (!exec_preprocess(tokens, context))
-			return (-1);
-		if (!is_command(*tokens))
-			return (0);
-		if (is_builtin(*tokens))
-			return (exec_builtin(*tokens, context));
-	}
 	if(!set_exp_vars(tokens, context))
 		return (-1);
 	try_dup2(context->open);
-	execve(get_path(*tokens, context->env), get_args(*tokens), 
-			context->env);
+	
+	char *path = get_path(*tokens, context->env);
+	if (!path)
+	{
+		fprintf(stderr, "%s: command not found\n", (*tokens)->value);
+		exit(127);
+	}
+	
+	execve(path, get_args(*tokens), context->env);
 	perror("exec_terminal");
 	exit(1);
 }

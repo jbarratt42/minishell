@@ -1,3 +1,5 @@
+
+
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -35,8 +37,7 @@ void free_node(t_node *node)
 void free_context(t_context *context)
 {
 	if (context->env)
-		while (*context->env)
-			free(*context->env++);
+		free_env(context->env);
 	/*
 	if (context->input)
 		free(context->input);	if (context->tokens)

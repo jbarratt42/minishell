@@ -28,6 +28,7 @@
 #include "parse.h"
 #include "exec.h"
 #include "util.h"
+#include "builtin.h"
 #include "../libft/libft.h"
 #ifdef DEBUG
 #include "print_tree.h"
