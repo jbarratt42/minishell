@@ -22,7 +22,7 @@ void	delete_tokens(t_token **token, size_t len)
 /* check if a token list contains a command */
 bool	is_command(t_token *token)
 {
-	while (token && token->type != EOF_T)
+	while (token && token->type < PIPE && token->type != EOF_T)
 	if (token->type >= REDIR_IN && token->type <= REDIR_APPEND)
 			token = token->next->next;
 		else if (token->type == WORD && ft_strchr(token->value, '='))
