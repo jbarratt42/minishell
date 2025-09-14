@@ -48,6 +48,11 @@ static t_token *lex_word(const char *input, int *i)
     while (input[*i] && !ft_isspace((unsigned char)input[*i]) &&
            !(is_metachar(input[*i]) && input[*i] != '-'))
         (*i)++;
+    
+    // Safety check to prevent infinite loop
+    if (*i == start)
+        (*i)++;
+        
     return (token_new(WORD, ft_strndup(input + start, *i - start), start));
 }
 
@@ -106,6 +111,8 @@ t_token *lex(const char *input)
 
     while (input[i])
     {
+        int prev_i = i;  // Track previous position to detect infinite loops
+        
         if (ft_isspace((unsigned char)input[i]))
         {
             i++;
@@ -163,6 +170,15 @@ t_token *lex(const char *input)
         }
         else
             cur->next = lex_word(input, &i);
+        
+        // Safety check to prevent infinite loop
+        if (i == prev_i)
+        {
+            lexer_error("lexer stuck", i, "");
+            free_tokens(head.next);
+            return NULL;
+        }
+        
         // Always ensure we make progress to avoid infinite loop
         if (cur->next && cur->next->type == ERROR)
             break;

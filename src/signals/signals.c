@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 15:10:26 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/12 18:29:09 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/13 08:43:05 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ void signal_handler(int sig)
     }
     else if (sig == SIGTERM)
     {
+        printf("Terminated by SIGTERM\n");
         g_status = SIGTERM;
         exit(0);
     }
