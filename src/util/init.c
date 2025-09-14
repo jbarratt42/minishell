@@ -1,19 +1,18 @@
 #include "minishell.h"
-#include <limits.h>
 
-char	*get_project_root(void)
+char *get_project_root(void)
 {
-	static char	project_root[PATH_MAX];
-	char		*cwd;
-	char		*minishell_pos;
-	
+	static char project_root[PATH_MAX];
+	char *cwd;
+	char *minishell_pos;
+
 	if (project_root[0] != '\0')
 		return (project_root);
-	
+
 	cwd = getcwd(NULL, 0);
 	if (!cwd)
 		return (NULL);
-	
+
 	// Look for the project root by finding where we are relative to the executable
 	// or by looking for a marker file like Makefile
 	minishell_pos = ft_strnstr(cwd, "minishell", ft_strlen(cwd));
@@ -33,12 +32,12 @@ char	*get_project_root(void)
 		// Fallback: use current directory
 		ft_strcpy(project_root, cwd);
 	}
-	
+
 	free(cwd);
 	return (project_root);
 }
 
-void	init_context(t_context *context, int argc, char **argv, char **env)
+void init_context(t_context *context, int argc, char **argv, char **env)
 {
 	context->argc = argc;
 	context->argv = argv;

@@ -1,18 +1,18 @@
 #include "minishell.h"
 
-static bool	is_numeric(const char *str)
+static bool is_numeric(const char *str)
 {
 	if (!str || !*str)
 		return (false);
-	
+
 	// Handle negative numbers
 	if (*str == '-')
 		str++;
-	
+
 	// Must have at least one digit
 	if (!*str || !ft_isdigit(*str))
 		return (false);
-	
+
 	// All remaining characters must be digits
 	while (*str)
 	{
@@ -20,24 +20,24 @@ static bool	is_numeric(const char *str)
 			return (false);
 		str++;
 	}
-	
+
 	return (true);
 }
 
-int	builtin_exit(t_token *tokens, t_context *context)
+int builtin_exit(t_token *tokens, t_context *context)
 {
-	t_token	*current;
-	int		exit_code;
+	t_token *current;
+	int exit_code;
 
 	current = tokens;
-	
+
 	// Skip the command name
 	if (current && current->type == WORD)
 		current = current->next;
-	
+
 	// Default exit code is 0
 	exit_code = 0;
-	
+
 	// If there's an argument, parse it
 	if (current && current->type == WORD)
 	{
@@ -56,9 +56,8 @@ int	builtin_exit(t_token *tokens, t_context *context)
 				exit_code = exit_code % 256;
 		}
 	}
-	
+	printf("exit\n");
 	// Clean up and exit
 	free_context(context);
-	printf("exit\n");
 	exit(exit_code);
 }
