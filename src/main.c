@@ -28,19 +28,27 @@ int main(int argc, char **argv, char **env)
 {
     pid_t pid;
     t_context context;
+    bool is_interactive = isatty(STDIN_FILENO);
 
     init_context(&context, argc, argv, env);
 
     signal(SIGINT, signal_handler);
-    signal(SIGQUIT, SIG_IGN);
     // signal(SIGTERM, signal_handler);
+    signal(SIGQUIT, SIG_IGN);
     // prompt readline loop +history
-    context.input = readline(MINISHELL_PROMPT);
 
-    while (context.input)
+    while (true)
     {
+        context.input = readline(MINISHELL_PROMPT);
+        if (!context.input)
+        {
+            if (!is_interactive)
+                break;
+            builtin_exit(context.tokens, &context);
+        }
         // Tokenize input
-        add_history(context.input);
+        if (is_interactive)
+            add_history(context.input);
         // maybe do expand at the token level
         // expand(&context);
         context.tokens = lex(context.input);
@@ -50,7 +58,7 @@ int main(int argc, char **argv, char **env)
         if (context.tokens)
             print_tokens(context.tokens);
 #endif
-		context.tree = parse(&context.tokens, 0);
+        context.tree = parse(&context.tokens, 0);
 #ifdef DEBUG
         printf("\nParse Tree:\n");
         print_tree_structure(context.tree, 0);
@@ -58,8 +66,7 @@ int main(int argc, char **argv, char **env)
         pid = traverse(context.tree, &context);
         if (pid)
         {
-            if (waitpid(pid, &context.status, 0) == -1
-					|| !WIFEXITED(context.status))
+            if (waitpid(pid, &context.status, 0) == -1 || !WIFEXITED(context.status))
                 perror("main");
             context.status = WEXITSTATUS(context.status);
         }
@@ -76,7 +83,7 @@ int main(int argc, char **argv, char **env)
                 ft_strlcat(history_path, "/history", ft_strlen(project_root) + ft_strlen(MINSHELL_DIRECTORY) + 10);
             }
         }
-        
+
         if (history_path)
         {
             ft_write_history(history_path, context.input);
@@ -90,7 +97,13 @@ int main(int argc, char **argv, char **env)
             free(history_path);
         }
 
-        context.input = readline(MINISHELL_PROMPT);
+        free(context.input);
+        if (!is_interactive)
+        {
+            // In non-interactive mode, exit with the status of the last command
+            free_context(&context);
+            exit(context.status);
+        }
     }
 
     free_context(&context);

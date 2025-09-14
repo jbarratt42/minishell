@@ -75,7 +75,7 @@ int	builtin_cd(t_token *tokens, t_context *context)
 		path = current->value;
 	
 	// Handle special cases
-	if (ft_strncmp(path, "-", 1) == 0)
+	if (ft_strcmp(path, "-") == 0)
 	{
 		path = ft_getenv("OLDPWD", context->env);
 		if (!path)
@@ -84,6 +84,13 @@ int	builtin_cd(t_token *tokens, t_context *context)
 			free(old_pwd);
 			return (1);
 		}
+	}
+	else if (path[0] == '-')
+	{
+		fprintf(stderr, "cd: %s: invalid option\n", path);
+		fprintf(stderr, "cd: usage: cd [-L|[-P [-e]]] [-@] [dir]\n");
+		free(old_pwd);
+		return (1);
 	}
 	
 	// Change directory
@@ -98,7 +105,7 @@ int	builtin_cd(t_token *tokens, t_context *context)
 	update_pwd_vars(context, old_pwd);
 	
 	// Print new directory if cd -
-	if (current && current->type == WORD && ft_strncmp(current->value, "-", 1) == 0)
+	if (current && current->type == WORD && ft_strcmp(current->value, "-") == 0)
 	{
 		char *new_pwd = getcwd(NULL, 0);
 		if (new_pwd)
