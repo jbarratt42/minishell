@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:31:14 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/12 12:24:07 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/14 13:27:23 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,9 +120,12 @@ static int	collect2(int pids[2])
 	i = 1;
 	while (i >= 0)
 	{
-		status[i] = collect(pids[i]);
-		if (status[i] == -1)
-			return (-1);
+		if(pids[i])
+		{
+			status[i] = collect(pids[i]);
+			if (status[i] == -1)
+				return (-1);
+		}
 		i--;
 	}
 	return(status[1]);
