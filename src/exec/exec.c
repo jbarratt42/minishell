@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:31:14 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/14 13:27:23 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/15 11:48:33 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,6 +212,7 @@ bool	exec_builtin(t_token *tokens, t_context *context)
 
 bool	exec_preprocess(t_token **tokens, t_context *context)
 {
+	t_token *t;
 	if (!expand_tokens(tokens, context))
 		return (false);
 	if (!is_command(*tokens))
@@ -219,6 +220,12 @@ bool	exec_preprocess(t_token **tokens, t_context *context)
 			return (false);
 	if (!redirect(tokens, context))
 		return (false);
+	t = *tokens;
+	while (t && t->type == WORD)
+	{
+		dequote(t->value);
+		t = t->next;
+	}
 	return (true);
 }
 

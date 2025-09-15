@@ -194,7 +194,6 @@ static char	*next_unquoted_space(char *str)
 	return (str);
 }
 
-
 t_token	**separate_words(t_token *token)
 {
 	char 	*p;
@@ -219,6 +218,44 @@ t_token	**separate_words(t_token *token)
 	}
 	token->next = next;
 	return (&token->next);
+}
+
+static char	*first_quote(char *str)
+{
+	char	*pos1;
+	char	*pos2;
+
+	pos1 = ft_strchr(str, '\'');
+	pos2 = ft_strchr(str, '"');
+	if (!pos1 && !pos2)
+		return (NULL);
+	if (!pos1)
+		return (pos2);
+	if (!pos2)
+		return (pos1);
+	if (pos2 < pos1)
+		return (pos2);
+	return (pos1);
+}
+
+void	dequote(char *str)
+{
+	char	*p;
+	char	*q;
+
+	str = first_quote(str);
+	while (str)
+	{
+		p = str;
+		q = ft_strchr(p + 1, *p);
+		str = q + 1;
+		while (*p++)
+			*(p - 1) = *p;
+		q--;
+		while (*q++)
+			*(q - 1) = *q;
+		str = first_quote(str);
+	}
 }
 
 /* expand variables in tokens */

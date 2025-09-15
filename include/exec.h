@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:30:37 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/12 12:23:48 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/15 11:37:17 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ _Bool heredoc(t_token *token, t_context *context);
 _Bool reassign_fd(t_token *token, t_context *context);
 _Bool redirect(t_token **token, t_context *context);
 t_token **separate_words(t_token *token);
+void	dequote(char *str);
 _Bool expand_tokens(t_token **token, t_context *context);
 /* src/exec/exec.c */
 char *append_path(char *a, char *b);
