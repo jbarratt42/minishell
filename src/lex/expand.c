@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 15:13:10 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/12 11:38:22 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/15 10:37:38 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,13 @@ int expand_special(char **ret, char **line, t_context *context)
 		return (expand_status(ret, line, context));
 	if (ft_isdigit(*(*line + 1)))
 		return (expand_pos_param(ret, line, context));
-	return (expand_variable(ret, line, context));
+	if (ft_isalpha(*(*line + 1)) || *(*line + 1) == '_')
+		return (expand_variable(ret, line, context));
+	if (ret && *ret)
+		*(*ret)++ = *(*line)++;
+	else
+		(*line)++;
+	return (0);
 }
 
 /*

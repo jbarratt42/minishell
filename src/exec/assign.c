@@ -237,6 +237,8 @@ bool	expand_tokens(t_token **token, t_context *context)
 				return (false);
 			if (!dquoted)
 				token = separate_words(*token);
+			else
+				token = &((*token)->next);
 		}
 		else if ((*token)->type == SQUOTE || (*token)->type == DQUOTE)
 		{
