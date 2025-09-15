@@ -248,6 +248,11 @@ void	dequote(char *str)
 	{
 		p = str;
 		q = ft_strchr(p + 1, *p);
+		if (!q)
+		{
+			//perror("dequote");
+			return ;
+		}
 		str = q + 1;
 		while (*p++)
 			*(p - 1) = *p;
