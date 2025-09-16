@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:31:14 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/15 11:48:33 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/16 11:06:38 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -273,6 +273,7 @@ pid_t	exec_terminal(t_token **tokens, t_context *context)
 			pid = fork();
 			if (pid == 0)
 			{
+				try_dup2(context->open);
 				exec_builtin(*tokens, context);
 				exit(context->status);
 			}

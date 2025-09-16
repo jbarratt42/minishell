@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 13:16:48 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/09 16:55:11 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/16 09:59:51 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,27 +106,50 @@ char	**push_env(char *var, char **env)
  */
 char	**set_env(char *var, char **env)
 {
-	const char		*pos = ft_strchr(var, '=');
-	char			**p;
+	char	*pos;
+	char	**p;
 
 	if (!env)
 		return(push_env(var, env));
+	pos = ft_strchr(var, '=');
 	if (!pos)
-	{
-		perror("set_env");
-		return (NULL);
-	}
+		pos = var + ft_strlen(var);
 	p = env;
 	while (*p)
 	{
-		if(!ft_strncmp(var, *p, pos - var))
+		if(!ft_strncmp(var, *p, pos - var) && *pos == '=')
 		{
 			free(*p);
-			*p = ft_strdup(var);
-			free(var);
+			*p = var;
 			return (env);
 		}
 		p++;
 	}
 	return (push_env(var, env));
+}
+
+char *get_var(char *name, char **env)
+{
+	const size_t len = ft_strlen(name);
+
+	if (!env)
+		return (NULL);
+	while (*env)
+	{
+		if (!ft_strncmp(name, *env, len))
+			return (*env);
+		env++;
+	}
+	return (NULL);
+}
+
+char *ft_getenv(char *name, char **env)
+{
+	char	*var;
+
+	var = get_var(name, env);
+	var = ft_strchr(var, '=');
+	if (var == NULL)
+		return (NULL);
+	return (var + 1);
 }

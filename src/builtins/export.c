@@ -83,10 +83,12 @@ static void	print_exported_vars(char **env)
 	free(sorted_env);
 }
 
+
 int	builtin_export(t_token *tokens, t_context *context)
 {
 	t_token	*current;
 	char	*var;
+	char	*pos;
 	int		ret;
 
 	current = tokens;
@@ -116,15 +118,27 @@ int	builtin_export(t_token *tokens, t_context *context)
 		}
 		else
 		{
-			// Add to environment
-			context->env = set_env(ft_strdup(var), context->env);
+			// check local environment
+			pos = ft_strchr(current->value, '=');
+			if (pos)
+				*pos = '\0';
+			var = get_var(current->value, context->local);
+			if (var && !pos) 	// current is a bare name, and exists in local;
+						  		// move from local
+				context->env = set_env(ft_strdup(var), context->env);
+			else
+			{
+				if (pos)
+					*pos = '=';
+				context->env = set_env(ft_strdup(current->value),
+						context->env);
+			}
 			if (!context->env)
 			{
 				perror("export");
 				ret = 1;
 			}
 		}
-		
 		current = current->next;
 	}
 	

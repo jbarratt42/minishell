@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 15:13:10 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/15 10:37:38 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/16 09:43:07 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,25 +59,6 @@ int	expand_status(char **ret, char **str, t_context *context)
 	}
 	free(tmp);
 	return (len - 2);
-}
-
-char *ft_getenv(char *name, char **env)
-{
-	const size_t len = ft_strlen(name);
-
-	if (!env)
-		return (NULL);
-	while (*env)
-	{
-		if (!ft_strncmp(name, *env, len) && (*env)[len] == '=')
-		{
-			if (!(*env)[len + 1])
-				return (NULL);
-			return (*env + len + 1);
-		}
-		env++;
-	}
-	return (NULL);
 }
 
 static int	pass_literal_special(char **ret, char **line)
