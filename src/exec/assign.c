@@ -146,7 +146,10 @@ bool	redirect(t_token **token, t_context *context)
 		if((*token)->type >= REDIR_IN && (*token)->type <= REDIR_APPEND)
 		{
 			if(!reassign_fd(*token, context))
+			{
+				context->status = 1;
 				return (false);
+			}
 			delete_tokens(token, 2);
 		}
 		else

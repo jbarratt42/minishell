@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:31:14 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/16 11:06:38 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/16 12:32:00 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,8 @@ static int	collect2(int pids[2])
 			if (status[i] == -1)
 				return (-1);
 		}
+		else
+			status[i] = 0;
 		i--;
 	}
 	return(status[1]);
@@ -288,6 +290,13 @@ pid_t	exec_terminal(t_token **tokens, t_context *context)
 	}
 	
 	// Handle external commands
+	/*
+	if (access(get_path(*tokens, context->env), X_OK) == -1)
+	{
+		perror("exec_terminal");
+		return (-1);
+	}
+	*/
 	pid = fork();
 	if (pid > 0)
 	{
@@ -337,6 +346,8 @@ bool	exec_sequential(t_node *node, t_context *context)
 pid_t	traverse(t_node *node, t_context *context)
 {
 	pid_t	pids[2];
+	int		status;
+
 	if (node->is_terminal)
 		return (exec_terminal(&node->data.tokens, context));
 	if (node->data.op.type != PIPE)
@@ -355,6 +366,8 @@ pid_t	traverse(t_node *node, t_context *context)
 	context->open[1] = 1;
 	context->open[2] = -1;
 	pids[1] = traverse(node->data.op.right, context);
-	context->status = collect2(pids);
+	status = collect2(pids);
+	if (status)
+		context->status = status;
 	return (0);
 }
