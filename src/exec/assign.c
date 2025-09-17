@@ -127,7 +127,7 @@ bool	reassign_fd(t_token *token, t_context *context)
 	else if (token->type == REDIR_OUT)
 		mode = O_WRONLY | O_CREAT;
 	else if (token->type == REDIR_APPEND)
-		mode = O_APPEND | O_CREAT;
+		mode = O_WRONLY | O_APPEND | O_CREAT;
 	else
 		return (heredoc(token, context));
 	if(context->open[fd] > 2 && close(context->open[fd]) == -1)

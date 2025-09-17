@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:31:14 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/17 12:55:03 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/17 13:16:20 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -371,12 +371,14 @@ pid_t	traverse(t_node *node, t_context *context)
 	context->open[1] = 1;
 	context->open[2] = -1;
 	pids[1] = traverse(node->data.op.right, context);
+	if (pids[1] == -1)
+		context->status = 1;
 	/*
 	if (pids[1] == -1)
 		return (-1);
 		*/
 	status = collect2(pids);
-	if (pids[1])
+	if (pids[1] && pids[1] != -1)
 		context->status = status;
 	return (0);
 }
