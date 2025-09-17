@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:31:14 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/16 12:32:00 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/17 12:55:03 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static bool	try_close2(int open[2])
 		if (open[i] > 2)
 			if (close(open[i]) == -1)
 			{
-				perror("try_close");
+				perror("try_close2");
 				return (false);
 			}
 		i++;
@@ -120,7 +120,7 @@ static int	collect2(int pids[2])
 	i = 1;
 	while (i >= 0)
 	{
-		if(pids[i])
+		if(pids[i] && pids[i] != -1)
 		{
 			status[i] = collect(pids[i]);
 			if (status[i] == -1)
@@ -266,6 +266,7 @@ pid_t	exec_terminal(t_token **tokens, t_context *context)
 		if (!context->is_pipeline)
 		{
 			// Builtins that affect parent state run in parent when not in pipeline
+			try_dup2(context->open);
 			exec_builtin(*tokens, context);
 			return (0);
 		}
@@ -360,14 +361,22 @@ pid_t	traverse(t_node *node, t_context *context)
 	if (!try_pipe(&context->open[1]))
 		return (-1);
 	pids[0] = traverse(node->data.op.left, context);
+	/*
+	if (pids[0] == -1)
+		return (-1);
+		*/
 	if (!try_close2(context->open))
 		return (-1);
 	context->open[0] = context->open[2];
 	context->open[1] = 1;
 	context->open[2] = -1;
 	pids[1] = traverse(node->data.op.right, context);
+	/*
+	if (pids[1] == -1)
+		return (-1);
+		*/
 	status = collect2(pids);
-	if (status)
+	if (pids[1])
 		context->status = status;
 	return (0);
 }

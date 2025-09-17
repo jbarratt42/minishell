@@ -64,7 +64,9 @@ int main(int argc, char **argv, char **env)
         print_tree_structure(context.tree, 0);
 #endif
         pid = traverse(context.tree, &context);
-        if (pid)
+		if (pid == -1)
+			context.status = 1;
+        if (pid && pid != -1)
         {
             if (waitpid(pid, &context.status, 0) == -1 || !WIFEXITED(context.status))
                 perror("main");

@@ -131,18 +131,24 @@ bool	reassign_fd(t_token *token, t_context *context)
 	else
 		return (heredoc(token, context));
 	if(context->open[fd] > 2 && close(context->open[fd]) == -1)
+	{
+		perror("reassign_fd");
 		return (false);
+	}
 	context->open[fd] = open(token->next->value, mode,
 			S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 	if (context->open[fd] == -1)
+	{
+		perror("reassign_fd");
 		return (false);
+	}
 	return (true);
 }
 
 /* redirect file descriptors left to right and delete the corresponding tokens*/
 bool	redirect(t_token **token, t_context *context)
 {
-	while (*token)
+	while (*token && (*token)->type < PIPE && (*token)->type != EOF_T)
 		if((*token)->type >= REDIR_IN && (*token)->type <= REDIR_APPEND)
 		{
 			if(!reassign_fd(*token, context))
