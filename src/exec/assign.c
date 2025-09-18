@@ -23,9 +23,11 @@ void	delete_tokens(t_token **token, size_t len)
 bool	is_command(t_token *token)
 {
 	while (token && token->type < PIPE && token->type != EOF_T)
-	if (token->type >= REDIR_IN && token->type <= REDIR_APPEND)
+    if (token->type >= REDIR_IN && token->type <= REDIR_APPEND)
 			token = token->next->next;
-		else if (token->type == WORD && ft_strchr(token->value, '='))
+        else if (token->type == WORD && token->value && token->value[0] == '\0')
+            token = token->next;
+        else if (token->type == WORD && ft_strchr(token->value, '='))
 			token = token->next;
 		else
 			return (true);
@@ -286,6 +288,11 @@ bool	expand_tokens(t_token **token, t_context *context)
 			(*token)->value = expand((*token)->value, context);
 			if(!*token)
 				return (false);
+			if (ft_strlen((*token)->value) == 0)
+			{
+				delete_tokens(token, 1);
+				continue;
+			}
 			if (!dquoted)
 				token = separate_words(*token);
 			else

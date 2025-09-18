@@ -57,6 +57,13 @@ int	builtin_cd(t_token *tokens, t_context *context)
 	if (current && current->type == WORD)
 		current = current->next;
 	
+	// too many arguments
+	if (current && current->type == WORD && current->next && current->next->type == WORD)
+	{
+		fprintf(stderr, "cd: too many arguments\n");
+		return (2);
+	}
+	
 	// Get current directory for OLDPWD
 	old_pwd = getcwd(NULL, 0);
 	
@@ -90,7 +97,7 @@ int	builtin_cd(t_token *tokens, t_context *context)
 		fprintf(stderr, "cd: %s: invalid option\n", path);
 		fprintf(stderr, "cd: usage: cd [-L|[-P [-e]]] [-@] [dir]\n");
 		free(old_pwd);
-		return (1);
+		return (2);
 	}
 	
 	// Change directory

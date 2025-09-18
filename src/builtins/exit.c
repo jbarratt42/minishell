@@ -5,15 +5,10 @@ static bool is_numeric(const char *str)
 	if (!str || !*str)
 		return (false);
 
-	// Handle negative numbers
-	if (*str == '-')
+	// Optional sign
+	if (*str == '-' || *str == '+')
 		str++;
 
-	// Must have at least one digit
-	if (!*str || !ft_isdigit(*str))
-		return (false);
-
-	// All remaining characters must be digits
 	while (*str)
 	{
 		if (!ft_isdigit(*str))
@@ -41,6 +36,12 @@ int builtin_exit(t_token *tokens, t_context *context)
 	// If there's an argument, parse it
 	if (current && current->type == WORD)
 	{
+		// too many arguments with numeric first argument → do not exit; return 2
+		if (current->next && current->next->type == WORD && is_numeric(current->value))
+		{
+			fprintf(stderr, "exit: too many arguments\n");
+			return (2);
+		}
 		if (!is_numeric(current->value))
 		{
 			fprintf(stderr, "exit: %s: numeric argument required\n", current->value);

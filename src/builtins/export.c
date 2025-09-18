@@ -109,35 +109,54 @@ int	builtin_export(t_token *tokens, t_context *context)
 	while (current && current->type == WORD)
 	{
 		var = current->value;
-		
-		// Check if it's a valid identifier
+		// Merge any following WORD tokens if current contains '=' or ends with '='
+		if (var && ft_strchr(var, '='))
+		{
+			while (current->next && current->next->type == WORD && current->next->value)
+			{
+				char *joined = ft_strjoin(current->value, current->next->value);
+				if (!joined)
+					break;
+				free(current->value);
+				current->value = joined;
+				t_token *to_free = current->next;
+				current->next = to_free->next;
+				if (to_free->value) free(to_free->value);
+				free(to_free);
+			}
+			var = current->value;
+		}
+		// Validate only key before '='
+		pos = ft_strchr(var, '=');
+		if (pos)
+			*pos = '\0';
 		if (!is_valid_identifier(var))
 		{
-			fprintf(stderr, "export: `%s': not a valid identifier\n", var);
+			if (pos) *pos = '=';
+			fprintf(stderr, "export: `%s': not a valid identifier\n", current->value);
 			ret = 1;
+			current = current->next;
+			continue;
+		}
+		if (pos) *pos = '=';
+
+		// Move from local if bare name exists there, else set env
+		pos = ft_strchr(current->value, '=');
+		if (!pos)
+		{
+			char *local_var = get_var(current->value, context->local);
+			if (local_var)
+				context->env = set_env(ft_strdup(local_var), context->env);
+			else
+				context->env = set_env(ft_strdup(current->value), context->env);
 		}
 		else
+			context->env = set_env(ft_strdup(current->value), context->env);
+
+		if (!context->env)
 		{
-			// check local environment
-			pos = ft_strchr(current->value, '=');
-			if (pos)
-				*pos = '\0';
-			var = get_var(current->value, context->local);
-			if (var && !pos) 	// current is a bare name, and exists in local;
-						  		// move from local
-				context->env = set_env(ft_strdup(var), context->env);
-			else
-			{
-				if (pos)
-					*pos = '=';
-				context->env = set_env(ft_strdup(current->value),
-						context->env);
-			}
-			if (!context->env)
-			{
-				perror("export");
-				ret = 1;
-			}
+			perror("export");
+			ret = 1;
 		}
 		current = current->next;
 	}

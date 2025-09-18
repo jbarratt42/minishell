@@ -136,7 +136,7 @@ char *get_var(char *name, char **env)
 		return (NULL);
 	while (*env)
 	{
-		if (!ft_strncmp(name, *env, len))
+		if (!ft_strncmp(name, *env, len) && (*env)[len] == '=')
 			return (*env);
 		env++;
 	}
@@ -148,6 +148,8 @@ char *ft_getenv(char *name, char **env)
 	char	*var;
 
 	var = get_var(name, env);
+	if (!var)
+		return (NULL);
 	var = ft_strchr(var, '=');
 	if (var == NULL)
 		return (NULL);

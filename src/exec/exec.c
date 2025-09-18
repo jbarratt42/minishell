@@ -11,6 +11,8 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <sys/stat.h>
+#include <errno.h>
 
 static bool	try_close2(int open[2])
 {
@@ -254,6 +256,7 @@ bool	cleanup_parent(t_context *context)
 pid_t	exec_terminal(t_token **tokens, t_context *context)
 {
 	pid_t	pid;
+	struct stat st;
 
 	if (!exec_preprocess(tokens, context))
 		return (-1);
@@ -316,9 +319,53 @@ pid_t	exec_terminal(t_token **tokens, t_context *context)
 		exit(127);
 	}
 	
+	// Check if the path exists and is executable
+	if (access(path, F_OK) == -1)
+	{
+		fprintf(stderr, "%s: No such file or directory\n", path);
+		exit(127);
+	}
+	if (access(path, X_OK) == -1)
+	{
+		
+		if (stat(path, &st) == 0 && S_ISDIR(st.st_mode))
+		{
+			fprintf(stderr, "%s: is a directory\n", path);
+			exit(126);
+		}
+		else
+		{
+			fprintf(stderr, "%s: Permission denied\n", path);
+			exit(126);
+		}
+	}
+	
 	execve(path, get_args(*tokens), context->env);
-	perror("exec_terminal");
-	exit(1);
+	// If we get here, execve failed
+	if (errno == ENOENT)
+	{
+		fprintf(stderr, "%s: No such file or directory\n", path);
+		exit(127);
+	}
+	else if (errno == EACCES)
+	{
+		
+		if (stat(path, &st) == 0 && S_ISDIR(st.st_mode))
+		{
+			fprintf(stderr, "%s: is a directory\n", path);
+			exit(126);
+		}
+		else
+		{
+			fprintf(stderr, "%s: Permission denied\n", path);
+			exit(126);
+		}
+	}
+	else
+	{
+		perror("exec_terminal");
+		exit(1);
+	}
 }
 
 bool	exec_sequential(t_node *node, t_context *context)
