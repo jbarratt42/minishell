@@ -61,7 +61,7 @@ int	builtin_cd(t_token *tokens, t_context *context)
 	if (current && current->type == WORD && current->next && current->next->type == WORD)
 	{
 		fprintf(stderr, "cd: too many arguments\n");
-		return (2);
+		return (1);
 	}
 	
 	// Get current directory for OLDPWD

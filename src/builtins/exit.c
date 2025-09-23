@@ -40,7 +40,7 @@ int builtin_exit(t_token *tokens, t_context *context)
 		if (current->next && current->next->type == WORD && is_numeric(current->value))
 		{
 			fprintf(stderr, "exit: too many arguments\n");
-			return (2);
+			return (1);
 		}
 		if (!is_numeric(current->value))
 		{
