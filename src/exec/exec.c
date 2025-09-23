@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:31:14 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/17 13:16:20 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/23 12:01:53 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -330,7 +330,7 @@ pid_t	exec_terminal(t_token **tokens, t_context *context)
 		
 		if (stat(path, &st) == 0 && S_ISDIR(st.st_mode))
 		{
-			fprintf(stderr, "%s: is a directory\n", path);
+			fprintf(stderr, "%s: Is a directory\n", path);
 			exit(126);
 		}
 		else
@@ -352,7 +352,7 @@ pid_t	exec_terminal(t_token **tokens, t_context *context)
 		
 		if (stat(path, &st) == 0 && S_ISDIR(st.st_mode))
 		{
-			fprintf(stderr, "%s: is a directory\n", path);
+			fprintf(stderr, "%s: Is a directory\n", path);
 			exit(126);
 		}
 		else
