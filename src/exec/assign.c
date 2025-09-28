@@ -184,22 +184,14 @@ static t_token	*try_word(size_t size)
 static char	*next_unquoted_space(char *str)
 {
 	char	delim;
-	bool	quoted;
 
 	delim = '\0';
-	quoted = false;
-	while (*str && !(!quoted && *str == ' '))
+	while (*str && !(!delim && *str == ' '))
 	{
-		if (*str == '\'' || *str == '"')
-		{
-			if (!quoted)
-			{
-				delim = *str;
-				quoted = true;
-			}
-			if (quoted && delim == *str)
-				quoted = false;
-		}
+		if (*str == delim)
+			delim = '\0';
+		else if (!delim && (*str == '\'' || *str == '"'))
+			delim = *str;
 		str++;
 	}
 	return (str);
@@ -264,10 +256,11 @@ void	dequote(char *str)
 			//perror("dequote");
 			return ;
 		}
-		str = q + 1;
+		str = q - 1;
 		while (*p++)
 			*(p - 1) = *p;
 		q--;
+		str--;
 		while (*q++)
 			*(q - 1) = *q;
 		str = first_quote(str);

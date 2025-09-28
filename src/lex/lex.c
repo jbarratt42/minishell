@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 17:16:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/08/25 13:11:18 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/28 14:45:14 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,12 +42,19 @@ static t_token *token_new(t_token_type type, const char *val, int pos)
 static t_token *lex_word(const char *input, int *i)
 {
     int start = *i;
+	char	delim = '\0';
     // Allow - to be part of a word when not standalone
     if (input[*i] == '-')
         (*i)++;
-    while (input[*i] && !ft_isspace((unsigned char)input[*i]) &&
+    while (input[*i] && !(!delim && ft_isspace((unsigned char)input[*i])) &&
            !(is_metachar(input[*i]) && input[*i] != '-'))
+	{
+		if (input[*i] == delim)
+			delim = '\0';
+		else if (input[*i] == '\'' || input[*i] == '"')
+			delim = input[*i];
         (*i)++;
+	}
     
     // Safety check to prevent infinite loop
     if (*i == start)
@@ -56,6 +63,7 @@ static t_token *lex_word(const char *input, int *i)
     return (token_new(WORD, ft_strndup(input + start, *i - start), start));
 }
 
+/*
 static t_token *lex_quote(const char *input, int *i, char quote)
 {
     int start = ++(*i);
@@ -100,6 +108,7 @@ static t_token *lex_quote(const char *input, int *i, char quote)
     (*i)++; // skip closing quote
     return head;
 }
+*/
 
 t_token *lex(const char *input)
 {
@@ -119,6 +128,7 @@ t_token *lex(const char *input)
             continue;
         }
 
+		/*
         if (input[i] == '\'' || input[i] == '"')
         {
             t_token *quote_tokens = lex_quote(input, &i, input[i]);
@@ -131,7 +141,8 @@ t_token *lex(const char *input)
                 cur = quote_tokens;
             }
         }
-        else if (input[i] == ';')
+        else */
+		if (input[i] == ';')
             cur->next = token_new(SEMICOLON, ";", i++);
         else if (input[i] == '|')
         {

@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:31:14 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/23 12:01:53 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/28 14:05:46 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,17 +219,18 @@ bool	exec_preprocess(t_token **tokens, t_context *context)
 	t_token *t;
 	if (!expand_tokens(tokens, context))
 		return (false);
+	t = *tokens;
+	while (t && t->type < PIPE && t->type != EOF_T)
+	{
+		if (t->type == WORD)
+			dequote(t->value);
+		t = t->next;
+	}
 	if (!is_command(*tokens))
 		if (!assign(tokens, context))
 			return (false);
 	if (!redirect(tokens, context))
 		return (false);
-	t = *tokens;
-	while (t && t->type == WORD)
-	{
-		dequote(t->value);
-		t = t->next;
-	}
 	return (true);
 }
 
