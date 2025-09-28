@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 17:16:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/28 14:45:14 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/28 15:57:41 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,11 @@ static t_token *lex_word(const char *input, int *i)
     if (input[*i] == '-')
         (*i)++;
     while (input[*i] && !(!delim && ft_isspace((unsigned char)input[*i])) &&
-           !(is_metachar(input[*i]) && input[*i] != '-'))
+           !(!delim && (is_metachar(input[*i]) && input[*i] != '-')))
 	{
 		if (input[*i] == delim)
 			delim = '\0';
-		else if (input[*i] == '\'' || input[*i] == '"')
+		else if (!delim && (input[*i] == '\'' || input[*i] == '"'))
 			delim = input[*i];
         (*i)++;
 	}
