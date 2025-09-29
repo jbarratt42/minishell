@@ -1,30 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
+/*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/30 15:10:26 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/29 12:43:42 by chuezeri         ###   ########.fr       */
+/*   Created: 2025/09/29 12:49:13 by chuezeri          #+#    #+#             */
+/*   Updated: 2025/09/29 12:49:17 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	signal_handler(int sig)
+int	builtin_pwd(t_token *tokens, t_context *context)
 {
-	if (sig == SIGINT)
+	char	*cwd;
+	char	*pwd_env;
+
+	(void)tokens;
+	cwd = getcwd(NULL, 0);
+	if (cwd)
 	{
-		rl_replace_line("", 0);
-		write(STDOUT_FILENO, "\n", 1);
-		rl_on_new_line();
-		rl_redisplay();
+		printf("%s\n", cwd);
+		free(cwd);
+		return (0);
 	}
-	else if (sig == SIGTERM)
+	pwd_env = ft_getenv("PWD", context->env);
+	if (pwd_env)
 	{
-		printf("Terminated by SIGTERM\n");
-		g_status = SIGTERM;
-		exit(0);
+		printf("%s\n", pwd_env);
+		return (0);
 	}
+	perror("pwd");
+	return (1);
 }

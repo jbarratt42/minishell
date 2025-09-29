@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 10:46:56 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/12 18:42:32 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/14 14:17:13 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 #include "parse.h"
 #include "exec.h"
 #include "util.h"
+#include "builtin.h"
 #include "../libft/libft.h"
 #ifdef DEBUG
 #include "print_tree.h"
@@ -35,6 +36,8 @@
 #ifdef DEBUG
 #include "print_tree.h"
 #endif
+
+#define PATH_MAX 1024
 
 extern int g_status;
 

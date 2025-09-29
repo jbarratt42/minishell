@@ -1,30 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
+/*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/30 15:10:26 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/29 12:43:42 by chuezeri         ###   ########.fr       */
+/*   Created: 2025/09/29 12:48:31 by chuezeri          #+#    #+#             */
+/*   Updated: 2025/09/29 12:48:37 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	signal_handler(int sig)
+int	builtin_env(t_token *tokens, t_context *context)
 {
-	if (sig == SIGINT)
+	char	**env;
+	int		i;
+
+	(void)tokens;
+	env = context->env;
+	if (!env)
+		return (0);
+	i = 0;
+	while (env[i])
 	{
-		rl_replace_line("", 0);
-		write(STDOUT_FILENO, "\n", 1);
-		rl_on_new_line();
-		rl_redisplay();
+		if (ft_strchr(env[i], '='))
+			printf("%s\n", env[i]);
+		i++;
 	}
-	else if (sig == SIGTERM)
-	{
-		printf("Terminated by SIGTERM\n");
-		g_status = SIGTERM;
-		exit(0);
-	}
+	return (0);
 }

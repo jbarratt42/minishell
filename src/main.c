@@ -1,82 +1,69 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/29 13:09:35 by chuezeri          #+#    #+#             */
+/*   Updated: 2025/09/29 13:53:48 by chuezeri         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-int g_status = 0;
+int		g_status = 0;
 
-bool minishell_init(t_context *context, int argc, char **argv, char **env)
+void	parse_and_execute(t_context *context, bool is_interactive)
 {
-    if (!context)
-        return (false);
+	pid_t	pid;
 
-    context->argc = argc;
-    context->argv = argv;
-    context->env = env;
-    context->status = EXIT_SUCCESS;
-
-    printf("███╗   ███╗██╗███╗   ██╗██╗███████╗██╗  ██╗███████╗██╗     ██╗\n");
-    printf("████╗ ████║██║████╗  ██║██║██╔════╝██║  ██║██╔════╝██║     ██║\n");
-    printf("██╔████╔██║██║██╔██╗ ██║██║███████╗███████║█████╗  ██║     ██║\n");
-    printf("██║╚██╔╝██║██║██║╚██╗██║██║╚════██║██╔══██║██╔══╝  ██║     ██║\n");
-    printf(
-        "██║ ╚═╝ ██║██║██║ ╚████║██║███████║██║  ██║███████╗███████╗███████╗\n");
-    printf(
-        "╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝\n");
-
-    return (true);
+	if (is_interactive)
+		add_history(context->input);
+	context->tokens = lex(context->input);
+	if (!context->tokens)
+		cleanup_and_exit(context);
+	context->tree = parse(&context->tokens, 0);
+	pid = traverse(context->tree, context);
+	if (pid == -1)
+		context->status = 1;
+	if (pid && pid != -1)
+	{
+		if (waitpid(pid, &context->status, 0) == -1
+			|| !WIFEXITED(context->status))
+			perror("main");
+		context->status = WEXITSTATUS(context->status);
+	}
+	if (!is_interactive)
+		cleanup_and_exit(context);
 }
 
-int main(int argc, char **argv, char **env)
+int	main(int argc, char **argv, char **env)
 {
-    pid_t pid;
-    t_context context;
-    t_token *token;
+	t_context	context;
+	bool		is_interactive;
 
-    if (!minishell_init(&context, argc, argv, env))
-        return (EXIT_FAILURE);
-
-    signal(SIGINT, signal_handler);
-    signal(SIGQUIT, SIG_IGN);
-    // signal(SIGTERM, signal_handler);
-    // prompt readline loop +history
-    context.input = readline(MINISHELL_PROMPT);
-
-    while (context.input)
-    {
-        // Tokenize input
-        add_history(context.input);
-        // maybe do expand at the token level
-        // expand(&context);
-        context.tokens = lex(context.input);
-        if (!context.tokens)
-            (free(context.input), g_status = EXIT_FAILURE);
-        token = context.tokens;
-        context.tree = parse(&token, 0);
-        pid = traverse(context.tree, &context);
-        if (pid)
-        {
-            if (waitpid(pid, &context.status, 0) == -1 || !WIFEXITED(context.status))
-                perror("main");
-            context.status = WEXITSTATUS(pid);
-        }
-
-#ifdef DEBUG
-        if (context.tokens)
-            print_tokens(context.tokens);
-        printf("\nParse Tree:\n");
-        print_tree_structure(context.tree, 0);
-#endif
-
-        // add_history(context.input);
-        ft_write_history(MINSHELL_DIRECTORY "/history", context.input);
-        if (ft_strncmp(context.input, "exit", 4) == 0)
-        {
-            free(context.input);
-            exit(EXIT_SUCCESS);
-        }
-        if (ft_strncmp(context.input, "history", 7) == 0)
-            print_history(MINSHELL_DIRECTORY "/history");
-
-        context.input = readline(MINISHELL_PROMPT);
-    }
-
-    return (EXIT_SUCCESS);
+	is_interactive = isatty(STDIN_FILENO);
+	init_context(&context, argc, argv, env);
+	signal(SIGINT, signal_handler);
+	signal(SIGQUIT, SIG_IGN);
+	while (true)
+	{
+		context.input = readline(MINISHELL_PROMPT);
+		if (!context.input)
+		{
+			if (!is_interactive)
+				break ;
+			builtin_exit(context.tokens, &context);
+		}
+		parse_and_execute(&context, is_interactive);
+		free_tokens(context.tokens);
+		free_node(context.tree);
+		context.tokens = NULL;
+		context.tree = NULL;
+	}
+	free_tokens(context.tokens);
+	free_node(context.tree);
+	free_context(&context);
+	return (EXIT_SUCCESS);
 }

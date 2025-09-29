@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 17:16:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/08/25 13:11:18 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/28 15:57:41 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,15 +42,28 @@ static t_token *token_new(t_token_type type, const char *val, int pos)
 static t_token *lex_word(const char *input, int *i)
 {
     int start = *i;
+	char	delim = '\0';
     // Allow - to be part of a word when not standalone
     if (input[*i] == '-')
         (*i)++;
-    while (input[*i] && !ft_isspace((unsigned char)input[*i]) &&
-           !(is_metachar(input[*i]) && input[*i] != '-'))
+    while (input[*i] && !(!delim && ft_isspace((unsigned char)input[*i])) &&
+           !(!delim && (is_metachar(input[*i]) && input[*i] != '-')))
+	{
+		if (input[*i] == delim)
+			delim = '\0';
+		else if (!delim && (input[*i] == '\'' || input[*i] == '"'))
+			delim = input[*i];
         (*i)++;
+	}
+    
+    // Safety check to prevent infinite loop
+    if (*i == start)
+        (*i)++;
+        
     return (token_new(WORD, ft_strndup(input + start, *i - start), start));
 }
 
+/*
 static t_token *lex_quote(const char *input, int *i, char quote)
 {
     int start = ++(*i);
@@ -95,6 +108,7 @@ static t_token *lex_quote(const char *input, int *i, char quote)
     (*i)++; // skip closing quote
     return head;
 }
+*/
 
 t_token *lex(const char *input)
 {
@@ -106,12 +120,15 @@ t_token *lex(const char *input)
 
     while (input[i])
     {
+        int prev_i = i;  // Track previous position to detect infinite loops
+        
         if (ft_isspace((unsigned char)input[i]))
         {
             i++;
             continue;
         }
 
+		/*
         if (input[i] == '\'' || input[i] == '"')
         {
             t_token *quote_tokens = lex_quote(input, &i, input[i]);
@@ -124,7 +141,8 @@ t_token *lex(const char *input)
                 cur = quote_tokens;
             }
         }
-        else if (input[i] == ';')
+        else */
+		if (input[i] == ';')
             cur->next = token_new(SEMICOLON, ";", i++);
         else if (input[i] == '|')
         {
@@ -163,25 +181,36 @@ t_token *lex(const char *input)
         }
         else
             cur->next = lex_word(input, &i);
+        
+        // Safety check to prevent infinite loop
+        if (i == prev_i)
+        {
+            lexer_error("lexer stuck", i, "");
+            free_tokens(head.next);
+            return NULL;
+        }
+        
         // Always ensure we make progress to avoid infinite loop
         if (cur->next && cur->next->type == ERROR)
             break;
 
         if (cur->next)
         {
-            // check if prev is and, or, pipe, redir, heredoc if so its invalid
-            if (cur->type == AND || cur->type == OR || cur->type == PIPE ||
-                cur->type == REDIR_IN || cur->type == REDIR_OUT || cur->type == HEREDOC)
+            // check for truly invalid operator sequences
+            // Only flag consecutive operators that are actually invalid in bash
+            if ((cur->type == AND || cur->type == OR) && 
+                (cur->next->type == AND || cur->next->type == OR || cur->next->type == PIPE))
             {
-
-                if (cur->next->type == AND || cur->next->type == OR || cur->next->type == PIPE ||
-                    cur->next->type == REDIR_IN || cur->next->type == REDIR_OUT || cur->next->type == HEREDOC)
-                {
-
-                    lexer_error("syntax error near unexpected token", i, cur->value);
-                    free_tokens(head.next);
-                    return NULL;
-                }
+                lexer_error("syntax error near unexpected token", i, cur->value);
+                free_tokens(head.next);
+                return NULL;
+            }
+            // Flag pipe followed by pipe (but not pipe followed by redirection)
+            if (cur->type == PIPE && cur->next->type == PIPE)
+            {
+                lexer_error("syntax error near unexpected token", i, cur->value);
+                free_tokens(head.next);
+                return NULL;
             }
             cur = cur->next;
         }

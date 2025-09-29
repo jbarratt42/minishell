@@ -6,11 +6,13 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:31:14 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/04 12:56:17 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/29 11:24:55 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <sys/stat.h>
+#include <errno.h>
 
 static bool	try_close2(int open[2])
 {
@@ -22,7 +24,7 @@ static bool	try_close2(int open[2])
 		if (open[i] > 2)
 			if (close(open[i]) == -1)
 			{
-				perror("try_close");
+				perror("try_close2");
 				return (false);
 			}
 		i++;
@@ -62,52 +64,75 @@ char	*search_path(char *s, char **env)
 	char	*paths;
 	char	*try_path;
 	char	*end;
+	char	*path_copy;
 
 	paths = ft_getenv("PATH", env);
 	if (!paths || !*paths)
 		return (NULL);
-	end = paths;
-	while (end)
+	
+	// Make a copy since we'll be modifying the string
+	path_copy = ft_strdup(paths);
+	if (!path_copy)
+		return (NULL);
+	
+	paths = path_copy;
+	while (*paths)
 	{
 		end = ft_strchr(paths, ':');
 		if (end)
 			*end = '\0';
+		
 		try_path = append_path(paths, s);
-		if (access(try_path, F_OK) == 0)
+		if (try_path && access(try_path, F_OK) == 0)
 		{
-			if (access(try_path, R_OK) != 0 || access(try_path, X_OK))
-			{
-				perror("search_path");
-				free(try_path);
-				return (NULL);
-			}
-			return (try_path);
+			if (access(try_path, R_OK) == 0 && access(try_path, X_OK) == 0)
+				return (free(path_copy), try_path);
+			free(try_path);
 		}
-		free(try_path);
-		paths = end + 1;
+		else if (try_path)
+			free(try_path);
+		
+		if (end)
+			paths = end + 1;
+		else
+			break;
 	}
-	perror("search_path");
+	free(path_copy);
 	return (NULL);
 }
 
-static int	collect(int pids[2])
+static int	collect(int pid)
 {
-	int	wstatus[2];
+	int w_status;
+
+	if (waitpid(pid, &w_status, 0) == -1)
+	//		|| !WIFEXITED(w_status))
+	{
+			perror("collect");
+			return (-1);
+	}
+	return (WEXITSTATUS(w_status));
+}
+
+static int	collect2(int pids[2])
+{
+	int	status[2];
 	int	i;
 
 	i = 1;
 	while (i >= 0)
 	{
-		wstatus[i] = 0;
-		if ((pids[i] && waitpid(pids[i], &wstatus[i], 0) == -1)
-				|| !WIFEXITED(wstatus[i]))
+		if(pids[i] && pids[i] != -1)
 		{
-			perror("collect");
-			return (-1);
+			status[i] = collect(pids[i]);
+			if (status[i] == -1)
+				return (-1);
 		}
+		else
+			status[i] = 0;
 		i--;
 	}
-	return(WEXITSTATUS(wstatus[1]));
+	return(status[1]);
 }
 
 bool	try_dup2(int open[3])
@@ -172,88 +197,236 @@ char	*get_path(t_token *tokens, char **env)
 
 bool	is_builtin(t_token *token)
 {
-	const char builtins[][10] = {"echo", "cd", "pwd", "export", "unset",
-								 "env", "exit", ""};
-	int i;
-
-	i = 0;
-	while (*builtins[i])
-		if (!ft_strncmp(token->value, builtins[i++], 10))
-			return (true);
-	return (false);
+	if (!token || token->type != WORD)
+		return (false);
+	return (is_builtin_command(token->value));
 }
 
-void	exec_builtin(t_token *token, t_context *context)
+bool	exec_builtin(t_token *tokens, t_context *context)
 {
-	(void)token;
-	(void)context;
-	// builtin if-else ladder
-	exit(0);
+	int	status;
+
+	if (!tokens || tokens->type != WORD)
+		return (false);
+	
+	status = execute_builtin(tokens->value, tokens, context);
+	context->status = status;
+	return (status == 0);
 }
 
-pid_t	exec_terminal(t_token *tokens, t_context *context)
+bool	exec_preprocess(t_token **tokens, t_context *context)
+{
+	t_token *t;
+	if (!expand_tokens(tokens, context))
+		return (false);
+	t = *tokens;
+	while (t && t->type < PIPE && t->type != EOF_T)
+	{
+		if (t->type == WORD)
+			dequote(t->value);
+		t = t->next;
+	}
+	if (!is_command(*tokens))
+		if (!assign(tokens, context))
+			return (false);
+	if (!redirect(tokens, context))
+		return (false);
+	return (true);
+}
+
+bool	set_exp_vars(t_token **tokens, t_context *context)
+{
+	while (ft_strchr((*tokens)->value, '='))
+	{
+		if(!set_env((*tokens)->value, context->env))
+			return (false);
+		delete_tokens(tokens, 1);
+	}
+	return (true);
+}
+
+bool	cleanup_parent(t_context *context)
+{
+	if(!try_close2(context->open))
+		return (false);
+	context->open[0] = 0;
+	context->open[1] = 1;
+	return (true);
+}
+
+pid_t	exec_terminal(t_token **tokens, t_context *context)
 {
 	pid_t	pid;
+	struct stat st;
 
-	pid = fork();
-	if (pid)
-		return (pid);
-	try_dup2(context->open);
+	if (!exec_preprocess(tokens, context))
+		return (-1);
+	if (!is_command(*tokens))
+		return (0);
+	
+	// Handle builtins
+	if (is_builtin(*tokens))
+	{
+		if (!context->is_pipeline)
+		{
+			// Builtins that affect parent state run in parent when not in pipeline
+			try_dup2(context->open);
+			exec_builtin(*tokens, context);
+			return (0);
+		}
+		else
+		{
+			// Builtins in pipeline run in child
+			pid = fork();
+			if (pid == 0)
+			{
+				try_dup2(context->open);
+				exec_builtin(*tokens, context);
+				exit(context->status);
+			}
+			if (pid > 0)
+			{
+				if (!cleanup_parent(context))
+					return (-1);
+				return (pid);
+			}
+			return (-1);
+		}
+	}
+	
+	// Handle external commands
 	/*
-	if (is_builtin(tokens))
-		exec_builtin(tokens, context);
-		*/
-	execve(get_path(tokens, context->env), get_args(tokens), context->env);
-	perror("exec_terminal");
-	exit(1);
+	if (access(get_path(*tokens, context->env), X_OK) == -1)
+	{
+		perror("exec_terminal");
+		return (-1);
+	}
+	*/
+	pid = fork();
+	if (pid > 0)
+	{
+		if (!cleanup_parent(context))
+			return (-1);
+		return (pid);
+	}
+	if(!set_exp_vars(tokens, context))
+		return (-1);
+	try_dup2(context->open);
+	
+	char *path = get_path(*tokens, context->env);
+	if (!path)
+	{
+		fprintf(stderr, "%s: command not found\n", (*tokens)->value);
+		exit(127);
+	}
+	
+	// Check if the path exists and is executable
+	if (access(path, F_OK) == -1)
+	{
+		fprintf(stderr, "%s: No such file or directory\n", path);
+		exit(127);
+	}
+	if (access(path, X_OK) == -1)
+	{
+		
+		if (stat(path, &st) == 0 && S_ISDIR(st.st_mode))
+		{
+			fprintf(stderr, "%s: Is a directory\n", path);
+			exit(126);
+		}
+		else
+		{
+			fprintf(stderr, "%s: Permission denied\n", path);
+			exit(126);
+		}
+	}
+	
+	execve(path, get_args(*tokens), context->env);
+	// If we get here, execve failed
+	if (errno == ENOENT)
+	{
+		fprintf(stderr, "%s: No such file or directory\n", path);
+		exit(127);
+	}
+	else if (errno == EACCES)
+	{
+		
+		if (stat(path, &st) == 0 && S_ISDIR(st.st_mode))
+		{
+			fprintf(stderr, "%s: Is a directory\n", path);
+			exit(126);
+		}
+		else
+		{
+			fprintf(stderr, "%s: Permission denied\n", path);
+			exit(126);
+		}
+	}
+	else
+	{
+		perror("exec_terminal");
+		exit(1);
+	}
 }
 
-void	exec_sequential(t_node *node, t_context *context)
+bool	exec_sequential(t_node *node, t_context *context)
 {	
 	(void)node;
 	(void)context;
-	/*
-	int		w_status;
+	
 	pid_t	pid;
 
-	pid = traverse(node->data.op.left);
+	pid = traverse(node->data.op.left, context);
 	if (pid)
-	{
-		if (waitpid(pid, w_status, 0) == -1 || !WIFEXITED(w_status))
-		{
-			perror("exec_sequential");
-			return (-1);
-		}
-		w_status = WEXITSTATUS(w_status);
-		if ((node->data.op.type == AND && ret != 0)
-					|| (node->data.op.type == OR && ret == 0))
-				context->status = w_status;
-				return
-	else
-		pid = tran
-		*/
-	return ;
+		context->status = collect(pid);
+	if (context->status == -1)
+		return (false);
+	if ((node->data.op.type == AND && context->status != 0)
+			|| (node->data.op.type == OR && context->status == 0))
+			return (true);
+	pid = traverse(node->data.op.right, context);
+	if (pid)
+		context->status = collect(pid);
+	if (context->status == -1)
+		return (false);
+	return (true);
 }
-		
+	
 pid_t	traverse(t_node *node, t_context *context)
 {
 	pid_t	pids[2];
+	int		status;
+
 	if (node->is_terminal)
-		return (exec_terminal(node->data.tokens, context));
+		return (exec_terminal(&node->data.tokens, context));
 	if (node->data.op.type != PIPE)
 	{
+		context->is_pipeline = false;
 		exec_sequential(node, context);
 		return (0);
 	}
+	context->is_pipeline = true;
 	if (!try_pipe(&context->open[1]))
 		return (-1);
 	pids[0] = traverse(node->data.op.left, context);
+	/*
+	if (pids[0] == -1)
+		return (-1);
+		*/
 	if (!try_close2(context->open))
 		return (-1);
 	context->open[0] = context->open[2];
 	context->open[1] = 1;
 	context->open[2] = -1;
 	pids[1] = traverse(node->data.op.right, context);
-	context->status = collect(pids);
+	if (pids[1] == -1)
+		context->status = 1;
+	/*
+	if (pids[1] == -1)
+		return (-1);
+		*/
+	status = collect2(pids);
+	if (pids[1] && pids[1] != -1)
+		context->status = status;
 	return (0);
 }
