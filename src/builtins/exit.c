@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 12:44:34 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/29 12:44:35 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/29 13:50:07 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,6 @@ int	builtin_exit(t_token *tokens, t_context *context)
 		}
 	}
 	printf("exit\n");
-	free_context(context);
-	exit(exit_code);
+	cleanup_and_exit(context);
+	return (exit_code);
 }

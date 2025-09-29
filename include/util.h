@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:06:47 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/29 13:07:20 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/29 13:48:17 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,4 +31,5 @@ void	init_context(t_context *context, int argc, char **argv, char **env);
 char	*get_project_root(void);
 char	*get_history_path(void);
 char	*get_var(char *name, char **env);
+void	cleanup_and_exit(t_context *context);
 #endif

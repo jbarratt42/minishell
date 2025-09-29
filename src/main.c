@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:09:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/29 13:20:45 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/29 13:53:48 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	parse_and_execute(t_context *context, bool is_interactive)
 		add_history(context->input);
 	context->tokens = lex(context->input);
 	if (!context->tokens)
-		(free(context->input), g_status = EXIT_FAILURE);
+		cleanup_and_exit(context);
 	context->tree = parse(&context->tokens, 0);
 	pid = traverse(context->tree, context);
 	if (pid == -1)
@@ -34,12 +34,8 @@ void	parse_and_execute(t_context *context, bool is_interactive)
 			perror("main");
 		context->status = WEXITSTATUS(context->status);
 	}
-	free(context->input);
 	if (!is_interactive)
-	{
-		free_context(context);
-		exit(context->status);
-	}
+		cleanup_and_exit(context);
 }
 
 int	main(int argc, char **argv, char **env)
@@ -61,7 +57,13 @@ int	main(int argc, char **argv, char **env)
 			builtin_exit(context.tokens, &context);
 		}
 		parse_and_execute(&context, is_interactive);
+		free_tokens(context.tokens);
+		free_node(context.tree);
+		context.tokens = NULL;
+		context.tree = NULL;
 	}
+	free_tokens(context.tokens);
+	free_node(context.tree);
 	free_context(&context);
 	return (EXIT_SUCCESS);
 }
