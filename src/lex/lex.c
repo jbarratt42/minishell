@@ -196,19 +196,21 @@ t_token *lex(const char *input)
 
         if (cur->next)
         {
-            // check if prev is and, or, pipe, redir, heredoc if so its invalid
-            if (cur->type == AND || cur->type == OR || cur->type == PIPE ||
-                cur->type == REDIR_IN || cur->type == REDIR_OUT || cur->type == HEREDOC)
+            // check for truly invalid operator sequences
+            // Only flag consecutive operators that are actually invalid in bash
+            if ((cur->type == AND || cur->type == OR) && 
+                (cur->next->type == AND || cur->next->type == OR || cur->next->type == PIPE))
             {
-
-                if (cur->next->type == AND || cur->next->type == OR || cur->next->type == PIPE ||
-                    cur->next->type == REDIR_IN || cur->next->type == REDIR_OUT || cur->next->type == HEREDOC)
-                {
-
-                    lexer_error("syntax error near unexpected token", i, cur->value);
-                    free_tokens(head.next);
-                    return NULL;
-                }
+                lexer_error("syntax error near unexpected token", i, cur->value);
+                free_tokens(head.next);
+                return NULL;
+            }
+            // Flag pipe followed by pipe (but not pipe followed by redirection)
+            if (cur->type == PIPE && cur->next->type == PIPE)
+            {
+                lexer_error("syntax error near unexpected token", i, cur->value);
+                free_tokens(head.next);
+                return NULL;
             }
             cur = cur->next;
         }
