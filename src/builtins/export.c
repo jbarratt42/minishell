@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   export.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/29 12:48:42 by chuezeri          #+#    #+#             */
+/*   Updated: 2025/09/29 12:48:55 by chuezeri         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static bool	is_valid_identifier(const char *str)
@@ -6,11 +18,8 @@ static bool	is_valid_identifier(const char *str)
 
 	if (!str || !*str)
 		return (false);
-	
-	// First character must be letter or underscore
 	if (!ft_isalpha(*str) && *str != '_')
 		return (false);
-	
 	i = 1;
 	while (str[i] && str[i] != '=')
 	{
@@ -18,7 +27,6 @@ static bool	is_valid_identifier(const char *str)
 			return (false);
 		i++;
 	}
-	
 	return (true);
 }
 
@@ -28,8 +36,8 @@ static void	print_exported_vars(char **env)
 	int		count;
 	int		i;
 	int		j;
+	char	*temp;
 
-	// Count exported variables
 	count = 0;
 	i = 0;
 	while (env && env[i])
@@ -38,16 +46,11 @@ static void	print_exported_vars(char **env)
 			count++;
 		i++;
 	}
-	
 	if (count == 0)
-		return;
-	
-	// Create sorted array
+		return ;
 	sorted_env = malloc((count + 1) * sizeof(char *));
 	if (!sorted_env)
-		return;
-	
-	// Copy exported variables
+		return ;
 	j = 0;
 	i = 0;
 	while (env && env[i])
@@ -57,32 +60,27 @@ static void	print_exported_vars(char **env)
 		i++;
 	}
 	sorted_env[j] = NULL;
-	
-	// Simple bubble sort
 	for (i = 0; i < count - 1; i++)
 	{
 		for (j = 0; j < count - i - 1; j++)
 		{
-			if (ft_strncmp(sorted_env[j], sorted_env[j + 1], ft_strlen(sorted_env[j]) + 1) > 0)
+			if (ft_strncmp(sorted_env[j], sorted_env[j + 1],
+					ft_strlen(sorted_env[j]) + 1) > 0)
 			{
-				char *temp = sorted_env[j];
+				temp = sorted_env[j];
 				sorted_env[j] = sorted_env[j + 1];
 				sorted_env[j + 1] = temp;
 			}
 		}
 	}
-	
-	// Print in format "declare -x VAR=value"
 	i = 0;
 	while (sorted_env[i])
 	{
 		printf("declare -x %s\n", sorted_env[i]);
 		i++;
 	}
-	
 	free(sorted_env);
 }
-
 
 int	builtin_export(t_token *tokens, t_context *context)
 {
@@ -90,21 +88,21 @@ int	builtin_export(t_token *tokens, t_context *context)
 	char	*var;
 	char	*pos;
 	int		ret;
+	char	*joined;
+	t_token	*to_free;
+	char	*local_var;
 
 	current = tokens;
 	ret = 0;
-	
 	// Skip the command name
 	if (current && current->type == WORD)
 		current = current->next;
-	
 	// If no arguments, print all exported variables
 	if (!current || current->type != WORD)
 	{
 		print_exported_vars(context->env);
 		return (0);
 	}
-	
 	// Process each argument
 	while (current && current->type == WORD)
 	{
@@ -112,16 +110,18 @@ int	builtin_export(t_token *tokens, t_context *context)
 		// Merge any following WORD tokens if current contains '=' or ends with '='
 		if (var && ft_strchr(var, '='))
 		{
-			while (current->next && current->next->type == WORD && current->next->value)
+			while (current->next && current->next->type == WORD
+				&& current->next->value)
 			{
-				char *joined = ft_strjoin(current->value, current->next->value);
+				joined = ft_strjoin(current->value, current->next->value);
 				if (!joined)
-					break;
+					break ;
 				free(current->value);
 				current->value = joined;
-				t_token *to_free = current->next;
+				to_free = current->next;
 				current->next = to_free->next;
-				if (to_free->value) free(to_free->value);
+				if (to_free->value)
+					free(to_free->value);
 				free(to_free);
 			}
 			var = current->value;
@@ -132,19 +132,21 @@ int	builtin_export(t_token *tokens, t_context *context)
 			*pos = '\0';
 		if (!is_valid_identifier(var))
 		{
-			if (pos) *pos = '=';
-			fprintf(stderr, "export: `%s': not a valid identifier\n", current->value);
+			if (pos)
+				*pos = '=';
+			fprintf(stderr, "export: `%s': not a valid identifier\n",
+				current->value);
 			ret = 1;
 			current = current->next;
-			continue;
+			continue ;
 		}
-		if (pos) *pos = '=';
-
+		if (pos)
+			*pos = '=';
 		// Move from local if bare name exists there, else set env
 		pos = ft_strchr(current->value, '=');
 		if (!pos)
 		{
-			char *local_var = get_var(current->value, context->local);
+			local_var = get_var(current->value, context->local);
 			if (local_var)
 				context->env = set_env(ft_strdup(local_var), context->env);
 			else
@@ -152,7 +154,6 @@ int	builtin_export(t_token *tokens, t_context *context)
 		}
 		else
 			context->env = set_env(ft_strdup(current->value), context->env);
-
 		if (!context->env)
 		{
 			perror("export");
@@ -160,6 +161,5 @@ int	builtin_export(t_token *tokens, t_context *context)
 		}
 		current = current->next;
 	}
-	
 	return (ret);
 }

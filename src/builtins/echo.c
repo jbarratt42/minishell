@@ -1,34 +1,38 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   echo.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/29 12:46:42 by chuezeri          #+#    #+#             */
+/*   Updated: 2025/09/29 12:48:03 by chuezeri         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int	builtin_echo(t_token *tokens, t_context *context)
 {
 	bool	newline;
 	t_token	*current;
+	int		i;
 
 	(void)context;
 	newline = true;
 	current = tokens;
-	
-	// Skip the command name
 	if (current && current->type == WORD)
 		current = current->next;
-	
-	// Check for -n flag
 	while (current && current->type == WORD && current->value[0] == '-')
 	{
-		int i = 1;
+		i = 1;
 		while (current->value[i] == 'n')
 			i++;
-		if (current->value[i] == '\0' && i > 1)
-		{
-			newline = false;
-			current = current->next;
-		}
-		else
-			break;
+		if (!(current->value[i] == '\0' && i > 1))
+			break ;
+		newline = false;
+		current = current->next;
 	}
-	
-	// Print arguments
 	while (current && current->type == WORD)
 	{
 		printf("%s", current->value);
@@ -36,9 +40,7 @@ int	builtin_echo(t_token *tokens, t_context *context)
 		if (current && current->type == WORD)
 			printf(" ");
 	}
-	
 	if (newline)
 		printf("\n");
-	
 	return (0);
 }

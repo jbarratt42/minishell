@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cd.c                                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/29 12:45:55 by chuezeri          #+#    #+#             */
+/*   Updated: 2025/09/29 12:46:33 by chuezeri         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 #include <sys/stat.h>
 
@@ -21,17 +33,11 @@ static void	update_pwd_vars(t_context *context, char *old_pwd)
 	if (!new_pwd)
 	{
 		perror("cd: getcwd");
-		return;
+		return ;
 	}
-	
-	// Update PWD
 	pwd_var = ft_strjoin("PWD=", new_pwd);
 	if (pwd_var)
-	{
 		context->env = set_env(pwd_var, context->env);
-	}
-	
-	// Update OLDPWD
 	if (old_pwd)
 	{
 		old_pwd_var = ft_strjoin("OLDPWD=", old_pwd);
@@ -41,7 +47,6 @@ static void	update_pwd_vars(t_context *context, char *old_pwd)
 		}
 		free(old_pwd);
 	}
-	
 	free(new_pwd);
 }
 
@@ -50,24 +55,15 @@ int	builtin_cd(t_token *tokens, t_context *context)
 	char	*path;
 	char	*old_pwd;
 	t_token	*current;
+	char	*new_pwd;
 
 	current = tokens;
-	
-	// Skip the command name
 	if (current && current->type == WORD)
 		current = current->next;
-	
-	// too many arguments
-	if (current && current->type == WORD && current->next && current->next->type == WORD)
-	{
-		fprintf(stderr, "cd: too many arguments\n");
-		return (1);
-	}
-	
-	// Get current directory for OLDPWD
+	if (current && current->type == WORD && current->next
+		&& current->next->type == WORD)
+		return (fprintf(stderr, "cd: too many arguments\n"), 1);
 	old_pwd = getcwd(NULL, 0);
-	
-	// Determine target path
 	if (!current || current->type != WORD)
 	{
 		path = get_home_path(context);
@@ -80,8 +76,6 @@ int	builtin_cd(t_token *tokens, t_context *context)
 	}
 	else
 		path = current->value;
-	
-	// Handle special cases
 	if (ft_strcmp(path, "-") == 0)
 	{
 		path = ft_getenv("OLDPWD", context->env);
@@ -99,28 +93,21 @@ int	builtin_cd(t_token *tokens, t_context *context)
 		free(old_pwd);
 		return (2);
 	}
-	
-	// Change directory
 	if (chdir(path) == -1)
 	{
 		perror("cd");
 		free(old_pwd);
 		return (1);
 	}
-	
-	// Update environment variables
 	update_pwd_vars(context, old_pwd);
-	
-	// Print new directory if cd -
 	if (current && current->type == WORD && ft_strcmp(current->value, "-") == 0)
 	{
-		char *new_pwd = getcwd(NULL, 0);
+		new_pwd = getcwd(NULL, 0);
 		if (new_pwd)
 		{
 			printf("%s\n", new_pwd);
 			free(new_pwd);
 		}
 	}
-	
 	return (0);
 }

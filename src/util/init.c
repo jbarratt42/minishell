@@ -1,43 +1,72 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/29 12:53:36 by chuezeri          #+#    #+#             */
+/*   Updated: 2025/09/29 13:14:13 by chuezeri         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-char *get_project_root(void)
+char	*get_project_root(void)
 {
-	static char project_root[PATH_MAX];
-	char *cwd;
-	char *minishell_pos;
+	static char	project_root[PATH_MAX];
+	char		*cwd;
+	char		*minishell_pos;
 
 	if (project_root[0] != '\0')
 		return (project_root);
-
 	cwd = getcwd(NULL, 0);
 	if (!cwd)
 		return (NULL);
-
-	// Look for the project root by finding where we are relative to the executable
-	// or by looking for a marker file like Makefile
 	minishell_pos = ft_strnstr(cwd, "minishell", ft_strlen(cwd));
 	if (minishell_pos)
 	{
-		// Find the end of the minishell directory name
 		while (*minishell_pos && *minishell_pos != '/')
 			minishell_pos++;
 		if (*minishell_pos == '/')
 			minishell_pos++;
-		// Truncate at the end of minishell directory
 		*minishell_pos = '\0';
 		ft_strcpy(project_root, cwd);
 	}
 	else
 	{
-		// Fallback: use current directory
 		ft_strcpy(project_root, cwd);
 	}
-
 	free(cwd);
 	return (project_root);
 }
 
-void init_context(t_context *context, int argc, char **argv, char **env)
+char	*get_history_path(void)
+{
+	static char	*project_root;
+	static char	*history_path;
+
+	project_root = get_project_root();
+	history_path = NULL;
+	if (project_root)
+	{
+		history_path = malloc(ft_strlen(project_root)
+				+ ft_strlen(MINSHELL_DIRECTORY) + 10);
+		if (history_path)
+		{
+			ft_strcpy(history_path, project_root);
+			ft_strlcat(history_path, "/", ft_strlen(project_root)
+				+ ft_strlen(MINSHELL_DIRECTORY) + 10);
+			ft_strlcat(history_path, MINSHELL_DIRECTORY, ft_strlen(project_root)
+				+ ft_strlen(MINSHELL_DIRECTORY) + 10);
+			ft_strlcat(history_path, "/history", ft_strlen(project_root)
+				+ ft_strlen(MINSHELL_DIRECTORY) + 10);
+		}
+	}
+	return (NULL);
+}
+
+void	init_context(t_context *context, int argc, char **argv, char **env)
 {
 	context->argc = argc;
 	context->argv = argv;
