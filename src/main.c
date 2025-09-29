@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:09:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/29 16:26:11 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/29 17:10:47 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,10 @@ void	parse_and_execute(t_context *context, bool is_interactive)
 		add_history(context->input);
 	context->tokens = lex(context->input);
 	if (!context->tokens)
-		cleanup_and_exit(context);
+	{
+		free_node(context->tree);
+		exit(context->status);
+	}
 	context->tree = parse(&context->tokens, 0);
 	pid = traverse(context->tree, context);
 	if (pid == -1)

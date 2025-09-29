@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 17:50:47 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/29 16:35:08 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/29 16:51:49 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ char	*expand(char *str, t_context *context)
 
 	ret = malloc(compute_length(str, context) + 1);
 	if (!ret)
-		return (false);
+		return (NULL);
 	p = str;
 	q = ret;
 	quoted = false;

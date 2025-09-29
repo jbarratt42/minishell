@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 17:16:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/29 16:39:07 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/29 17:07:42 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,11 @@ static t_token	*lex_word(const char *input, int *i)
 {
 	int		start;
 	char	delim;
+	t_token	*token;
+	char	*str;
 
 	start = *i;
 	delim = '\0';
-	// Allow - to be part of a word when not standalone
 	if (input[*i] == '-')
 		(*i)++;
 	while (input[*i] && !(!delim && ft_isspace((unsigned char)input[*i]))
@@ -60,10 +61,12 @@ static t_token	*lex_word(const char *input, int *i)
 			delim = input[*i];
 		(*i)++;
 	}
-	// Safety check to prevent infinite loop
 	if (*i == start)
 		(*i)++;
-	return (token_new(WORD, ft_strndup(input + start, *i - start), start));
+	str = ft_strndup(input + start, *i - start);
+	token = token_new(WORD, str, start);
+	free(str);
+	return (token);
 }
 
 t_token	*lex(const char *input)
@@ -77,7 +80,7 @@ t_token	*lex(const char *input)
 	cur = &head;
 	head.type = WORD;
 	i = 0;
-	while (input[i])
+	while (*input && input[i])
 	{
 		prev_i = i;
 		while (ft_isspace((unsigned char)input[i]))
