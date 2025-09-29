@@ -3,69 +3,65 @@
 /*                                                        :::      ::::::::   */
 /*   util.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
+/*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 17:50:47 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/08/24 20:09:00 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/29 16:35:08 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-const char *token_type_str(t_token_type type)
+static size_t	compute_length(char *str, t_context *context)
 {
-    switch (type)
-    {
-    case WORD:
-        return "WORD";
-    case SQUOTE:
-        return "SQUOTE";
-    case DQUOTE:
-        return "DQUOTE";
-    case PIPE:
-        return "PIPE";
-    case AND:
-        return "AND";
-    case OR:
-        return "OR";
-    case SEMICOLON:
-        return "SEMICOLON";
-    case REDIR_IN:
-        return "REDIR_IN";
-    case REDIR_OUT:
-        return "REDIR_OUT";
-    case REDIR_APPEND:
-        return "REDIR_APPEND";
-    case HEREDOC:
-        return "HEREDOC";
-    case EOF_T:
-        return "EOF";
-    case ERROR:
-        return "ERROR";
-    default:
-        return "UNKNOWN";
-    }
+	size_t	ret;
+	char	*pos;
+
+	ret = ft_strlen(str);
+	pos = str;
+	while (*pos)
+	{
+		if (*pos == '$')
+			ret += expand_special(NULL, &pos, context);
+		else
+			pos++;
+	}
+	return (ret);
 }
 
-void print_tokens(const t_token *tok)
+/* @brief get the (length of the) new context->lineing with expanded variables
+ * @param context->line context->lineing with variables
+ * @param len length of new context->lineing.  if this is 0, just return the
+ * length of the expanded context->lineing
+ * NOTE: context->lineing must not end with '\'!
+ */
+char	*expand(char *str, t_context *context)
 {
-    printf("|-------------TOKENS----------------|\n");
-    printf("|-----------------------------------|\n");
-    printf("| %-12s | %-5s | %-10s |\n", "Type", "Pos", "Value");
-    printf("|--------------|-------|------------|\n");
+	bool	quoted;
+	char	*ret;
+	char	*p;
+	char	*q;
 
-    int count = 0;
-    while (tok)
-    {
-        printf("| %-12s | %-5d | %-10s |\n",
-               token_type_str(tok->type),
-               tok->pos,
-               tok->value ? tok->value : "(null)");
-
-        printf("|--------------|-------|------------|\n");
-        tok = tok->next;
-        count++;
-    }
-
-    printf("Total tokens: %d\n", count);
+	ret = malloc(compute_length(str, context) + 1);
+	if (!ret)
+		return (false);
+	p = str;
+	q = ret;
+	quoted = false;
+	while (*p)
+	{
+		if (*p == '\\')
+			*q++ = *p++;
+		else if (*p == '\'')
+			quoted = !quoted;
+		else if (!quoted && *p == '$')
+		{
+			expand_special(&q, &p, context);
+			continue ;
+		}
+		*q++ = *p++;
+	}
+	*q = '\0';
+	free(str);
+	return (ret);
 }

@@ -3,7 +3,7 @@ NAME = minishell
 EXEC = $(NAME)
 
 # Define compiler and flags
-CC = cc
+CC = cc -g
 ifndef DEBUG
 CC += -O3
 endif

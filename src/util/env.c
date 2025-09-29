@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 13:16:48 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/16 09:59:51 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/29 15:36:42 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	free_env(char **env)
 	char	**p;
 
 	if (!env)
-		return;
+		return ;
 	p = env;
 	while (*p)
 		free(*p++);
@@ -52,7 +52,8 @@ void	free_env(char **env)
 
 char	**init_env(void)
 {
-	char **env;
+	char	**env;
+
 	env = malloc(sizeof(char *));
 	if (!env)
 		return (NULL);
@@ -90,7 +91,7 @@ char	**push_env(char *var, char **env)
 		return (NULL);
 	}
 	i = 0;
-	while(i < len)
+	while (i < len)
 	{
 		p[i] = env[i];
 		i++;
@@ -110,14 +111,14 @@ char	**set_env(char *var, char **env)
 	char	**p;
 
 	if (!env)
-		return(push_env(var, env));
+		return (push_env(var, env));
 	pos = ft_strchr(var, '=');
 	if (!pos)
 		pos = var + ft_strlen(var);
 	p = env;
 	while (*p)
 	{
-		if(!ft_strncmp(var, *p, pos - var) && *pos == '=')
+		if (!ft_strncmp(var, *p, pos - var) && *pos == '=')
 		{
 			free(*p);
 			*p = var;
@@ -128,9 +129,9 @@ char	**set_env(char *var, char **env)
 	return (push_env(var, env));
 }
 
-char *get_var(char *name, char **env)
+char	*get_var(char *name, char **env)
 {
-	const size_t len = ft_strlen(name);
+	const size_t	len = ft_strlen(name);
 
 	if (!env)
 		return (NULL);
@@ -143,7 +144,7 @@ char *get_var(char *name, char **env)
 	return (NULL);
 }
 
-char *ft_getenv(char *name, char **env)
+char	*ft_getenv(char *name, char **env)
 {
 	char	*var;
 

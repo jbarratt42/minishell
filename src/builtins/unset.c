@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 12:49:21 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/29 12:50:18 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/29 16:25:21 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,15 +46,7 @@ static void	unset_from_env(char **env, const char *name)
 		if (equal_pos && (equal_pos - *p) == name_len)
 		{
 			if (ft_strcmp(*p, name) == 0)
-			{
-				free(*p);
-				while (*p)
-				{
-					*p = *(p + 1);
-					p++;
-				}
-				return ;
-			}
+				return (free(*p));
 		}
 		p++;
 	}

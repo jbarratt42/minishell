@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 10:46:56 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/29 13:33:07 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/29 16:20:04 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ t_node					*parse(t_token **token, int min_precedence);
 int						is_arg(t_token *token);
 int						try_open(char *path, int flags);
 void					parse_redirect(t_token *token, int fd[2]);
-t_node					*parse_command(t_token *token, char *path, char **argv,
-							int *fd);
+
 void					free_node(t_node *node);
 #endif

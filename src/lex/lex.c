@@ -3,235 +3,154 @@
 /*                                                        :::      ::::::::   */
 /*   lex.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
+/*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 17:16:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/28 15:57:41 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/29 16:39:07 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int is_metachar(char c)
+static int	is_metachar(char c)
 {
-    return (c == '|' || c == '<' || c == '>' || c == '&' || c == '-');
+	return (c == '|' || c == '<' || c == '>' || c == '&' || c == '-');
 }
 
-static void lexer_error(const char *msg, int pos, char *token)
+static void	lexer_error(const char *msg, int pos, char *token)
 {
-    (void)msg;
-    (void)pos;
+	(void)msg;
+	(void)pos;
 	(void)token;
-    // perror("minishell");
-    // fprintf(stderr, "minishell: %s %s\n", msg, token);
-    fprintf(stderr, "minishell: %s %s\n", msg, "");
+	fprintf(stderr, "minishell: %s %s\n", msg, "");
 }
 
-static t_token *token_new(t_token_type type, const char *val, int pos)
+static t_token	*token_new(t_token_type type, const char *val, int pos)
 {
-    t_token *tok = malloc(sizeof(t_token));
-    if (!tok)
-        return NULL;
-    tok->type = type;
-    tok->value = val ? ft_strdup(val) : NULL;
-    tok->pos = pos;
-    tok->next = NULL;
-    return tok;
+	t_token	*tok;
+
+	tok = malloc(sizeof(t_token));
+	if (!tok)
+		return (NULL);
+	tok->type = type;
+	tok->value = NULL;
+	if (val)
+		tok->value = ft_strdup(val);
+	tok->pos = pos;
+	tok->next = NULL;
+	return (tok);
 }
 
-static t_token *lex_word(const char *input, int *i)
+static t_token	*lex_word(const char *input, int *i)
 {
-    int start = *i;
-	char	delim = '\0';
-    // Allow - to be part of a word when not standalone
-    if (input[*i] == '-')
-        (*i)++;
-    while (input[*i] && !(!delim && ft_isspace((unsigned char)input[*i])) &&
-           !(!delim && (is_metachar(input[*i]) && input[*i] != '-')))
+	int		start;
+	char	delim;
+
+	start = *i;
+	delim = '\0';
+	// Allow - to be part of a word when not standalone
+	if (input[*i] == '-')
+		(*i)++;
+	while (input[*i] && !(!delim && ft_isspace((unsigned char)input[*i]))
+		&& !(!delim && (is_metachar(input[*i]) && input[*i] != '-')))
 	{
 		if (input[*i] == delim)
 			delim = '\0';
 		else if (!delim && (input[*i] == '\'' || input[*i] == '"'))
 			delim = input[*i];
-        (*i)++;
+		(*i)++;
 	}
-    
-    // Safety check to prevent infinite loop
-    if (*i == start)
-        (*i)++;
-        
-    return (token_new(WORD, ft_strndup(input + start, *i - start), start));
+	// Safety check to prevent infinite loop
+	if (*i == start)
+		(*i)++;
+	return (token_new(WORD, ft_strndup(input + start, *i - start), start));
 }
 
-/*
-static t_token *lex_quote(const char *input, int *i, char quote)
+t_token	*lex(const char *input)
 {
-    int start = ++(*i);
-    while (input[*i] && input[*i] != quote)
-        (*i)++;
-    if (!input[*i])
-    {
-        lexer_error("unclosed quote", start - 1, NULL);
-        return token_new(ERROR, NULL, start - 1);
-    }
+	static t_token	head = {0};
+	t_token			*cur;
+	int				i;
+	t_token			*eof_token;
+	int				prev_i;
 
-    // Create opening quote token
-    t_token *head = token_new(
-        quote == '\'' ? SQUOTE : DQUOTE,
-        ft_strndup(&quote, 1),
-        start - 1);
-
-    // Create content token if there's content inside
-    if (*i > start)
-    {
-        head->next = token_new(WORD, ft_strndup(input + start, *i - start), start);
-        head->next->prev = head;
-    }
-
-    // Create closing quote token
-    t_token *closing_quote = token_new(
-        quote == '\'' ? SQUOTE : DQUOTE,
-        ft_strndup(&quote, 1),
-        *i);
-
-    if (head->next)
-    {
-        head->next->next = closing_quote;
-        closing_quote->prev = head->next;
-    }
-    else
-    {
-        head->next = closing_quote;
-        closing_quote->prev = head;
-    }
-
-    (*i)++; // skip closing quote
-    return head;
-}
-*/
-
-t_token *lex(const char *input)
-{
-    t_token head = {0};
-    t_token *cur = &head;
-    head.type = WORD; // Initialize the dummy head node with a valid type
-
-    int i = 0;
-
-    while (input[i])
-    {
-        int prev_i = i;  // Track previous position to detect infinite loops
-        
-        if (ft_isspace((unsigned char)input[i]))
-        {
-            i++;
-            continue;
-        }
-
-		/*
-        if (input[i] == '\'' || input[i] == '"')
-        {
-            t_token *quote_tokens = lex_quote(input, &i, input[i]);
-            if (quote_tokens)
-            {
-                cur->next = quote_tokens;
-                // Find the last token in the quote sequence
-                while (quote_tokens->next)
-                    quote_tokens = quote_tokens->next;
-                cur = quote_tokens;
-            }
-        }
-        else */
+	cur = &head;
+	head.type = WORD;
+	i = 0;
+	while (input[i])
+	{
+		prev_i = i;
+		while (ft_isspace((unsigned char)input[i]))
+			i++;
 		if (input[i] == ';')
-            cur->next = token_new(SEMICOLON, ";", i++);
-        else if (input[i] == '|')
-        {
-            if (input[i + 1] == '|')
-            {
-                cur->next = token_new(OR, "||", i);
-                i += 2;
-            }
-            else
-                cur->next = token_new(PIPE, "|", i++);
-        }
-        else if (input[i] == '&' && input[i + 1] == '&')
-        {
-            cur->next = token_new(AND, "&&", i);
-            i += 2;
-        }
-        else if (input[i] == '<')
-        {
-            if (input[i + 1] == '<')
-            {
-                cur->next = token_new(HEREDOC, "<<", i);
-                i += 2;
-            }
-            else
-                cur->next = token_new(REDIR_IN, "<", i++);
-        }
-        else if (input[i] == '>')
-        {
-            if (input[i + 1] == '>')
-            {
-                cur->next = token_new(REDIR_APPEND, ">>", i);
-                i += 2;
-            }
-            else
-                cur->next = token_new(REDIR_OUT, ">", i++);
-        }
-        else
-            cur->next = lex_word(input, &i);
-        
-        // Safety check to prevent infinite loop
-        if (i == prev_i)
-        {
-            lexer_error("lexer stuck", i, "");
-            free_tokens(head.next);
-            return NULL;
-        }
-        
-        // Always ensure we make progress to avoid infinite loop
-        if (cur->next && cur->next->type == ERROR)
-            break;
-
-        if (cur->next)
-        {
-            // check for truly invalid operator sequences
-            // Only flag consecutive operators that are actually invalid in bash
-            if ((cur->type == AND || cur->type == OR) && 
-                (cur->next->type == AND || cur->next->type == OR || cur->next->type == PIPE))
-            {
-                lexer_error("syntax error near unexpected token", i, cur->value);
-                free_tokens(head.next);
-                return NULL;
-            }
-            // Flag pipe followed by pipe (but not pipe followed by redirection)
-            if (cur->type == PIPE && cur->next->type == PIPE)
-            {
-                lexer_error("syntax error near unexpected token", i, cur->value);
-                free_tokens(head.next);
-                return NULL;
-            }
-            cur = cur->next;
-        }
-    }
-    // Add EOF token at the end with proper type
-    t_token *eof_token = token_new(EOF_T, NULL, i);
-    if (eof_token)
-        cur->next = eof_token;
-
-    return (head.next);
-}
-
-void free_tokens(t_token *tok)
-{
-    t_token *tmp;
-    while (tok)
-    {
-        tmp = tok->next;
-        if (tok->value)
-            free(tok->value);
-        free(tok);
-        tok = tmp;
-    }
+			cur->next = token_new(SEMICOLON, ";", i++);
+		else if (input[i] == '|')
+		{
+			if (input[i + 1] == '|')
+			{
+				cur->next = token_new(OR, "||", i);
+				i += 2;
+			}
+			else
+				cur->next = token_new(PIPE, "|", i++);
+		}
+		else if (input[i] == '&' && input[i + 1] == '&')
+		{
+			cur->next = token_new(AND, "&&", i);
+			i += 2;
+		}
+		else if (input[i] == '<')
+		{
+			if (input[i + 1] == '<')
+			{
+				cur->next = token_new(HEREDOC, "<<", i);
+				i += 2;
+			}
+			else
+				cur->next = token_new(REDIR_IN, "<", i++);
+		}
+		else if (input[i] == '>')
+		{
+			if (input[i + 1] == '>')
+			{
+				cur->next = token_new(REDIR_APPEND, ">>", i);
+				i += 2;
+			}
+			else
+				cur->next = token_new(REDIR_OUT, ">", i++);
+		}
+		else
+			cur->next = lex_word(input, &i);
+		if (i == prev_i)
+		{
+			lexer_error("lexer stuck", i, "");
+			free_tokens(head.next);
+			return (NULL);
+		}
+		if (cur->next && cur->next->type == ERROR)
+			break ;
+		if (cur->next)
+		{
+			if ((cur->type == AND || cur->type == OR) && (cur->next->type == AND
+					|| cur->next->type == OR || cur->next->type == PIPE))
+			{
+				lexer_error("syntax error near unexpected token", i,
+					cur->value);
+				free_tokens(head.next);
+				return (NULL);
+			}
+			if (cur->type == PIPE && cur->next->type == PIPE)
+			{
+				lexer_error("syntax error near unexpected token", i,
+					cur->value);
+				free_tokens(head.next);
+				return (NULL);
+			}
+			cur = cur->next;
+		}
+	}
+	eof_token = token_new(EOF_T, NULL, i);
+	if (eof_token)
+		cur->next = eof_token;
+	return (head.next);
 }

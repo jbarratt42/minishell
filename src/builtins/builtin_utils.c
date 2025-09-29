@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 12:44:47 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/29 12:45:50 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/29 16:40:33 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,33 +53,13 @@ int	execute_builtin(const char *cmd, t_token *tokens, t_context *context)
 
 int	builtin_history(t_token *tokens, t_context *context)
 {
-	char	*project_root;
 	char	*history_path;
-	int		result;
 
 	(void)tokens;
 	(void)context;
-	project_root = get_project_root();
-	if (!project_root)
-	{
-		fprintf(stderr, "history: unable to determine project root\n");
-		return (1);
-	}
-	history_path = malloc(ft_strlen(project_root)
-			+ ft_strlen(MINSHELL_DIRECTORY) + 10);
+	history_path = get_history_path();
 	if (!history_path)
-	{
-		fprintf(stderr, "history: memory allocation failed\n");
-		return (1);
-	}
-	ft_strcpy(history_path, project_root);
-	ft_strlcat(history_path, "/", ft_strlen(project_root)
-		+ ft_strlen(MINSHELL_DIRECTORY) + 10);
-	ft_strlcat(history_path, MINSHELL_DIRECTORY, ft_strlen(project_root)
-		+ ft_strlen(MINSHELL_DIRECTORY) + 10);
-	ft_strlcat(history_path, "/history", ft_strlen(project_root)
-		+ ft_strlen(MINSHELL_DIRECTORY) + 10);
-	result = print_history(history_path);
+		return (EXIT_FAILURE);
 	free(history_path);
-	return (result);
+	return (print_history(history_path));
 }

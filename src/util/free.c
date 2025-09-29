@@ -1,14 +1,12 @@
-
-
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
+/*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 11:49:07 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/06 13:33:59 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/29 16:39:41 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +18,20 @@ void	free_token(t_token *token)
 		free_token(token->next);
 	free(token->value);
 	free(token);
+}
+
+void	free_tokens(t_token *tok)
+{
+	t_token	*tmp;
+
+	while (tok)
+	{
+		tmp = tok->next;
+		if (tok->value)
+			free(tok->value);
+		free(tok);
+		tok = tmp;
+	}
 }
 
 void	free_node(t_node *node)
@@ -44,6 +56,5 @@ void	cleanup_and_exit(t_context *context)
 {
 	free_tokens(context->tokens);
 	free_node(context->tree);
-	free_context(context);
 	exit(context->status);
 }

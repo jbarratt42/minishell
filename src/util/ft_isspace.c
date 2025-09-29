@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   ft_isspace.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
+/*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 15:49:06 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/08/24 15:49:07 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/29 15:40:22 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int ft_isspace(int c)
+int	ft_isspace(int c)
 {
-    if (c == ' ' || c == '\t' || c == '\n' ||
-        c == '\v' || c == '\f' || c == '\r')
-        return (1);
-    return (0);
+	if (c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f'
+		|| c == '\r')
+		return (1);
+	return (0);
 }

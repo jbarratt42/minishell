@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 12:48:42 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/29 12:48:55 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/29 15:38:53 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +60,11 @@ static void	print_exported_vars(char **env)
 		i++;
 	}
 	sorted_env[j] = NULL;
-	for (i = 0; i < count - 1; i++)
+	i = 0;
+	while (i < count - 1)
 	{
-		for (j = 0; j < count - i - 1; j++)
+		j = 0;
+		while (j < count - i - 1)
 		{
 			if (ft_strncmp(sorted_env[j], sorted_env[j + 1],
 					ft_strlen(sorted_env[j]) + 1) > 0)
@@ -71,7 +73,9 @@ static void	print_exported_vars(char **env)
 				sorted_env[j] = sorted_env[j + 1];
 				sorted_env[j + 1] = temp;
 			}
+			j++;
 		}
+		i++;
 	}
 	i = 0;
 	while (sorted_env[i])

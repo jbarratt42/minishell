@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:09:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/29 13:53:48 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/29 16:26:11 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,8 @@ void	parse_and_execute(t_context *context, bool is_interactive)
 
 int	main(int argc, char **argv, char **env)
 {
-	t_context	context;
-	bool		is_interactive;
+	static t_context	context = {0};
+	bool				is_interactive;
 
 	is_interactive = isatty(STDIN_FILENO);
 	init_context(&context, argc, argv, env);
@@ -54,16 +54,14 @@ int	main(int argc, char **argv, char **env)
 		{
 			if (!is_interactive)
 				break ;
-			builtin_exit(context.tokens, &context);
+			builtin_exit(NULL, &context);
 		}
 		parse_and_execute(&context, is_interactive);
 		free_tokens(context.tokens);
 		free_node(context.tree);
-		context.tokens = NULL;
-		context.tree = NULL;
 	}
+	clear_history();
 	free_tokens(context.tokens);
 	free_node(context.tree);
-	free_context(&context);
 	return (EXIT_SUCCESS);
 }

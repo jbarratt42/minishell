@@ -6,13 +6,13 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 21:24:15 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/29 13:49:55 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/29 15:51:00 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef BUILTIN_H
 # define BUILTIN_H
-
+# include <stdbool.h>
 // Builtin command functions
 int		builtin_echo(t_token *tokens, t_context *context);
 int		builtin_cd(t_token *tokens, t_context *context);

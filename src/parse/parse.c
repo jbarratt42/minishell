@@ -6,12 +6,11 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:33:32 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/29 13:33:52 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/29 16:21:54 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <sys/fcntl.h>
 
 static t_token	*next_operator(t_token *token)
 {
@@ -85,75 +84,10 @@ t_node	*parse(t_token **token, int min_precedence)
 		else
 			right = parse(token, precedence(op) + 1);
 		if (!right)
-		{
-			free_node(left);
-			return (NULL);
-		}
+			return (free_node(left), (NULL));
 		left = parse_operator(op, left, right);
 		if (!left)
 			return (NULL);
 	}
 	return (left);
-}
-
-int	is_arg(t_token *token)
-{
-	if (*token->value == '<' || *token->value == '>')
-		return (0);
-	return (1);
-}
-
-int	try_open(char *path, int flags)
-{
-	int	ret;
-
-	ret = open(path, flags);
-	if (ret == -1)
-		exit(1);
-	return (ret);
-}
-
-void	parse_redirect(t_token *token, int fd[2])
-{
-	const int	ind = *token->value == '>';
-	int			mode;
-
-	if (fd[ind] > 2)
-		close(fd[ind]);
-	mode = O_WRONLY;
-	if (!ind)
-		mode = O_RDONLY;
-	if (mode == O_WRONLY && token->value[1] == '>')
-		mode = mode & O_APPEND;
-	token = token->next;
-	if (!token)
-		exit(1);
-	fd[ind] = try_open(token->value, mode);
-}
-
-char	*expand_vars(t_token *token)
-{
-	(void)token;
-	return (NULL);
-}
-
-t_node	*parse_command(t_token *token, char *path, char **argv, int *fd)
-{
-	int	i;
-
-	path = token->value;
-	token = token->next;
-	i = 0;
-	(void)path;
-	while (token && token->type < PIPE)
-	{
-		if (is_arg(token))
-		{
-			argv[i] = expand_vars(token);
-			i++;
-		}
-		else
-			parse_redirect(token, fd);
-	}
-	return (NULL);
 }
