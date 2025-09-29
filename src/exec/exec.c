@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:31:14 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/28 14:05:46 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/29 11:24:55 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,8 +105,8 @@ static int	collect(int pid)
 {
 	int w_status;
 
-	if (waitpid(pid, &w_status, 0) == -1
-			|| !WIFEXITED(w_status))
+	if (waitpid(pid, &w_status, 0) == -1)
+	//		|| !WIFEXITED(w_status))
 	{
 			perror("collect");
 			return (-1);
