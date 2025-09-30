@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 12:44:47 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/29 16:40:33 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/30 10:13:42 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,12 +54,14 @@ int	execute_builtin(const char *cmd, t_token *tokens, t_context *context)
 int	builtin_history(t_token *tokens, t_context *context)
 {
 	char	*history_path;
+	int		ret;
 
 	(void)tokens;
 	(void)context;
 	history_path = get_history_path();
 	if (!history_path)
 		return (EXIT_FAILURE);
+	ret = print_history(history_path);
 	free(history_path);
-	return (print_history(history_path));
+	return (ret);
 }

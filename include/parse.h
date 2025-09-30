@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 10:46:56 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/29 17:20:29 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/30 10:08:59 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ typedef struct s_operator
 union					u_data
 {
 	t_operator			op;
+	t_token				*tokens;
 };
 
 typedef struct s_node
