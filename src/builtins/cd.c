@@ -62,14 +62,14 @@ int	builtin_cd(t_token *tokens, t_context *context)
 		current = current->next;
 	if (current && current->type == WORD && current->next
 		&& current->next->type == WORD)
-		return (fprintf(stderr, "cd: too many arguments\n"), 1);
+		return (err_printf("cd: too many arguments\n"), 1);
 	old_pwd = getcwd(NULL, 0);
 	if (!current || current->type != WORD)
 	{
 		path = get_home_path(context);
 		if (!path)
 		{
-			fprintf(stderr, "cd: HOME not set\n");
+			err_printf("cd: HOME not set\n");
 			free(old_pwd);
 			return (1);
 		}
@@ -81,15 +81,15 @@ int	builtin_cd(t_token *tokens, t_context *context)
 		path = ft_getenv("OLDPWD", context->env);
 		if (!path)
 		{
-			fprintf(stderr, "cd: OLDPWD not set\n");
+			err_printf("cd: OLDPWD not set\n");
 			free(old_pwd);
 			return (1);
 		}
 	}
 	else if (path[0] == '-')
 	{
-		fprintf(stderr, "cd: %s: invalid option\n", path);
-		fprintf(stderr, "cd: usage: cd [-L|[-P [-e]]] [-@] [dir]\n");
+		err_printf("cd: %s: invalid option\n", path);
+		err_printf("cd: usage: cd [-L|[-P [-e]]] [-@] [dir]\n");
 		free(old_pwd);
 		return (2);
 	}
@@ -105,7 +105,7 @@ int	builtin_cd(t_token *tokens, t_context *context)
 		new_pwd = getcwd(NULL, 0);
 		if (new_pwd)
 		{
-			printf("%s\n", new_pwd);
+		ft_printf("%s\n", new_pwd);
 			free(new_pwd);
 		}
 	}

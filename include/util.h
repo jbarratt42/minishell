@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:06:47 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/30 10:35:25 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/09/30 12:31:08 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,4 +33,7 @@ char	*get_project_root(void);
 char	*get_history_path(void);
 char	*get_var(char *name, char **env);
 void	cleanup_and_exit(t_context *context);
+/* src/util/ft_fprintf.h */
+int	err_printf(const char *format, ...);
+
 #endif

@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 10:46:56 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/29 16:17:43 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/30 12:12:04 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,9 @@
 # include "parse.h"
 # include "signals.h"
 # include "util.h"
+# include "ft_printf.h"
 
-# define PATH_MAX 1024
+//# define PATH_MAX 1024
 
 extern int		g_status;
 

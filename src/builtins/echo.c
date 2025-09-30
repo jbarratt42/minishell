@@ -35,12 +35,12 @@ int	builtin_echo(t_token *tokens, t_context *context)
 	}
 	while (current && current->type == WORD)
 	{
-		printf("%s", current->value);
+	ft_printf("%s", current->value);
 		current = current->next;
 		if (current && current->type == WORD)
-			printf(" ");
+		ft_printf(" ");
 	}
 	if (newline)
-		printf("\n");
+	ft_printf("\n");
 	return (0);
 }

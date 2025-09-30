@@ -80,7 +80,7 @@ static void	print_exported_vars(char **env)
 	i = 0;
 	while (sorted_env[i])
 	{
-		printf("declare -x %s\n", sorted_env[i]);
+	ft_printf("declare -x %s\n", sorted_env[i]);
 		i++;
 	}
 	free(sorted_env);
@@ -138,7 +138,7 @@ int	builtin_export(t_token *tokens, t_context *context)
 		{
 			if (pos)
 				*pos = '=';
-			fprintf(stderr, "export: `%s': not a valid identifier\n",
+			err_printf("export: `%s': not a valid identifier\n",
 				current->value);
 			ret = 1;
 			current = current->next;

@@ -67,7 +67,7 @@ int	builtin_unset(t_token *tokens, t_context *context)
 	{
 		if (!is_valid_identifier(current->value))
 		{
-			fprintf(stderr, "unset: `%s': not a valid identifier\n",
+			err_printf("unset: `%s': not a valid identifier\n",
 				current->value);
 			ret = 1;
 		}

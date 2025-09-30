@@ -21,14 +21,14 @@ int	builtin_pwd(t_token *tokens, t_context *context)
 	cwd = getcwd(NULL, 0);
 	if (cwd)
 	{
-		printf("%s\n", cwd);
+	ft_printf("%s\n", cwd);
 		free(cwd);
 		return (0);
 	}
 	pwd_env = ft_getenv("PWD", context->env);
 	if (pwd_env)
 	{
-		printf("%s\n", pwd_env);
+	ft_printf("%s\n", pwd_env);
 		return (0);
 	}
 	perror("pwd");

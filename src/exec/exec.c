@@ -316,14 +316,14 @@ pid_t	exec_terminal(t_token **tokens, t_context *context)
 	char *path = get_path(*tokens, context->env);
 	if (!path)
 	{
-		fprintf(stderr, "%s: command not found\n", (*tokens)->value);
+		err_printf("%s: command not found\n", (*tokens)->value);
 		exit(127);
 	}
 	
 	// Check if the path exists and is executable
 	if (access(path, F_OK) == -1)
 	{
-		fprintf(stderr, "%s: No such file or directory\n", path);
+		err_printf("%s: No such file or directory\n", path);
 		exit(127);
 	}
 	if (access(path, X_OK) == -1)
@@ -331,12 +331,12 @@ pid_t	exec_terminal(t_token **tokens, t_context *context)
 		
 		if (stat(path, &st) == 0 && S_ISDIR(st.st_mode))
 		{
-			fprintf(stderr, "%s: Is a directory\n", path);
+			err_printf("%s: Is a directory\n", path);
 			exit(126);
 		}
 		else
 		{
-			fprintf(stderr, "%s: Permission denied\n", path);
+			err_printf("%s: Permission denied\n", path);
 			exit(126);
 		}
 	}
@@ -345,7 +345,7 @@ pid_t	exec_terminal(t_token **tokens, t_context *context)
 	// If we get here, execve failed
 	if (errno == ENOENT)
 	{
-		fprintf(stderr, "%s: No such file or directory\n", path);
+		err_printf("%s: No such file or directory\n", path);
 		exit(127);
 	}
 	else if (errno == EACCES)
@@ -353,12 +353,12 @@ pid_t	exec_terminal(t_token **tokens, t_context *context)
 		
 		if (stat(path, &st) == 0 && S_ISDIR(st.st_mode))
 		{
-			fprintf(stderr, "%s: Is a directory\n", path);
+			err_printf("%s: Is a directory\n", path);
 			exit(126);
 		}
 		else
 		{
-			fprintf(stderr, "%s: Permission denied\n", path);
+			err_printf("%s: Permission denied\n", path);
 			exit(126);
 		}
 	}

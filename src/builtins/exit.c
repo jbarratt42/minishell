@@ -41,12 +41,12 @@ int	builtin_exit(t_token *tokens, t_context *context)
 		if (current->next && current->next->type == WORD
 			&& is_numeric(current->value))
 		{
-			fprintf(stderr, "exit: too many arguments\n");
+			err_printf("exit: too many arguments\n");
 			return (1);
 		}
 		if (!is_numeric(current->value))
 		{
-			fprintf(stderr, "exit: %s: numeric argument required\n",
+			err_printf("exit: %s: numeric argument required\n",
 				current->value);
 			exit_code = 2;
 		}
@@ -59,7 +59,7 @@ int	builtin_exit(t_token *tokens, t_context *context)
 				exit_code = exit_code % 256;
 		}
 	}
-	printf("exit\n");
+ft_printf("exit\n");
 	clear_history();
 	free_context(context);
 	exit(exit_code);
