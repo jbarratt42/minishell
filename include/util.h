@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:06:47 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/29 13:48:17 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/09/30 10:35:25 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ void	free_env(char **env);
 char	**push_env(char *var, char **env);
 char	**set_env(char *var, char **env);
 /* src/util/free.c */
+void	free_token(t_token *token);
 void	free_context(t_context *context);
 /* src/util/ft_isspace.c */
 int		ft_isspace(int c);
