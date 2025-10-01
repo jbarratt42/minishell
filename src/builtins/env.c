@@ -25,7 +25,7 @@ int	builtin_env(t_token *tokens, t_context *context)
 	while (env[i])
 	{
 		if (ft_strchr(env[i], '='))
-		ft_printf("%s\n", env[i]);
+			ft_printf("%s\n", env[i]);
 		i++;
 	}
 	return (0);

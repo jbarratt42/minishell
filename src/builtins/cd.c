@@ -105,7 +105,7 @@ int	builtin_cd(t_token *tokens, t_context *context)
 		new_pwd = getcwd(NULL, 0);
 		if (new_pwd)
 		{
-		ft_printf("%s\n", new_pwd);
+			ft_printf("%s\n", new_pwd);
 			free(new_pwd);
 		}
 	}

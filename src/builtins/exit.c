@@ -59,7 +59,7 @@ int	builtin_exit(t_token *tokens, t_context *context)
 				exit_code = exit_code % 256;
 		}
 	}
-ft_printf("exit\n");
+	ft_printf("exit\n");
 	clear_history();
 	free_context(context);
 	exit(exit_code);

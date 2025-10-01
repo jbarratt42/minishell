@@ -80,7 +80,7 @@ static void	print_exported_vars(char **env)
 	i = 0;
 	while (sorted_env[i])
 	{
-	ft_printf("declare -x %s\n", sorted_env[i]);
+		ft_printf("declare -x %s\n", sorted_env[i]);
 		i++;
 	}
 	free(sorted_env);

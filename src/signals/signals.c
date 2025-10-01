@@ -23,7 +23,7 @@ void	signal_handler(int sig)
 	}
 	else if (sig == SIGTERM)
 	{
-	ft_printf("Terminated by SIGTERM\n");
+		ft_printf("Terminated by SIGTERM\n");
 		g_status = SIGTERM;
 		exit(0);
 	}

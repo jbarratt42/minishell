@@ -93,7 +93,7 @@ int	print_history(const char *filename)
 		return (perror("Failed to read history file"), -EXIT_FAILURE);
 	while (history[i])
 	{
-	ft_printf("%5d %s\n", i, history[i]);
+		ft_printf("%5d %s\n", i, history[i]);
 		free(history[i]);
 		i++;
 	}
