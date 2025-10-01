@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/29 08:51:02 by jbarratt          #+#    #+#             */
-/*   Updated: 2024/12/09 14:40:36 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/01 10:51:27 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ int	ft_vdprintf(int fd, const char *format, va_list args)
 		}
 		else
 		{
-			ft_dprintf_char(1, *c);
+			ft_dprintf_char(fd, *c);
 			len++;
 		}
 		c++;
