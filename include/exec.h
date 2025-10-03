@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:30:37 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/29 15:54:50 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/03 10:44:30 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,4 +36,6 @@ bool	set_exp_vars(t_token **tokens, t_context *context);
 pid_t	exec_terminal(t_token **tokens, t_context *context);
 bool	exec_sequential(t_node *node, t_context *context);
 pid_t	traverse(t_node *node, t_context *context);
+bool	try_close2(int open[2]);
+bool	try_pipe(int fds[2]);
 #endif

@@ -6,100 +6,13 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:31:14 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/29 11:24:55 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/03 11:25:41 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <sys/stat.h>
 #include <errno.h>
-
-static bool	try_close2(int open[2])
-{
-	int	i;
-
-	i = 0;
-	while (i < 2)
-	{
-		if (open[i] > 2)
-			if (close(open[i]) == -1)
-			{
-				perror("try_close2");
-				return (false);
-			}
-		i++;
-	}
-	return (true);
-}
-
-static bool	try_pipe(int fds[2])
-{
-	int	tmp[2];
-	if (pipe(tmp) == -1)
-	{
-		perror("try_pipe");
-		return (false);
-	}
-	fds[0] = tmp[1];
-	fds[1] = tmp[0];
-	return (true);
-}
-
-char	*append_path(char *a, char *b)
-{
-	char	*c;
-	const size_t	len = ft_strlen(a) + ft_strlen(b) + 2;
-
-	c = malloc(len);
-	if (!c)
-		return (NULL);
-	ft_strcpy(c, a);
-	ft_strlcat(c, "/", len);
-	ft_strlcat(c, b, len);
-	return (c);
-}
-
-char	*search_path(char *s, char **env)
-{
-	char	*paths;
-	char	*try_path;
-	char	*end;
-	char	*path_copy;
-
-	paths = ft_getenv("PATH", env);
-	if (!paths || !*paths)
-		return (NULL);
-	
-	// Make a copy since we'll be modifying the string
-	path_copy = ft_strdup(paths);
-	if (!path_copy)
-		return (NULL);
-	
-	paths = path_copy;
-	while (*paths)
-	{
-		end = ft_strchr(paths, ':');
-		if (end)
-			*end = '\0';
-		
-		try_path = append_path(paths, s);
-		if (try_path && access(try_path, F_OK) == 0)
-		{
-			if (access(try_path, R_OK) == 0 && access(try_path, X_OK) == 0)
-				return (free(path_copy), try_path);
-			free(try_path);
-		}
-		else if (try_path)
-			free(try_path);
-		
-		if (end)
-			paths = end + 1;
-		else
-			break;
-	}
-	free(path_copy);
-	return (NULL);
-}
 
 static int	collect(int pid)
 {
@@ -135,29 +48,6 @@ static int	collect2(int pids[2])
 	return(status[1]);
 }
 
-bool	try_dup2(int open[3])
-{
-	int	i;
-
-	i = 0;
-	while (i < 2)
-	{
-		if(open[i] != i)
-			if(dup2(open[i], i) == -1)
-				return (false);
-		i++;
-	}
-	i = 0;
-	while (i < 3)
-	{
-		if (open[i] > 2)
-			if (close(open[i]) == -1)
-				return (false);
-		i++;
-	}
-	return (true);
-}
-
 char	**get_args(t_token *tokens)
 {
 	int 	i;
@@ -183,16 +73,6 @@ char	**get_args(t_token *tokens)
 	}
 	args[i] = NULL;
 	return (args);
-}
-
-char	*get_path(t_token *tokens, char **env)
-{
-	char	*path;
-
-	path = tokens->value;
-	if (!ft_strchr(tokens->value, '/'))
-		path = search_path(path, env);
-	return (path);
 }
 
 bool	is_builtin(t_token *token)
