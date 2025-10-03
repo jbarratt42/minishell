@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 16:13:34 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/03 12:46:47 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/03 13:32:01 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,9 @@
 /* expand variables in tokens */
 bool	expand_tokens(t_token **token, t_context *context)
 {
-	bool	squoted;
-	bool	dquoted;
-
-	squoted = false;
-	dquoted = false;
 	while (*token && (*token)->type < PIPE && (*token)->type != EOF_T)
 	{
-		if ((*token)->type == WORD && !squoted) //
+		if ((*token)->type == WORD)
 		{
 			(*token)->value = expand((*token)->value, context);
 			if (!*token)
@@ -32,18 +27,7 @@ bool	expand_tokens(t_token **token, t_context *context)
 				delete_tokens(token, 1);
 				continue ;
 			}
-			if (!dquoted)
-				token = separate_words(*token);
-			else
-				token = &((*token)->next);
-		}
-		else if ((*token)->type == SQUOTE || (*token)->type == DQUOTE)
-		{
-			if ((*token)->type == SQUOTE)
-				squoted = !squoted;
-			if ((*token)->type == DQUOTE)
-				dquoted = !dquoted;
-			delete_tokens(token, 1);
+			token = separate_words(*token);
 		}
 		else
 			token = &((*token)->next);
