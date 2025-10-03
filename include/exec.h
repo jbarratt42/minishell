@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:30:37 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/03 10:44:30 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/03 12:58:31 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,4 +38,15 @@ bool	exec_sequential(t_node *node, t_context *context);
 pid_t	traverse(t_node *node, t_context *context);
 bool	try_close2(int open[2]);
 bool	try_pipe(int fds[2]);
+/* src/exec/collect.c */
+int collect(int pid);
+int collect2(int pids[2]);
+char **get_args(t_token *tokens);
+_Bool is_builtin(t_token *token);
+_Bool set_exp_vars(t_token **tokens, t_context *context);
+_Bool cleanup_parent(t_context *context);
+/* src/exec/handle.c */
+pid_t handle_builtins(t_token **tokens, t_context *context);
+void check_path_child(char *path, t_token **tokens);
+void handle_execve_fail(char *path);
 #endif

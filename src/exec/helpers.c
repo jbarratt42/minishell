@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 16:13:34 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/29 16:49:55 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/03 12:46:47 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ bool	expand_tokens(t_token **token, t_context *context)
 	dquoted = false;
 	while (*token && (*token)->type < PIPE && (*token)->type != EOF_T)
 	{
-		if ((*token)->type == WORD && !squoted)
+		if ((*token)->type == WORD && !squoted) //
 		{
 			(*token)->value = expand((*token)->value, context);
 			if (!*token)

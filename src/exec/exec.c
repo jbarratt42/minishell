@@ -6,81 +6,11 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:31:14 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/10/03 11:25:41 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/03 12:58:21 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <sys/stat.h>
-#include <errno.h>
-
-static int	collect(int pid)
-{
-	int w_status;
-
-	if (waitpid(pid, &w_status, 0) == -1)
-	//		|| !WIFEXITED(w_status))
-	{
-			perror("collect");
-			return (-1);
-	}
-	return (WEXITSTATUS(w_status));
-}
-
-static int	collect2(int pids[2])
-{
-	int	status[2];
-	int	i;
-
-	i = 1;
-	while (i >= 0)
-	{
-		if(pids[i] && pids[i] != -1)
-		{
-			status[i] = collect(pids[i]);
-			if (status[i] == -1)
-				return (-1);
-		}
-		else
-			status[i] = 0;
-		i--;
-	}
-	return(status[1]);
-}
-
-char	**get_args(t_token *tokens)
-{
-	int 	i;
-	char	**args;
-	t_token	*pos;
-
-	i = 0;
-	pos = tokens;
-	while (pos && pos->type < PIPE && pos->type != EOF_T)
-	{
-		pos = pos->next;
-		i++;
-	}
-	args = malloc((i + 1) * sizeof(char *));
-	if (!args)
-		return (NULL);
-	i = 0;
-	pos = tokens;
-	while (pos && pos->type < PIPE && pos->type != EOF_T)
-	{
-		args[i++] = pos->value;
-		pos = pos->next;
-	}
-	args[i] = NULL;
-	return (args);
-}
-
-bool	is_builtin(t_token *token)
-{
-	if (!token || token->type != WORD)
-		return (false);
-	return (is_builtin_command(token->value));
-}
 
 bool	exec_builtin(t_token *tokens, t_context *context)
 {
@@ -114,74 +44,17 @@ bool	exec_preprocess(t_token **tokens, t_context *context)
 	return (true);
 }
 
-bool	set_exp_vars(t_token **tokens, t_context *context)
-{
-	while (ft_strchr((*tokens)->value, '='))
-	{
-		if(!set_env((*tokens)->value, context->env))
-			return (false);
-		delete_tokens(tokens, 1);
-	}
-	return (true);
-}
-
-bool	cleanup_parent(t_context *context)
-{
-	if(!try_close2(context->open))
-		return (false);
-	context->open[0] = 0;
-	context->open[1] = 1;
-	return (true);
-}
-
 pid_t	exec_terminal(t_token **tokens, t_context *context)
 {
 	pid_t	pid;
-	struct stat st;
+	char	*path;
 
 	if (!exec_preprocess(tokens, context))
 		return (-1);
 	if (!is_command(*tokens))
 		return (0);
-	
-	// Handle builtins
 	if (is_builtin(*tokens))
-	{
-		if (!context->is_pipeline)
-		{
-			// Builtins that affect parent state run in parent when not in pipeline
-			try_dup2(context->open);
-			exec_builtin(*tokens, context);
-			return (0);
-		}
-		else
-		{
-			// Builtins in pipeline run in child
-			pid = fork();
-			if (pid == 0)
-			{
-				try_dup2(context->open);
-				exec_builtin(*tokens, context);
-				exit(context->status);
-			}
-			if (pid > 0)
-			{
-				if (!cleanup_parent(context))
-					return (-1);
-				return (pid);
-			}
-			return (-1);
-		}
-	}
-	
-	// Handle external commands
-	/*
-	if (access(get_path(*tokens, context->env), X_OK) == -1)
-	{
-		perror("exec_terminal");
-		return (-1);
-	}
-	*/
+		return (handle_builtins(tokens, context));
 	pid = fork();
 	if (pid > 0)
 	{
@@ -189,64 +62,13 @@ pid_t	exec_terminal(t_token **tokens, t_context *context)
 			return (-1);
 		return (pid);
 	}
-	if(!set_exp_vars(tokens, context))
+	if(!set_exp_vars(tokens, context) || !try_dup2(context->open))
 		return (-1);
-	try_dup2(context->open);
-	
-	char *path = get_path(*tokens, context->env);
-	if (!path)
-	{
-		err_printf("%s: command not found\n", (*tokens)->value);
-		exit(127);
-	}
-	
-	// Check if the path exists and is executable
-	if (access(path, F_OK) == -1)
-	{
-		err_printf("%s: No such file or directory\n", path);
-		exit(127);
-	}
-	if (access(path, X_OK) == -1)
-	{
-		
-		if (stat(path, &st) == 0 && S_ISDIR(st.st_mode))
-		{
-			err_printf("%s: Is a directory\n", path);
-			exit(126);
-		}
-		else
-		{
-			err_printf("%s: Permission denied\n", path);
-			exit(126);
-		}
-	}
-	
+	path = get_path(*tokens, context->env);
+	check_path_child(path, tokens);	
 	execve(path, get_args(*tokens), context->env);
-	// If we get here, execve failed
-	if (errno == ENOENT)
-	{
-		err_printf("%s: No such file or directory\n", path);
-		exit(127);
-	}
-	else if (errno == EACCES)
-	{
-		
-		if (stat(path, &st) == 0 && S_ISDIR(st.st_mode))
-		{
-			err_printf("%s: Is a directory\n", path);
-			exit(126);
-		}
-		else
-		{
-			err_printf("%s: Permission denied\n", path);
-			exit(126);
-		}
-	}
-	else
-	{
-		perror("exec_terminal");
-		exit(1);
-	}
+	handle_execve_fail(path);
+	return (pid);
 }
 
 bool	exec_sequential(t_node *node, t_context *context)
