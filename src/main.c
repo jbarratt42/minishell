@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:09:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/30 11:24:49 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/04 11:38:17 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,8 @@ int	main(int argc, char **argv, char **env)
 			builtin_exit(NULL, &context);
 		}
 		parse_and_execute(&context, is_interactive);
+		free(context.input);
+		context.input = NULL;
 		free_tokens(context.tokens);
 		context.tokens = NULL;
 		free_node(context.tree);
