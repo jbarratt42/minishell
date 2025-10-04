@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 12:53:36 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/29 15:37:33 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/04 11:46:21 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void	init_context(t_context *context, int argc, char **argv, char **env)
 	context->argc = argc;
 	context->argv = argv;
 	context->env = copy_env(env);
-	context->local = NULL;
+	context->local = init_env();
 	context->open[0] = 0;
 	context->open[1] = 1;
 	context->open[2] = -1;

@@ -6,13 +6,14 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:06:47 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/30 12:31:08 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/04 11:48:33 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef UTIL_H
 # define UTIL_H
 /* src/util/env.c */
+char	**init_env(void);
 char	**copy_env(char **env);
 void	free_env(char **env);
 char	**push_env(char *var, char **env);

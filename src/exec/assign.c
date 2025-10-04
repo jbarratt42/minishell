@@ -6,13 +6,14 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 16:03:37 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/03 14:03:10 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/04 11:59:16 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 /* delete len tokens starting with the token pointed to by token */
+/*
 void	delete_tokens(t_token **token, size_t len)
 {
 	t_token	*tmp;
@@ -26,6 +27,18 @@ void	delete_tokens(t_token **token, size_t len)
 		end = end->next;
 	*token = end;
 	end = NULL;
+	free(tmp);
+}
+*/
+void	delete_tokens(t_token **token, size_t len)
+{
+	t_token	*tmp;
+	if (!len)
+		return ;
+	free((*token)->value);
+	tmp = *token;
+	*token = (*token)->next;
+	delete_tokens(token, len - 1);
 	free(tmp);
 }
 
