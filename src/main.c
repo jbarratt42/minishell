@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:09:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/04 11:44:18 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/06 11:55:24 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,12 +43,12 @@ void	parse_and_execute(t_context *context, bool is_interactive)
 
 static void	free_for_input(t_context *context)
 {
-		free(context->input);
-		context->input = NULL;
-		free_tokens(context->tokens);
-		context->tokens = NULL;
-		free_node(context->tree);
-		context->tree = NULL;
+	free(context->input);
+	context->input = NULL;
+	free_tokens(context->tokens);
+	context->tokens = NULL;
+	free_node(context->tree);
+	context->tree = NULL;
 }
 
 int	main(int argc, char **argv, char **env)

@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 17:50:47 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/29 16:51:49 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/06 11:52:38 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,20 @@ static size_t	compute_length(char *str, t_context *context)
 	return (ret);
 }
 
+static void	eat_char(char **p, char **q, bool *quoted, t_context *context)
+{
+	if (**p == '\\')
+		*(*q)++ = *(*p)++;
+	else if (**p == '\'')
+		*quoted = !*quoted;
+	else if (!*quoted && **p == '$')
+	{
+		expand_special(q, p, context);
+		return ;
+	}
+	*(*q)++ = *(*p)++;
+}
+
 /* @brief get the (length of the) new context->lineing with expanded variables
  * @param context->line context->lineing with variables
  * @param len length of new context->lineing.  if this is 0, just return the
@@ -49,18 +63,7 @@ char	*expand(char *str, t_context *context)
 	q = ret;
 	quoted = false;
 	while (*p)
-	{
-		if (*p == '\\')
-			*q++ = *p++;
-		else if (*p == '\'')
-			quoted = !quoted;
-		else if (!quoted && *p == '$')
-		{
-			expand_special(&q, &p, context);
-			continue ;
-		}
-		*q++ = *p++;
-	}
+		eat_char(&p, &q, &quoted, context);
 	*q = '\0';
 	free(str);
 	return (ret);

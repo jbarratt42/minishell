@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 16:03:37 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/04 11:59:16 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/06 11:41:29 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ void	delete_tokens(t_token **token, size_t len)
 void	delete_tokens(t_token **token, size_t len)
 {
 	t_token	*tmp;
+
 	if (!len)
 		return ;
 	free((*token)->value);
