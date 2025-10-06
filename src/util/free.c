@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 11:49:07 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/30 11:26:43 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/06 11:37:25 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,18 @@ void	free_node(t_node *node)
 		free_node(node->data.op.right);
 	}
 	free(node);
+}
+
+void	free_env(char **env)
+{
+	char	**p;
+
+	if (!env)
+		return ;
+	p = env;
+	while (*p)
+		free(*p++);
+	free(env);
 }
 
 void	free_context(t_context *context)

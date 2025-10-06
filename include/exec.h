@@ -6,12 +6,14 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:30:37 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/03 12:58:31 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/06 11:21:12 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef EXEC_H
 # define EXEC_H
+
+/* prototypes */
 
 /* src/exec/assign.c */
 void	delete_tokens(t_token **token, size_t len);

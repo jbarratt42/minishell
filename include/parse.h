@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 10:46:56 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/30 10:08:59 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/06 11:24:07 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@ typedef struct s_node
 	bool				is_terminal;
 	union u_data		data;
 }						t_node;
+
+/* prototypes */
 
 t_node					*parse(t_token **token, int min_precedence);
 int						is_arg(t_token *token);

@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 13:16:48 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/10/06 11:15:43 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/06 11:38:01 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,29 +36,6 @@ char	**copy_env(char **env)
 	}
 	p[i] = NULL;
 	return (p);
-}
-
-void	free_env(char **env)
-{
-	char	**p;
-
-	if (!env)
-		return ;
-	p = env;
-	while (*p)
-		free(*p++);
-	free(env);
-}
-
-char	**init_env(void)
-{
-	char	**env;
-
-	env = malloc(sizeof(char *));
-	if (!env)
-		return (NULL);
-	env[0] = NULL;
-	return (env);
 }
 
 /* @param var malloc'd string of the form VAR=value

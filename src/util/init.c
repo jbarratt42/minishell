@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 12:53:36 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/04 11:46:21 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/06 11:38:00 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,17 @@ char	*get_history_path(void)
 		}
 	}
 	return (NULL);
+}
+
+char	**init_env(void)
+{
+	char	**env;
+
+	env = malloc(sizeof(char *));
+	if (!env)
+		return (NULL);
+	env[0] = NULL;
+	return (env);
 }
 
 void	init_context(t_context *context, int argc, char **argv, char **env)
