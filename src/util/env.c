@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 13:16:48 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/09/29 15:36:42 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/06 11:15:43 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,20 +62,14 @@ char	**init_env(void)
 }
 
 /* @param var malloc'd string of the form VAR=value
+ * @param env must be initialized with init_env or copy_env!
  */
 char	**push_env(char *var, char **env)
 {
 	char	**p;
 	size_t	len;
 	size_t	i;
-	bool	should_free_env;
 
-	should_free_env = false;
-	if (!env)
-	{
-		env = init_env();
-		should_free_env = true;
-	}
 	len = 0;
 	p = env;
 	while (*p)
@@ -85,19 +79,14 @@ char	**push_env(char *var, char **env)
 	}
 	p = malloc((len + 2) * sizeof(char *));
 	if (!p)
-	{
-		if (should_free_env)
-			free(env);
-		return (NULL);
-	}
+		return (free(env), NULL);
 	i = 0;
 	while (i < len)
 	{
 		p[i] = env[i];
 		i++;
 	}
-	if (should_free_env)
-		free(env);
+	free(env);
 	p[len] = var;
 	p[len + 1] = NULL;
 	return (p);
