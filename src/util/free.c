@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 11:49:07 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/10/06 11:37:25 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/06 12:13:17 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,27 +22,13 @@ void	free_tokens(t_token *token)
 	free(token);
 }
 
-/*
-void	free_token(t_token *tok)
-{
-	t_token	*tmp;
-
-	while (tok)
-	{
-		tmp = tok->next;
-		if (tok->value)
-			free(tok->value);
-		free(tok);
-		tok = tmp;
-	}
-}
-*/
-
 void	free_node(t_node *node)
 {
 	if (!node)
 		return ;
-	if (!node->is_terminal)
+	if (node->is_terminal)
+		free_tokens(node->data.tokens);
+	else
 	{
 		free_node(node->data.op.left);
 		free_node(node->data.op.right);

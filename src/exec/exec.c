@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:31:14 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/10/03 13:16:43 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/06 12:07:20 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ bool	exec_preprocess(t_token **tokens, t_context *context)
 			dequote(t->value);
 		t = t->next;
 	}
+	t->next = NULL;
 	if (!is_command(*tokens))
 		if (!assign(tokens, context))
 			return (false);
