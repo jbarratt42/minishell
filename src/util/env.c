@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 13:16:48 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/10/06 11:38:01 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/06 12:21:36 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,8 @@ char	**push_env(char *var, char **env)
 	return (p);
 }
 
-/* @param var malloc'd string of the form VAR=value
+/* @param var malloc'd string of the form VAR=value.  !!must be malloc'd 
+ * separately from the token value (i.e. ft_strdup())!!
  */
 char	**set_env(char *var, char **env)
 {

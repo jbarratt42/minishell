@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 16:03:37 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/06 11:41:29 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/06 12:18:14 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,8 @@ bool	assign(t_token **token, t_context *context)
 	{
 		if ((*token)->type == WORD && ft_strchr((*token)->value, '='))
 		{
-			context->local = set_env((*token)->value, context->local);
+			context->local = set_env(ft_strdup((*token)->value), 
+					context->local);
 			if (!context->local)
 				return (false);
 			delete_tokens(token, 1);
