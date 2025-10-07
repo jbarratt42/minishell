@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 17:16:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/30 12:27:12 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/07 13:15:35 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,13 +77,18 @@ static void	skip_whitespace(const char *input, int *i)
 
 static t_token	*lex_operator(const char *input, int *i)
 {
+	t_token	*t;
+	t_token	*t;
+	t_token	*t;
+	t_token	*t;
+
 	if (input[*i] == ';')
 		return (token_new(SEMICOLON, ";", (*i)++));
 	else if (input[*i] == '|')
 	{
 		if (input[*i + 1] == '|')
 		{
-			t_token *t = token_new(OR, "||", *i);
+			t = token_new(OR, "||", *i);
 			*i += 2;
 			return (t);
 		}
@@ -91,7 +96,7 @@ static t_token	*lex_operator(const char *input, int *i)
 	}
 	else if (input[*i] == '&' && input[*i + 1] == '&')
 	{
-		t_token *t = token_new(AND, "&&", *i);
+		t = token_new(AND, "&&", *i);
 		*i += 2;
 		return (t);
 	}
@@ -99,7 +104,7 @@ static t_token	*lex_operator(const char *input, int *i)
 	{
 		if (input[*i + 1] == '<')
 		{
-			t_token *t = token_new(HEREDOC, "<<", *i);
+			t = token_new(HEREDOC, "<<", *i);
 			*i += 2;
 			return (t);
 		}
@@ -109,7 +114,7 @@ static t_token	*lex_operator(const char *input, int *i)
 	{
 		if (input[*i + 1] == '>')
 		{
-			t_token *t = token_new(REDIR_APPEND, ">>", *i);
+			t = token_new(REDIR_APPEND, ">>", *i);
 			*i += 2;
 			return (t);
 		}
@@ -118,12 +123,13 @@ static t_token	*lex_operator(const char *input, int *i)
 	return (NULL);
 }
 
-static int	validate_sequence(t_token *prev, t_token *next, int i, t_token *head)
+static int	validate_sequence(t_token *prev, t_token *next, int i,
+		t_token *head)
 {
 	if (!next)
 		return (1);
-	if ((prev->type == AND || prev->type == OR)
-		&& (next->type == AND || next->type == OR || next->type == PIPE))
+	if ((prev->type == AND || prev->type == OR) && (next->type == AND
+			|| next->type == OR || next->type == PIPE))
 	{
 		lexer_error("syntax error near unexpected token", i, prev->value);
 		free_tokens(head->next);
