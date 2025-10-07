@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 17:50:47 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/06 11:52:38 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/07 14:10:35 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,4 +67,20 @@ char	*expand(char *str, t_context *context)
 	*q = '\0';
 	free(str);
 	return (ret);
+}
+
+t_token	*token_new(t_token_type type, const char *val, int pos)
+{
+	t_token	*tok;
+
+	tok = malloc(sizeof(t_token));
+	if (!tok)
+		return (NULL);
+	tok->type = type;
+	tok->value = NULL;
+	if (val)
+		tok->value = ft_strdup(val);
+	tok->pos = pos;
+	tok->next = NULL;
+	return (tok);
 }

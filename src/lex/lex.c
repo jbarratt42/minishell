@@ -6,27 +6,11 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 17:16:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/07 13:27:55 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/07 14:10:20 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-t_token	*token_new(t_token_type type, const char *val, int pos)
-{
-	t_token	*tok;
-
-	tok = malloc(sizeof(t_token));
-	if (!tok)
-		return (NULL);
-	tok->type = type;
-	tok->value = NULL;
-	if (val)
-		tok->value = ft_strdup(val);
-	tok->pos = pos;
-	tok->next = NULL;
-	return (tok);
-}
 
 static t_token	*lex_word(const char *input, int *i)
 {
@@ -82,16 +66,13 @@ static t_token	*lex_operator(const char *input, int *i)
 	return (lex_redir_out(input, i));
 }
 
-t_token	*lex(const char *input)
+static t_token	*lex_tokens(const char *input, t_token *head)
 {
-	static t_token	head = {0};
-	t_token			*cur;
-	int				i;
-	t_token			*eof_token;
-	int				prev_i;
+	t_token	*cur;
+	int		i;
+	int		prev_i;
 
-	cur = &head;
-	head.type = WORD;
+	cur = head;
 	i = 0;
 	while (*input && input[i])
 	{
@@ -101,19 +82,29 @@ t_token	*lex(const char *input)
 		if (!cur->next)
 			cur->next = lex_word(input, &i);
 		if (i == prev_i)
-		{
-			lexer_error("lexer stuck", i, "");
-			free_tokens(head.next);
-			return (NULL);
-		}
+			return (lexer_error("lexer stuck", i, ""), free_tokens(head->next),
+				NULL);
 		if (cur->next && cur->next->type == ERROR)
 			break ;
-		if (cur->next && !validate_sequence(cur, cur->next, i, &head))
+		if (cur->next && !validate_sequence(cur, cur->next, i, head))
 			return (NULL);
 		if (cur->next)
 			cur = cur->next;
 	}
-	eof_token = token_new(EOF_T, NULL, i);
+	return (cur);
+}
+
+t_token	*lex(const char *input)
+{
+	static t_token	head = {0};
+	t_token			*cur;
+	t_token			*eof_token;
+
+	head.type = WORD;
+	cur = lex_tokens(input, &head);
+	if (!cur)
+		return (NULL);
+	eof_token = token_new(EOF_T, NULL, 0);
 	if (eof_token)
 		cur->next = eof_token;
 	return (head.next);

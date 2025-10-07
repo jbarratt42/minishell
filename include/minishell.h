@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 10:46:56 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/10/07 12:39:54 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/07 13:55:00 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,4 +58,5 @@ char			*ft_strcpy(char *dest, const char *src);
  ** Returns non zero if the character is a whitespace, and zero if not.
  */
 int				ft_isspace(int c);
+bool			is_numeric(const char *str);
 #endif

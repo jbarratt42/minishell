@@ -6,26 +6,11 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 12:44:34 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/29 15:35:33 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/07 13:53:34 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-static bool	is_numeric(const char *str)
-{
-	if (!str || !*str)
-		return (false);
-	if (*str == '-' || *str == '+')
-		str++;
-	while (*str)
-	{
-		if (!ft_isdigit(*str))
-			return (false);
-		str++;
-	}
-	return (true);
-}
 
 static bool	has_too_many_args(t_token *arg)
 {
