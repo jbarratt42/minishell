@@ -12,24 +12,6 @@
 
 #include "minishell.h"
 
-static bool	is_valid_identifier(const char *str)
-{
-	int	i;
-
-	if (!str || !*str)
-		return (false);
-	if (!ft_isalpha(*str) && *str != '_')
-		return (false);
-	i = 1;
-	while (str[i])
-	{
-		if (!ft_isalnum(str[i]) && str[i] != '_')
-			return (false);
-		i++;
-	}
-	return (true);
-}
-
 static void	unset_from_env(char **env, const char *name)
 {
 	char	**p;

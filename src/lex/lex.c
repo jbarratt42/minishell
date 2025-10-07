@@ -69,6 +69,75 @@ static t_token	*lex_word(const char *input, int *i)
 	return (token);
 }
 
+static void	skip_whitespace(const char *input, int *i)
+{
+	while (input[*i] && ft_isspace((unsigned char)input[*i]))
+		(*i)++;
+}
+
+static t_token	*lex_operator(const char *input, int *i)
+{
+	if (input[*i] == ';')
+		return (token_new(SEMICOLON, ";", (*i)++));
+	else if (input[*i] == '|')
+	{
+		if (input[*i + 1] == '|')
+		{
+			t_token *t = token_new(OR, "||", *i);
+			*i += 2;
+			return (t);
+		}
+		return (token_new(PIPE, "|", (*i)++));
+	}
+	else if (input[*i] == '&' && input[*i + 1] == '&')
+	{
+		t_token *t = token_new(AND, "&&", *i);
+		*i += 2;
+		return (t);
+	}
+	else if (input[*i] == '<')
+	{
+		if (input[*i + 1] == '<')
+		{
+			t_token *t = token_new(HEREDOC, "<<", *i);
+			*i += 2;
+			return (t);
+		}
+		return (token_new(REDIR_IN, "<", (*i)++));
+	}
+	else if (input[*i] == '>')
+	{
+		if (input[*i + 1] == '>')
+		{
+			t_token *t = token_new(REDIR_APPEND, ">>", *i);
+			*i += 2;
+			return (t);
+		}
+		return (token_new(REDIR_OUT, ">", (*i)++));
+	}
+	return (NULL);
+}
+
+static int	validate_sequence(t_token *prev, t_token *next, int i, t_token *head)
+{
+	if (!next)
+		return (1);
+	if ((prev->type == AND || prev->type == OR)
+		&& (next->type == AND || next->type == OR || next->type == PIPE))
+	{
+		lexer_error("syntax error near unexpected token", i, prev->value);
+		free_tokens(head->next);
+		return (0);
+	}
+	if (prev->type == PIPE && next->type == PIPE)
+	{
+		lexer_error("syntax error near unexpected token", i, prev->value);
+		free_tokens(head->next);
+		return (0);
+	}
+	return (1);
+}
+
 t_token	*lex(const char *input)
 {
 	static t_token	head = {0};
@@ -83,46 +152,9 @@ t_token	*lex(const char *input)
 	while (*input && input[i])
 	{
 		prev_i = i;
-		while (ft_isspace((unsigned char)input[i]))
-			i++;
-		if (input[i] == ';')
-			cur->next = token_new(SEMICOLON, ";", i++);
-		else if (input[i] == '|')
-		{
-			if (input[i + 1] == '|')
-			{
-				cur->next = token_new(OR, "||", i);
-				i += 2;
-			}
-			else
-				cur->next = token_new(PIPE, "|", i++);
-		}
-		else if (input[i] == '&' && input[i + 1] == '&')
-		{
-			cur->next = token_new(AND, "&&", i);
-			i += 2;
-		}
-		else if (input[i] == '<')
-		{
-			if (input[i + 1] == '<')
-			{
-				cur->next = token_new(HEREDOC, "<<", i);
-				i += 2;
-			}
-			else
-				cur->next = token_new(REDIR_IN, "<", i++);
-		}
-		else if (input[i] == '>')
-		{
-			if (input[i + 1] == '>')
-			{
-				cur->next = token_new(REDIR_APPEND, ">>", i);
-				i += 2;
-			}
-			else
-				cur->next = token_new(REDIR_OUT, ">", i++);
-		}
-		else
+		skip_whitespace(input, &i);
+		cur->next = lex_operator(input, &i);
+		if (!cur->next)
 			cur->next = lex_word(input, &i);
 		if (i == prev_i)
 		{
@@ -132,25 +164,10 @@ t_token	*lex(const char *input)
 		}
 		if (cur->next && cur->next->type == ERROR)
 			break ;
+		if (cur->next && !validate_sequence(cur, cur->next, i, &head))
+			return (NULL);
 		if (cur->next)
-		{
-			if ((cur->type == AND || cur->type == OR) && (cur->next->type == AND
-					|| cur->next->type == OR || cur->next->type == PIPE))
-			{
-				lexer_error("syntax error near unexpected token", i,
-					cur->value);
-				free_tokens(head.next);
-				return (NULL);
-			}
-			if (cur->type == PIPE && cur->next->type == PIPE)
-			{
-				lexer_error("syntax error near unexpected token", i,
-					cur->value);
-				free_tokens(head.next);
-				return (NULL);
-			}
 			cur = cur->next;
-		}
 	}
 	eof_token = token_new(EOF_T, NULL, i);
 	if (eof_token)
