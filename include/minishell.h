@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 10:46:56 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/10/03 12:51:53 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/07 12:39:54 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@
 # include <fcntl.h>
 # include <sys/stat.h>
 # include <errno.h>
-
 # include "../libft/libft.h"
 # include "prlh.h"
 # include "exec.h"

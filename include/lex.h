@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 17:16:07 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/06 12:29:44 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/07 12:35:30 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,16 @@ typedef enum e_token_type
 	EOF_T,
 	ERROR,
 	WORD,
-	REDIR_IN,		// <  (input redirection)
-	HEREDOC,		// << (here document)
-	REDIR_OUT,		// >  (output redirection)
-	REDIR_APPEND,	// >> (output append)
-	SQUOTE,			// '  (single quote)
-	DQUOTE,			// "  (double quote)
-	PIPE,			// |  (pipe)
-	AND,			// &  (AND)
-	OR,				// ||  (OR)
-	SEMICOLON,		// ;  (statement separator)
+	REDIR_IN,
+	HEREDOC,
+	REDIR_OUT,
+	REDIR_APPEND,
+	SQUOTE,
+	DQUOTE,
+	PIPE,
+	AND,
+	OR,
+	SEMICOLON,
 	OPEN,
 	CLOSE,
 	MAX_TOKEN_TYPE
