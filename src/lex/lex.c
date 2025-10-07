@@ -75,52 +75,78 @@ static void	skip_whitespace(const char *input, int *i)
 		(*i)++;
 }
 
-static t_token	*lex_operator(const char *input, int *i)
+static t_token	*lex_semicolon(const char *input, int *i)
 {
-	t_token	*t;
-	t_token	*t;
-	t_token	*t;
-	t_token	*t;
+	if (input[*i] != ';')
+		return (NULL);
+	return (token_new(SEMICOLON, ";", (*i)++));
+}
 
-	if (input[*i] == ';')
-		return (token_new(SEMICOLON, ";", (*i)++));
-	else if (input[*i] == '|')
+static t_token	*lex_pipe_or(const char *input, int *i)
+{
+	if (input[*i] != '|')
+		return (NULL);
+	if (input[*i + 1] == '|')
 	{
-		if (input[*i + 1] == '|')
-		{
-			t = token_new(OR, "||", *i);
-			*i += 2;
-			return (t);
-		}
-		return (token_new(PIPE, "|", (*i)++));
-	}
-	else if (input[*i] == '&' && input[*i + 1] == '&')
-	{
-		t = token_new(AND, "&&", *i);
+		t_token *t = token_new(OR, "||", *i);
 		*i += 2;
 		return (t);
 	}
-	else if (input[*i] == '<')
+	return (token_new(PIPE, "|", (*i)++));
+}
+
+static t_token	*lex_and(const char *input, int *i)
+{
+	if (!(input[*i] == '&' && input[*i + 1] == '&'))
+		return (NULL);
+	t_token *t = token_new(AND, "&&", *i);
+	*i += 2;
+	return (t);
+}
+
+static t_token	*lex_redir_in(const char *input, int *i)
+{
+	if (input[*i] != '<')
+		return (NULL);
+	if (input[*i + 1] == '<')
 	{
-		if (input[*i + 1] == '<')
-		{
-			t = token_new(HEREDOC, "<<", *i);
-			*i += 2;
-			return (t);
-		}
-		return (token_new(REDIR_IN, "<", (*i)++));
+		t_token *t = token_new(HEREDOC, "<<", *i);
+		*i += 2;
+		return (t);
 	}
-	else if (input[*i] == '>')
+	return (token_new(REDIR_IN, "<", (*i)++));
+}
+
+static t_token	*lex_redir_out(const char *input, int *i)
+{
+	if (input[*i] != '>')
+		return (NULL);
+	if (input[*i + 1] == '>')
 	{
-		if (input[*i + 1] == '>')
-		{
-			t = token_new(REDIR_APPEND, ">>", *i);
-			*i += 2;
-			return (t);
-		}
-		return (token_new(REDIR_OUT, ">", (*i)++));
+		t_token *t = token_new(REDIR_APPEND, ">>", *i);
+		*i += 2;
+		return (t);
 	}
-	return (NULL);
+	return (token_new(REDIR_OUT, ">", (*i)++));
+}
+
+static t_token	*lex_operator(const char *input, int *i)
+{
+	t_token	*t;
+
+	t = lex_semicolon(input, i);
+	if (t)
+		return (t);
+	t = lex_pipe_or(input, i);
+	if (t)
+		return (t);
+	t = lex_and(input, i);
+	if (t)
+		return (t);
+	t = lex_redir_in(input, i);
+	if (t)
+		return (t);
+	return (lex_redir_out(input, i));
 }
 
 static int	validate_sequence(t_token *prev, t_token *next, int i,
