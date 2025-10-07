@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 17:16:07 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/07 12:35:30 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/07 13:27:52 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,4 +88,17 @@ int					expand_status(char **ret, char **str, t_context *context);
 int					expand_pos_param(char **ret, char **str,
 						t_context *context);
 
+t_token				*token_new(t_token_type type, const char *val, int pos);
+
+t_token				*lex_and(const char *input, int *i);
+t_token				*lex_redir_out(const char *input, int *i);
+t_token				*lex_redir_in(const char *input, int *i);
+t_token				*lex_pipe_or(const char *input, int *i);
+
+int					is_metachar(char c);
+int					validate_sequence(t_token *prev, t_token *next, int i,
+						t_token *head);
+
+void				lexer_error(const char *msg, int pos, char *token);
+void				skip_whitespace(const char *input, int *i);
 #endif
