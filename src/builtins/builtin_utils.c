@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 12:44:47 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/30 10:13:42 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/07 12:46:01 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 bool	is_builtin_command(const char *cmd)
 {
 	const char	*builtins[] = {"echo", "cd", "pwd", "export", "unset", "env",
-			"exit", "history", NULL};
+		"exit", "history", NULL};
 	int			i;
 
 	if (!cmd)

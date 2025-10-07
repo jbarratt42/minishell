@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 21:24:15 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/29 15:51:00 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/07 13:03:26 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,10 @@ int		builtin_exit(t_token *tokens, t_context *context);
 int		builtin_history(t_token *tokens, t_context *context);
 
 // Helper functions
+
+void	sort_env_vars(char **env, int count);
+void	print_exported_vars(char **env);
+bool	is_valid_identifier(const char *str);
 bool	is_builtin_command(const char *cmd);
 int		execute_builtin(const char *cmd, t_token *tokens, t_context *context);
 
