@@ -69,6 +69,7 @@ clean:
 
 fclean: clean
 	$(RM) $(NAME)
+	$(MAKE) -C libft fclean
 
 # Add debug target that forces rebuild
 debug:

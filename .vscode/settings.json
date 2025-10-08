@@ -26,7 +26,8 @@
 	"functional": "c",
 	"tuple": "c",
 	"type_traits": "c",
-	"utility": "c"
+	"utility": "c",
+	"errno.h": "c"
 },
   "cSpell.words": ["chuezeri", "MINISHELL", "PRLH"]
 }
