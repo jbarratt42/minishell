@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 12:05:13 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/10/03 12:08:06 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/08 12:12:12 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,8 @@ bool	is_builtin(t_token *token)
 
 bool	set_exp_vars(t_token **tokens, t_context *context)
 {
-	while (ft_strchr((*tokens)->value, '='))
+	while (ft_strchr((*tokens)->value, '=')
+		&& is_valid_identifier((*tokens)->value))
 	{
 		if (!set_env((*tokens)->value, context->env))
 			return (false);

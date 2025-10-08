@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:31:14 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/10/06 12:07:20 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/08 11:47:38 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,9 @@ bool	exec_preprocess(t_token **tokens, t_context *context)
 
 	if (!expand_tokens(tokens, context))
 		return (false);
+	if (!is_command(*tokens))
+		if (!assign(tokens, context))
+			return (false);
 	t = *tokens;
 	while (t && t->type < PIPE && t->type != EOF_T)
 	{
@@ -37,9 +40,6 @@ bool	exec_preprocess(t_token **tokens, t_context *context)
 		t = t->next;
 	}
 	t->next = NULL;
-	if (!is_command(*tokens))
-		if (!assign(tokens, context))
-			return (false);
 	if (!redirect(tokens, context))
 		return (false);
 	return (true);
