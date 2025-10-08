@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 16:03:37 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/06 12:40:17 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/08 11:50:39 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,8 @@ bool	is_command(t_token *token)
 			token = token->next->next;
 		else if (token->type == WORD && token->value && token->value[0] == '\0')
 			token = token->next;
-		else if (token->type == WORD && ft_strchr(token->value, '='))
+		else if (token->type == WORD && ft_strchr(token->value, '=')
+			&& is_valid_identifier(token->value))
 			token = token->next;
 		else
 			return (true);
@@ -65,7 +66,8 @@ bool	assign(t_token **token, t_context *context)
 {
 	while (*token && (*token)->type != EOF_T)
 	{
-		if ((*token)->type == WORD && ft_strchr((*token)->value, '='))
+		if ((*token)->type == WORD && ft_strchr((*token)->value, '=')
+			&& is_valid_identifier((*token)->value))
 		{
 			context->local = set_env(ft_strdup((*token)->value),
 					context->local);
