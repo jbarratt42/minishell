@@ -18,7 +18,7 @@ static void	cleanup_heredoc(int fd, char *tmp_file)
 	free(tmp_file);
 }
 
-static bool	read_heredoc(char *tmp_file, char *delimiter)
+static bool	read_heredoc(char *tmp_file, char *delimiter, t_context *context)
 {
 	int		fd;
 	char	*line;
@@ -26,7 +26,7 @@ static bool	read_heredoc(char *tmp_file, char *delimiter)
 	fd = open(tmp_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd == -1)
 		return (free(tmp_file), (false));
-	while (true)
+    while (true)
 	{
 		line = readline("> ");
 		if (!line)
@@ -36,9 +36,13 @@ static bool	read_heredoc(char *tmp_file, char *delimiter)
 			free(line);
 			break ;
 		}
-		write(fd, line, ft_strlen(line));
-		write(fd, "\n", 1);
-		free(line);
+        dequote(line);
+        line = expand(line, context);
+        if (!line)
+            return (cleanup_heredoc(fd, tmp_file), false);
+        write(fd, line, ft_strlen(line));
+        write(fd, "\n", 1);
+        free(line);
 	}
 	close(fd);
 	return (true);
@@ -56,7 +60,7 @@ bool	heredoc(t_token *token, t_context *context)
 	tmp_file = ft_strjoin(".minishell/heredoc_", delimiter);
 	if (!tmp_file)
 		return (false);
-	read_heredoc(tmp_file, delimiter);
+    read_heredoc(tmp_file, delimiter, context);
 	if (context->open[0] > 2)
 		close(context->open[0]);
 	context->open[0] = open(tmp_file, O_RDONLY);
