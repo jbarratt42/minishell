@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 14:01:49 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/10/03 14:04:57 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/09 14:06:00 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ static bool	read_heredoc(char *tmp_file, char *delimiter, t_context *context)
 	int		fd;
 	char	*line;
 
+	context->is_heredoc = true;
 	fd = open(tmp_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd == -1)
 		return (free(tmp_file), (false));
@@ -44,6 +45,7 @@ static bool	read_heredoc(char *tmp_file, char *delimiter, t_context *context)
         free(line);
 	}
 	close(fd);
+	context->is_heredoc = false;
 	return (true);
 }
 
