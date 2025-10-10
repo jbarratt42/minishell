@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 16:08:55 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/29 16:14:44 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/10 13:45:41 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ static t_token	*try_word(size_t size)
 		free(token);
 		return (NULL);
 	}
+	token->type = WORD;
 	return (token);
 }
 
