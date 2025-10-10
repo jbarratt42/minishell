@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 14:01:49 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/10/09 14:06:00 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/10 11:17:40 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 static void	cleanup_heredoc(int fd, char *tmp_file)
 {
 	close(fd);
-	free(tmp_file);
+	(void)tmp_file;
+	//free(tmp_file);
 }
 
 static bool	read_heredoc(char *tmp_file, char *delimiter, t_context *context)
