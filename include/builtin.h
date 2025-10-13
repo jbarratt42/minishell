@@ -41,5 +41,6 @@ int		ensure_single_arg(t_token *arg);
 int		resolve_path_value(t_token *arg, t_context *context, char **out_path,
 			int *print_pwd);
 void	print_current_pwd_if_requested(int print_pwd);
+char	*get_minishell_dir(void);
 
 #endif
