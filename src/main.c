@@ -6,13 +6,13 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:09:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/09 14:05:07 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/14 11:48:59 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int		g_status = 0;
+int			g_status = 0;
 
 void	parse_and_execute(t_context *context, bool is_interactive)
 {
@@ -65,6 +65,7 @@ int	main(int argc, char **argv, char **env)
 	while (true)
 	{
 		context.input = readline(MINISHELL_PROMPT);
+		rl_done = 1;
 		if (!context.input)
 		{
 			if (!is_interactive)

@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:30:37 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/06 11:21:12 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/14 11:47:44 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,4 +55,8 @@ bool	try_dup2(int open[3]);
 /* src/exec//utils.c */
 t_token	**separate_words(t_token *token);
 void	dequote(char *str);
+void	cleanup_heredoc(int fd);
+bool	has_quotes(const char *s);
+int		is_delim_line(const char *line, const char *cmp_delim);
+
 #endif
