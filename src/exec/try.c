@@ -6,15 +6,15 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/02 10:10:03 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/10/13 11:37:18 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/13 15:24:36 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-bool try_close2(int open[2])
+bool	try_close2(int open[2])
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < 2)
@@ -32,9 +32,9 @@ bool try_close2(int open[2])
 	return (true);
 }
 
-bool try_pipe(int fds[2])
+bool	try_pipe(int fds[2])
 {
-	int tmp[2];
+	int	tmp[2];
 
 	if (pipe(tmp) == -1)
 	{
@@ -46,9 +46,9 @@ bool try_pipe(int fds[2])
 	return (true);
 }
 
-bool try_dup2(int open[3])
+bool	try_dup2(int open[3])
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < 2)

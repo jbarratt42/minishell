@@ -6,17 +6,17 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 12:53:36 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/13 10:02:42 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/13 15:20:33 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char *get_project_root(void)
+char	*get_project_root(void)
 {
-	static char project_root[PATH_MAX];
-	char *cwd;
-	char *minishell_pos;
+	static char	project_root[PATH_MAX];
+	char		*cwd;
+	char		*minishell_pos;
 
 	if (project_root[0] != '\0')
 		return (project_root);
@@ -41,11 +41,11 @@ char *get_project_root(void)
 	return (project_root);
 }
 
-char *get_minishell_dir(void)
+char	*get_minishell_dir(void)
 {
-	char *project_root;
-	char *dir_path;
-	size_t len_total;
+	char	*project_root;
+	char	*dir_path;
+	size_t	len_total;
 
 	project_root = get_project_root();
 	if (!project_root)
@@ -65,30 +65,34 @@ char *get_minishell_dir(void)
 	return (dir_path);
 }
 
-char *get_history_path(void)
+char	*get_history_path(void)
 {
-	static char *project_root;
-	static char *history_path;
+	static char	*project_root;
+	static char	*history_path;
 
 	project_root = get_project_root();
 	history_path = NULL;
 	if (project_root)
 	{
-		history_path = malloc(ft_strlen(project_root) + ft_strlen(MINSHELL_DIRECTORY) + 10);
+		history_path = malloc(ft_strlen(project_root)
+				+ ft_strlen(MINSHELL_DIRECTORY) + 10);
 		if (history_path)
 		{
 			ft_strcpy(history_path, project_root);
-			ft_strlcat(history_path, "/", ft_strlen(project_root) + ft_strlen(MINSHELL_DIRECTORY) + 10);
-			ft_strlcat(history_path, MINSHELL_DIRECTORY, ft_strlen(project_root) + ft_strlen(MINSHELL_DIRECTORY) + 10);
-			ft_strlcat(history_path, "/history", ft_strlen(project_root) + ft_strlen(MINSHELL_DIRECTORY) + 10);
+			ft_strlcat(history_path, "/", ft_strlen(project_root)
+				+ ft_strlen(MINSHELL_DIRECTORY) + 10);
+			ft_strlcat(history_path, MINSHELL_DIRECTORY, ft_strlen(project_root)
+				+ ft_strlen(MINSHELL_DIRECTORY) + 10);
+			ft_strlcat(history_path, "/history", ft_strlen(project_root)
+				+ ft_strlen(MINSHELL_DIRECTORY) + 10);
 		}
 	}
 	return (NULL);
 }
 
-char **init_env(void)
+char	**init_env(void)
 {
-	char **env;
+	char	**env;
 
 	env = malloc(sizeof(char *));
 	if (!env)
@@ -97,7 +101,7 @@ char **init_env(void)
 	return (env);
 }
 
-void init_context(t_context *context, int argc, char **argv, char **env)
+void	init_context(t_context *context, int argc, char **argv, char **env)
 {
 	context->argc = argc;
 	context->argv = argv;

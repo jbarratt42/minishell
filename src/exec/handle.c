@@ -6,15 +6,15 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 12:46:49 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/10/13 11:36:50 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/13 15:27:56 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-pid_t handle_builtins(t_token **tokens, t_context *context)
+pid_t	handle_builtins(t_token **tokens, t_context *context)
 {
-	pid_t pid;
+	pid_t	pid;
 
 	if (!context->is_pipeline)
 	{
@@ -41,9 +41,9 @@ pid_t handle_builtins(t_token **tokens, t_context *context)
 	return (-1);
 }
 
-void check_path_child(char *path, t_token **tokens)
+void	check_path_child(char *path, t_token **tokens)
 {
-	struct stat st;
+	struct stat	st;
 
 	if (!path)
 	{
@@ -70,9 +70,9 @@ void check_path_child(char *path, t_token **tokens)
 	}
 }
 
-void handle_execve_fail(char *path)
+void	handle_execve_fail(char *path)
 {
-	struct stat st;
+	struct stat	st;
 
 	if (errno == ENOENT)
 	{
