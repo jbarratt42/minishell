@@ -20,6 +20,9 @@ pid_t	handle_builtins(t_token **tokens, t_context *context)
 	{
 		try_dup2(context->open);
 		exec_builtin(*tokens, context);
+		context->open[0] = 0;
+		context->open[1] = 1;
+		context->open[2] = -1;
 		return (0);
 	}
 	pid = fork();
