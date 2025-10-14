@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 13:13:51 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/29 15:50:27 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/09 13:58:38 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ typedef struct s_context
 	t_node				*tree;
 	int					open[MAX_OPEN_FDS];
 	bool				is_pipeline;
+	bool				is_heredoc;
 	int					status;
 }						t_context;
 

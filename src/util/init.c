@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 12:53:36 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/06 11:38:00 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/13 15:20:33 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,30 @@ char	*get_project_root(void)
 	}
 	free(cwd);
 	return (project_root);
+}
+
+char	*get_minishell_dir(void)
+{
+	char	*project_root;
+	char	*dir_path;
+	size_t	len_total;
+
+	project_root = get_project_root();
+	if (!project_root)
+		return (NULL);
+	len_total = ft_strlen(project_root) + 1 + ft_strlen(MINSHELL_DIRECTORY) + 1;
+	dir_path = malloc(len_total);
+	if (!dir_path)
+		return (NULL);
+	ft_strcpy(dir_path, project_root);
+	ft_strlcat(dir_path, "/", len_total);
+	ft_strlcat(dir_path, MINSHELL_DIRECTORY, len_total);
+	if (access(dir_path, F_OK) != 0)
+	{
+		if (mkdir(dir_path, 0700) != 0)
+			return (free(dir_path), NULL);
+	}
+	return (dir_path);
 }
 
 char	*get_history_path(void)
@@ -87,5 +111,6 @@ void	init_context(t_context *context, int argc, char **argv, char **env)
 	context->open[1] = 1;
 	context->open[2] = -1;
 	context->is_pipeline = false;
+	context->is_heredoc = false;
 	context->status = 0;
 }

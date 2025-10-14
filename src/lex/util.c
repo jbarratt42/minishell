@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 17:50:47 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/07 14:10:35 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/09 14:01:06 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,21 @@ static size_t	compute_length(char *str, t_context *context)
 {
 	size_t	ret;
 	char	*pos;
+	bool	quoted;
 
 	ret = ft_strlen(str);
 	pos = str;
+	quoted = false;
 	while (*pos)
 	{
-		if (*pos == '$')
+		if ((!quoted || context->is_heredoc) && *pos == '$')
 			ret += expand_special(NULL, &pos, context);
 		else
+		{
+			if (*pos == '\'')
+				quoted = !quoted;
 			pos++;
+		}
 	}
 	return (ret);
 }
@@ -35,7 +41,7 @@ static void	eat_char(char **p, char **q, bool *quoted, t_context *context)
 		*(*q)++ = *(*p)++;
 	else if (**p == '\'')
 		*quoted = !*quoted;
-	else if (!*quoted && **p == '$')
+	else if ((!*quoted || context->is_heredoc) && **p == '$')
 	{
 		expand_special(q, p, context);
 		return ;
