@@ -151,8 +151,8 @@ bool heredoc(t_token *token, t_context *context)
 		return (false);
 	if (!read_heredoc(tmp_file, delimiter, context))
 		return (free(tmp_file), (false));
-	if (!ft_strnstr(context->input, "echo", ft_strlen(context->input)))
-		context->open[0] = open(tmp_file, O_RDONLY);
+	// if (!ft_strnstr(context->input, "echo", ft_strlen(context->input)))
+	// 	context->open[0] = open(tmp_file, O_RDONLY);
 	if (context->open[0] == -1)
 		return (free(tmp_file), (false));
 	unlink(tmp_file);
