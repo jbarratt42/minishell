@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 12:48:42 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/07 12:53:15 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/14 14:06:58 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,6 @@ int	handle_export_argument(t_token **current_ptr, t_context *context)
 	char	*pos;
 
 	current = *current_ptr;
-	merge_adjacent_assignments(current);
 	var = current->value;
 	pos = ft_strchr(var, '=');
 	if (pos)
