@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 16:13:34 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/03 13:32:01 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/15 15:26:34 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ bool	reassign_fd(t_token *token, t_context *context)
 	else
 		return (heredoc(token, context));
 	if (context->open[fd] > 2 && close(context->open[fd]) == -1)
-		return (perror("reassign_fd"), (false));
+		return (perror("reassign_fd"), false);
 	context->open[fd] = open(token->next->value, mode,
 			S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 	if (context->open[fd] == -1)
