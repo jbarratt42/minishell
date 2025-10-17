@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:31:14 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/10/17 12:49:03 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/17 14:04:30 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,9 @@ pid_t	exec_terminal(t_token **tokens, t_context *context)
 	if (!set_exp_vars(tokens, context) || !try_dup2(context->open))
 		return (-1);
 	path = get_path(*tokens, context->env);
-	check_path_child(path, tokens);
+	context->status = check_path_child(path, tokens); 
+	if(context->status != 0)
+		cleanup_and_exit(context);
 	execve(path, get_args(*tokens), context->env);
 	handle_execve_fail(path);
 	return (pid);

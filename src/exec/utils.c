@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 16:08:55 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/17 11:18:40 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/17 14:40:46 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,6 @@ void	dequote(char *str)
 		while (*p++)
 			*(p - 1) = *p;
 		q--;
-		str--;
 		while (*q++)
 			*(q - 1) = *q;
 		str = first_quote(str);

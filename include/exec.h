@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:30:37 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/17 11:33:38 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/17 13:50:15 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ pid_t	exec_terminal(t_token **tokens, t_context *context);
 bool	exec_sequential(t_node *node, t_context *context);
 /* src/exec//handle.c */
 pid_t	handle_builtins(t_token **tokens, t_context *context);
-void	check_path_child(char *path, t_token **tokens);
+int		check_path_child(char *path, t_token **tokens);
 void	handle_execve_fail(char *path);
 /* src/exec//help.c */
 char	**get_args(t_token *tokens);

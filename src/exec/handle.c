@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 12:46:49 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/10/17 13:28:27 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/17 14:05:11 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,33 +63,34 @@ pid_t	handle_builtins(t_token **tokens, t_context *context)
 	return (-1);
 }
 
-void	check_path_child(char *path, t_token **tokens)
+int	check_path_child(char *path, t_token **tokens)
 {
 	struct stat	st;
 
 	if (!path)
 	{
 		err_printf("%s: command not found\n", (*tokens)->value);
-		exit(127);
+		return (127);
 	}
 	if (access(path, F_OK) == -1)
 	{
 		err_printf("%s: No such file or directory\n", path);
-		exit(127);
+		return (127);
 	}
 	if (access(path, X_OK) == -1)
 	{
 		if (stat(path, &st) == 0 && S_ISDIR(st.st_mode))
 		{
 			err_printf("%s: Is a directory\n", path);
-			exit(126);
+			return (126);
 		}
 		else
 		{
 			err_printf("%s: Permission denied\n", path);
-			exit(126);
+			return (126);
 		}
 	}
+	return (0);
 }
 
 void	handle_execve_fail(char *path)
