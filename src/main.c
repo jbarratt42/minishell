@@ -6,13 +6,13 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:09:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/17 11:12:24 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/17 12:46:56 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int		g_status = 0;
+int			g_status = 0;
 
 void	parse_and_execute(t_context *context, bool is_interactive)
 {
@@ -32,8 +32,7 @@ void	parse_and_execute(t_context *context, bool is_interactive)
 		context->status = 1;
 	if (pid && pid != -1)
 	{
-		if (waitpid(pid, &context->status, 0) == -1
-			|| !WIFEXITED(context->status))
+		if (waitpid(pid, &context->status, 0) == -1)
 			perror("main");
 		context->status = WEXITSTATUS(context->status);
 	}

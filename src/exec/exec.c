@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:31:14 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/10/08 11:47:38 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/17 12:49:03 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,10 +57,12 @@ pid_t	exec_terminal(t_token **tokens, t_context *context)
 	if (is_builtin(*tokens))
 		return (handle_builtins(tokens, context));
 	pid = fork();
+	signal(SIGQUIT, SIG_DFL);
 	if (pid > 0)
 	{
 		if (!cleanup_parent(context))
 			return (-1);
+		signal(SIGQUIT, SIG_IGN);
 		return (pid);
 	}
 	if (!set_exp_vars(tokens, context) || !try_dup2(context->open))
