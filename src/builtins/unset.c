@@ -6,17 +6,25 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 12:49:21 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/17 11:34:01 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/17 11:48:13 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+static void	shift_env(char **p)
+{
+	while (*p)
+	{
+		*p = *(p + 1);
+		p++;
+	}
+}
+
 static void	unset_from_env(char **env, const char *name)
 {
 	int		name_len;
 	int		i;
-	int		j;
 	char	*equal_pos;
 
 	if (!env || !name)
@@ -30,13 +38,7 @@ static void	unset_from_env(char **env, const char *name)
 				name, name_len))
 		{
 			free(env[i]);
-			j = i;
-			while (env[j + 1])
-			{
-				env[j] = env[j + 1];
-				j++;
-			}
-			env[j] = NULL;
+			shift_env(&env[i]);
 			i--;
 		}
 		i++;

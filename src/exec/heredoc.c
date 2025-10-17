@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 14:01:49 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/10/17 11:32:25 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/17 12:02:13 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,18 @@ static bool	read_heredoc(char *tmp_file, char *delimiter, t_context *context)
 	return (ok);
 }
 
+static bool	check_heredoc(t_token *token, char **minishell_dir,
+		char **delimiter)
+{
+	if (!token || !token->next || token->next->type != WORD)
+		return (false);
+	*delimiter = token->next->value;
+	*minishell_dir = get_minishell_dir();
+	if (!*minishell_dir)
+		return (false);
+	return (true);
+}
+
 /* process a heredoc */
 bool	heredoc(t_token *token, t_context *context)
 {
@@ -90,11 +102,7 @@ bool	heredoc(t_token *token, t_context *context)
 	char	*minishell_dir;
 	char	*fname;
 
-	if (!token || !token->next || token->next->type != WORD)
-		return (false);
-	delimiter = token->next->value;
-	minishell_dir = get_minishell_dir();
-	if (!minishell_dir)
+	if (!check_heredoc(token, &minishell_dir, &delimiter))
 		return (false);
 	fname = ft_strjoin("heredoc_", delimiter);
 	if (!fname)
