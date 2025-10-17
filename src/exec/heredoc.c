@@ -3,66 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
+/*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 14:01:49 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/10/13 11:39:01 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/17 11:32:25 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <unistd.h>
 
-static void cleanup_heredoc(int fd)
+static bool	write_line_to_fd(int fd, const char *line)
 {
-	if (fd >= 0)
-		close(fd);
-}
-
-static bool has_quotes(const char *s)
-{
-	if (!s)
-		return (false);
-	while (*s)
-	{
-		if (*s == '\'' || *s == '"')
-			return (true);
-		s++;
-	}
-	return (false);
-}
-
-static int is_delim_line(const char *line, const char *cmp_delim)
-{
-	size_t len_line;
-	size_t len_cmp;
-	size_t cmp_len;
-
-	len_line = ft_strlen(line);
-	len_cmp = ft_strlen(cmp_delim);
-	if (len_line > len_cmp)
-		cmp_len = len_line;
-	else
-		cmp_len = len_cmp;
-	if (ft_strncmp(line, cmp_delim, cmp_len + 1) == 0)
-		return (1);
-	return (0);
-}
-
-static char *maybe_expand_line(char *line, bool do_expand, t_context *context)
-{
-	char *expanded;
-
-	if (!do_expand)
-		return (line);
-	expanded = expand(line, context);
-	// free(line);
-	return (expanded);
-}
-
-static bool write_line_to_fd(int fd, const char *line)
-{
-	size_t len;
+	size_t	len;
 
 	if (!line)
 		return (false);
@@ -73,18 +26,20 @@ static bool write_line_to_fd(int fd, const char *line)
 		return (false);
 	return (true);
 }
+#define HEREDOC_WARNING_MSG "minishell: warning: here-document delimited"
 
-static bool heredoc_loop(int fd, char *cmp_delim, bool do_expand, t_context *context)
+static bool	heredoc_loop(int fd, char *cmp_delim, bool do_expand,
+		t_context *context)
 {
-	char *line;
+	char	*line;
 
 	while (true)
 	{
 		line = readline("> ");
 		if (!line)
 		{
-			err_printf("minishell: warning: here-document delimited by end-of-file (wanted `%s')\n",
-					   cmp_delim);
+			err_printf(HEREDOC_WARNING_MSG " by end-of-file (wanted `%s')\n",
+				cmp_delim);
 			return (true);
 		}
 		if (is_delim_line(line, cmp_delim))
@@ -98,12 +53,12 @@ static bool heredoc_loop(int fd, char *cmp_delim, bool do_expand, t_context *con
 	}
 }
 
-static bool read_heredoc(char *tmp_file, char *delimiter, t_context *context)
+static bool	read_heredoc(char *tmp_file, char *delimiter, t_context *context)
 {
-	int fd;
-	bool do_expand;
-	char *cmp_delim;
-	bool ok;
+	int		fd;
+	bool	do_expand;
+	char	*cmp_delim;
+	bool	ok;
 
 	context->is_heredoc = true;
 	fd = open(tmp_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
@@ -122,19 +77,18 @@ static bool read_heredoc(char *tmp_file, char *delimiter, t_context *context)
 	}
 	ok = heredoc_loop(fd, cmp_delim, do_expand, context);
 	cleanup_heredoc(fd);
-
 	free(cmp_delim);
 	context->is_heredoc = false;
 	return (ok);
 }
 
 /* process a heredoc */
-bool heredoc(t_token *token, t_context *context)
+bool	heredoc(t_token *token, t_context *context)
 {
-	char *delimiter;
-	char *tmp_file;
-	char *minishell_dir;
-	char *fname;
+	char	*delimiter;
+	char	*tmp_file;
+	char	*minishell_dir;
+	char	*fname;
 
 	if (!token || !token->next || token->next->type != WORD)
 		return (false);

@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:30:37 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/06 11:21:12 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/17 11:33:38 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,10 @@ bool	cleanup_parent(t_context *context);
 bool	expand_tokens(t_token **token, t_context *context);
 bool	reassign_fd(t_token *token, t_context *context);
 /* src/exec//heredoc.c */
+void	cleanup_heredoc(int fd);
+bool	has_quotes(const char *s);
+int		is_delim_line(const char *line, const char *cmp_delim);
+char	*maybe_expand_line(char *line, bool do_expand, t_context *context);
 bool	heredoc(t_token *token, t_context *context);
 /* src/exec//path.c */
 char	*append_path(char *a, char *b);
