@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:09:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/09 14:05:07 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/17 10:41:53 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ int	main(int argc, char **argv, char **env)
 {
 	static t_context	context = {0};
 	bool				is_interactive;
+	char				*tmp;
 
 	is_interactive = isatty(STDIN_FILENO);
 	init_context(&context, argc, argv, env);
@@ -64,7 +65,9 @@ int	main(int argc, char **argv, char **env)
 	signal(SIGQUIT, SIG_IGN);
 	while (true)
 	{
-		context.input = readline(MINISHELL_PROMPT);
+		tmp = readline(MINISHELL_PROMPT);
+		context.input = ft_strtrim(tmp, " \t\n");
+		free(tmp);
 		if (!context.input)
 		{
 			if (!is_interactive)

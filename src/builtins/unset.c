@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 12:49:21 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/29 16:25:21 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/17 10:25:36 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,7 @@ int	builtin_unset(t_token *tokens, t_context *context)
 	{
 		if (!is_valid_identifier(current->value))
 		{
-			err_printf("unset: `%s': not a valid identifier\n",
-				current->value);
+			err_printf("unset: `%s': not a valid identifier\n", current->value);
 			ret = 1;
 		}
 		else

@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 17:16:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/07 14:10:20 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/17 10:38:19 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,12 +68,12 @@ static t_token	*lex_operator(const char *input, int *i)
 
 static t_token	*lex_tokens(const char *input, t_token *head)
 {
-	t_token	*cur;
 	int		i;
 	int		prev_i;
+	t_token	*cur;
 
-	cur = head;
 	i = 0;
+	cur = head;
 	while (*input && input[i])
 	{
 		prev_i = i;
