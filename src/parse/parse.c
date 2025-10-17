@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:33:32 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/09/29 16:21:54 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/17 15:33:10 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@ static t_node	*parse_terminal(t_token *token)
 		return (NULL);
 	node->is_terminal = true;
 	node->data.tokens = token;
+	if (!is_command(token))
+		return (free(node), NULL);
 	return (node);
 }
 

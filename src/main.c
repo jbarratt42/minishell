@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:09:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/17 12:46:56 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/17 15:29:48 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,11 @@ void	parse_and_execute(t_context *context, bool is_interactive)
 		exit(context->status);
 	}
 	context->tree = parse(&context->tokens, 0);
+	if (!context->tree)
+	{
+		err_printf("syntax error\n");
+		return ;
+	}
 	pid = traverse(context->tree, context);
 	if (pid == -1)
 		context->status = 1;

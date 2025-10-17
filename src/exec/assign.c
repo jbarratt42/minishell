@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 16:03:37 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/08 11:50:39 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/17 15:34:32 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@ void	delete_tokens(t_token **token, size_t len)
 /* check if a token list contains a command */
 bool	is_command(t_token *token)
 {
+	if (token->type >= PIPE)
+		return (false);
 	while (token && token->type < PIPE && token->type != EOF_T)
 	{
 		if (token->type >= REDIR_IN && token->type <= REDIR_APPEND)

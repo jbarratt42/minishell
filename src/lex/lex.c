@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 17:16:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/17 10:38:19 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/17 15:37:48 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,8 +86,10 @@ static t_token	*lex_tokens(const char *input, t_token *head)
 				NULL);
 		if (cur->next && cur->next->type == ERROR)
 			break ;
+		/*
 		if (cur->next && !validate_sequence(cur, cur->next, i, head))
 			return (NULL);
+			*/
 		if (cur->next)
 			cur = cur->next;
 	}
