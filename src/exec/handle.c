@@ -6,39 +6,39 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 12:46:49 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/10/17 12:44:01 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/17 13:28:27 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int    handle_non_pipeline(t_context *context, t_token **tokens)
+int	handle_non_pipeline(t_context *context, t_token **tokens)
 {
-       int     saved_in;
-       int     saved_out;
+	int	saved_in;
+	int	saved_out;
 
-       saved_in = -1;
-       saved_out = -1;
-       if (context->open[0] != 0)
-               saved_in = dup(0);
-       if (context->open[1] != 1)
-               saved_out = dup(1);
-       try_dup2(context->open);
-       exec_builtin(*tokens, context);
-       if (saved_in != -1)
-       {
-               dup2(saved_in, 0);
-               close(saved_in);
-       }
-       if (saved_out != -1)
-       {
-               dup2(saved_out, 1);
-               close(saved_out);
-       }
-       context->open[0] = 0;
-       context->open[1] = 1;
-       context->open[2] = -1;
-       return (0);
+	saved_in = -1;
+	saved_out = -1;
+	if (context->open[0] != 0)
+		saved_in = dup(0);
+	if (context->open[1] != 1)
+		saved_out = dup(1);
+	try_dup2(context->open);
+	exec_builtin(*tokens, context);
+	if (saved_in != -1)
+	{
+		dup2(saved_in, 0);
+		close(saved_in);
+	}
+	if (saved_out != -1)
+	{
+		dup2(saved_out, 1);
+		close(saved_out);
+	}
+	context->open[0] = 0;
+	context->open[1] = 1;
+	context->open[2] = -1;
+	return (0);
 }
 
 pid_t	handle_builtins(t_token **tokens, t_context *context)
