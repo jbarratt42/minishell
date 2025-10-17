@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 11:49:07 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/10/06 12:13:17 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/17 09:45:49 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ void	free_context(t_context *context)
 
 void	cleanup_and_exit(t_context *context)
 {
+	cleanup_parent(context);
 	free_context(context);
 	exit(context->status);
 }

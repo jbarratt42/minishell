@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:09:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/15 15:27:37 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/10/17 09:43:57 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,7 @@ static void	free_for_input(t_context *context)
 	context->tree = NULL;
 	context->is_pipeline = false;
 	context->is_heredoc = false;
-	context->open[0] = 0;
-	context->open[1] = 1;
-	context->open[2] = -1;
+	cleanup_parent(context);
 }
 
 int	main(int argc, char **argv, char **env)
