@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 12:49:21 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/17 10:25:36 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/10/17 11:24:45 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,25 +14,35 @@
 
 static void	unset_from_env(char **env, const char *name)
 {
-	char	**p;
-	char	*equal_pos;
 	int		name_len;
+	int		i;
+	int		j;
+	char	*equal_pos;
 
 	if (!env || !name)
 		return ;
 	name_len = ft_strlen(name);
-	p = env;
-	while (*p)
+	i = 0;
+	while (env[i])
 	{
-		equal_pos = ft_strchr(*p, '=');
-		if (equal_pos && (equal_pos - *p) == name_len)
+		equal_pos = ft_strchr(env[i], '=');
+		if (equal_pos && (equal_pos - env[i]) == name_len
+			&& !ft_strncmp(env[i], name, name_len))
 		{
-			if (ft_strcmp(*p, name) == 0)
-				return (free(*p));
+			free(env[i]);
+			j = i;
+			while (env[j + 1])
+			{
+				env[j] = env[j + 1];
+				j++;
+			}
+			env[j] = NULL;
+			i--;
 		}
-		p++;
+		i++;
 	}
 }
+
 
 int	builtin_unset(t_token *tokens, t_context *context)
 {
