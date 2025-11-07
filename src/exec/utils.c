@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 16:08:55 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/17 14:40:46 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/07 12:51:49 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ static char	*next_unquoted_space(char *str)
 	{
 		if (*str == delim)
 			delim = '\0';
-		if (delim == '\0' && *str == '=')
+		else if (delim == '\0' && *str == '=')
 			return (str + ft_strlen(str));
 		else if (!delim && (*str == '\'' || *str == '"'))
 			delim = *str;
