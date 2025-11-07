@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:09:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/17 15:29:48 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/07 13:46:37 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,11 @@ int	main(int argc, char **argv, char **env)
 		tmp = readline(MINISHELL_PROMPT);
 		context.input = ft_strtrim(tmp, " \t\n");
 		free(tmp);
+		if (!ft_strlen(context.input))
+		{
+			free(context.input);
+			continue;
+		}
 		if (!context.input)
 		{
 			if (!is_interactive)
