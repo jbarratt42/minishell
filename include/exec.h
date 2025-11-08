@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:30:37 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/17 13:50:15 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/08 11:53:46 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,5 +58,5 @@ bool	try_pipe(int fds[2]);
 bool	try_dup2(int open[3]);
 /* src/exec//utils.c */
 t_token	**separate_words(t_token *token);
-void	dequote(char *str);
+bool	dequote(char *str);
 #endif

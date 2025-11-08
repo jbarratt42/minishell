@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 16:08:55 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/11/07 12:51:49 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/08 11:54:36 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ t_token	**separate_words(t_token *token)
 	return (&token->next);
 }
 
-void	dequote(char *str)
+bool	dequote(char *str)
 {
 	char	*p;
 	char	*q;
@@ -102,7 +102,10 @@ void	dequote(char *str)
 		p = str;
 		q = ft_strchr(p + 1, *p);
 		if (!q)
-			return ;
+		{
+			err_printf("unclosed quote\n");
+			return (false);
+		}
 		str = q - 1;
 		while (*p++)
 			*(p - 1) = *p;
@@ -111,4 +114,5 @@ void	dequote(char *str)
 			*(q - 1) = *q;
 		str = first_quote(str);
 	}
+	return (true);
 }

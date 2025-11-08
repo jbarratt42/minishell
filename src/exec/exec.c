@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:31:14 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/11/07 18:44:33 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/08 11:50:40 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,8 @@ bool	exec_preprocess(t_token **tokens, t_context *context)
 	while (t && t->type < PIPE && t->type != EOF_T)
 	{
 		if (t->type == WORD)
-			dequote(t->value);
+			if (!dequote(t->value))
+				return (false);
 		t = t->next;
 	}
 	t->next = NULL;
