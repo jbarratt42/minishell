@@ -37,6 +37,7 @@ void	parse_and_execute(t_context *context, bool is_interactive)
 	if (!context->tree)
 	{
 		err_printf("syntax error\n");
+		g_status = 2;
 		return ;
 	}
 	pid = traverse(context->tree, context);
@@ -68,6 +69,11 @@ static bool	process_input(t_context *context, bool is_interactive)
 	char	*tmp;
 
 	tmp = readline(MINISHELL_PROMPT);
+	if (g_status)
+	{
+		context->status = g_status;
+		g_status = 0;
+	}
 	context->input = ft_strtrim(tmp, " \t\n");
 	free(tmp);
 	if (!context->input)

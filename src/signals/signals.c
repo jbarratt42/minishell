@@ -20,6 +20,7 @@ void	signal_handler(int sig)
 		write(STDOUT_FILENO, "\n", 1);
 		rl_on_new_line();
 		rl_redisplay();
+		g_status = SIG_DEFAULT + SIGINT;
 	}
 	else if (sig == SIGTERM)
 	{
