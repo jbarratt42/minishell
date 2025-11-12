@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:09:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/11/08 11:41:23 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/12 12:31:38 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,6 @@ static void	free_for_input(t_context *context)
 {
 	free(context->input);
 	context->input = NULL;
-	free_tokens(context->tokens);
-	context->tokens = NULL;
 	free_node(context->tree);
 	context->tree = NULL;
 	context->is_pipeline = false;
