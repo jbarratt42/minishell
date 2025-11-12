@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:31:14 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/11/12 13:25:34 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/12 14:08:54 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ pid_t	exec_terminal(t_token **tokens, t_context *context)
 	signal(SIGQUIT, SIG_DFL);
 	if (pid > 0)
 	{
+		signal(SIGINT, execve_handler);
 		if (!cleanup_parent(context))
 			return (-1);
 		signal(SIGQUIT, SIG_IGN);
@@ -70,7 +71,6 @@ pid_t	exec_terminal(t_token **tokens, t_context *context)
 		return (-1);
 	path = get_path(*tokens, context->env);
 	context->status = check_path_child(path, tokens);
-	signal(SIGINT, SIG_IGN);
 	if (context->status != 0)
 		cleanup_and_exit(context);
 	execve(path, get_args(*tokens), context->env);

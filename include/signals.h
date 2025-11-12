@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 15:10:38 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/06 12:30:45 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/12 14:09:18 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,5 +18,6 @@
 # define SIG_DEFAULT 128
 
 void	signal_handler(int sig);
+void	execve_handler(int sig);
 
 #endif

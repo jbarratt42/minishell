@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:09:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/11/12 12:31:38 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/12 14:16:33 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ static void	wait_and_set_status(pid_t pid, t_context *context)
 {
 	if (waitpid(pid, &context->status, 0) == -1)
 		perror("main");
+	signal(SIGINT, signal_handler);
 	context->status = WEXITSTATUS(context->status);
 }
 

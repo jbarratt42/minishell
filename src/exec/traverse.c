@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 13:11:36 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/10/03 13:21:05 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/12 14:04:11 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,5 +46,6 @@ pid_t	traverse(t_node *node, t_context *context)
 	context->open[2] = -1;
 	pids[1] = traverse(node->data.op.right, context);
 	set_status(pids, context);
+	signal(SIGINT, signal_handler);
 	return (0);
 }
