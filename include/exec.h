@@ -6,12 +6,13 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:30:37 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/11/08 11:53:46 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/12 14:50:22 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef EXEC_H
 # define EXEC_H
+# define HEREDOC_WARNING_MSG "minishell: warning: here-document delimited"
 
 /* prototypes */
 /* src/exec//assign.c */

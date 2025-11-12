@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 12:46:49 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/10/17 14:05:11 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/12 14:47:11 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,15 +68,9 @@ int	check_path_child(char *path, t_token **tokens)
 	struct stat	st;
 
 	if (!path)
-	{
-		err_printf("%s: command not found\n", (*tokens)->value);
-		return (127);
-	}
+		return (err_printf("%s: command not found\n", (*tokens)->value), 127);
 	if (access(path, F_OK) == -1)
-	{
-		err_printf("%s: No such file or directory\n", path);
-		return (127);
-	}
+		return (err_printf("%s: No such file or directory\n", path), 127);
 	if (access(path, X_OK) == -1)
 	{
 		if (stat(path, &st) == 0 && S_ISDIR(st.st_mode))

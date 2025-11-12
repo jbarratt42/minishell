@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:31:14 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/11/12 14:08:54 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/12 14:42:41 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,21 @@ bool	exec_preprocess(t_token **tokens, t_context *context)
 	return (true);
 }
 
+static void	do_execve(t_token **tokens, t_context *context)
+{
+	char	*path;
+
+	path = get_path(*tokens, context->env);
+	context->status = check_path_child(path, tokens);
+	if (context->status != 0)
+		cleanup_and_exit(context);
+	execve(path, get_args(*tokens), context->env);
+	handle_execve_fail(path);
+}
+
 pid_t	exec_terminal(t_token **tokens, t_context *context)
 {
 	pid_t	pid;
-	char	*path;
 
 	if (!exec_preprocess(tokens, context))
 		return (-1);
@@ -69,12 +80,7 @@ pid_t	exec_terminal(t_token **tokens, t_context *context)
 	}
 	if (!set_exp_vars(tokens, context) || !try_dup2(context->open))
 		return (-1);
-	path = get_path(*tokens, context->env);
-	context->status = check_path_child(path, tokens);
-	if (context->status != 0)
-		cleanup_and_exit(context);
-	execve(path, get_args(*tokens), context->env);
-	handle_execve_fail(path);
+	do_execve(tokens, context);
 	return (pid);
 }
 

@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 15:10:26 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/11/12 14:19:29 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/12 14:33:13 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,6 @@ void	signal_handler(int sig)
 		rl_redisplay();
 		g_status = SIG_DEFAULT + SIGINT;
 	}
-//	else if (sig == SIGTERM)
-//	{
-//		ft_printf("Terminated by SIGTERM\n");
-//		g_status = SIGTERM;
-//		exit(0);
-//	}
 }
 
 void	execve_handler(int sig)
@@ -37,10 +31,4 @@ void	execve_handler(int sig)
 		write(STDOUT_FILENO, "\n", 1);
 		g_status = SIG_DEFAULT + SIGINT;
 	}
-//	else if (sig == SIGTERM)
-//	{
-//		ft_printf("Terminated by SIGTERM\n");
-//		g_status = SIGTERM;
-//		exit(0);
-//	}
 }
