@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 11:49:07 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/10/06 12:13:17 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/12 13:30:44 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,6 @@ void	free_context(t_context *context)
 	context->local = NULL;
 	free(context->input);
 	context->input = NULL;
-	free_tokens(context->tokens);
-	context->tokens = NULL;
 	free_node(context->tree);
 	context->tree = NULL;
 }
