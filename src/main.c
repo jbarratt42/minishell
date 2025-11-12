@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:09:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/11/12 14:16:33 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/12 14:28:20 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,7 @@ int	main(int argc, char **argv, char **env)
 	init_context(&context, argc, argv, env);
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, SIG_IGN);
+	signal(SIGTERM, SIG_IGN);
 	while (process_input(&context, is_interactive))
 		;
 	clear_history();
