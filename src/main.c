@@ -39,9 +39,17 @@ void	parse_and_execute(t_context *context, bool is_interactive)
 	{
 		err_printf("syntax error\n");
 		g_status = 2;
-		free_tokens(context->tokens);
+		/* Free tokens if they weren't already freed by parse().
+		 * parse() sets context->tokens to NULL when it frees tokens. */
+		if (context->tokens)
+		{
+			free_tokens(context->tokens);
+		}
+		context->tokens = NULL;
 		return ;
 	}
+	/* After successful parse, tree owns the tokens, so clear the pointer */
+	context->tokens = NULL;
 	pid = traverse(context->tree, context);
 	if (pid == -1)
 		context->status = 1;
@@ -57,6 +65,12 @@ static void	free_for_input(t_context *context)
 	context->input = NULL;
 	free_node(context->tree);
 	context->tree = NULL;
+	/* Only free tokens if they weren't consumed by the parse tree */
+	if (context->tokens)
+	{
+		free_tokens(context->tokens);
+		context->tokens = NULL;
+	}
 	context->is_pipeline = false;
 	context->is_heredoc = false;
 	context->open[0] = 0;
