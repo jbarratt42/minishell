@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 12:46:49 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/11/12 16:28:49 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/12 14:47:11 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ pid_t	handle_builtins(t_token **tokens, t_context *context)
 	{
 		try_dup2(context->open);
 		exec_builtin(*tokens, context);
-		free_context(context);
 		exit(context->status);
 	}
 	if (pid > 0)
