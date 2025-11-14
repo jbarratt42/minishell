@@ -14,28 +14,12 @@
 
 void	free_tokens(t_token *token)
 {
-	t_token	*next;
-
 	if (!token)
 		return ;
-	/* Save next before freeing current token, in case token->next
-	 * gets corrupted during free or token is part of a larger list
-	 * that's being freed elsewhere */
-	next = token->next;
-	/* Free value if it exists */
-	if (token->value)
-	{
-		free(token->value);
-		token->value = NULL;
-	}
-	/* Clear next pointer before freeing to prevent accidental traversal
-	 * of freed memory */
-	token->next = NULL;
-	token->prev = NULL;
+	if (token->next)
+		free_tokens(token->next);
+	free(token->value);
 	free(token);
-	/* Recursively free the rest of the list */
-	if (next)
-		free_tokens(next);
 }
 
 void	free_node(t_node *node)
