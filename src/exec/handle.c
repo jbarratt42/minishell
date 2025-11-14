@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 12:46:49 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/11/12 14:47:11 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/14 09:04:08 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ pid_t	handle_builtins(t_token **tokens, t_context *context)
 	{
 		try_dup2(context->open);
 		exec_builtin(*tokens, context);
-		exit(context->status);
+		cleanup_and_exit(context);
 	}
 	if (pid > 0)
 	{
@@ -87,28 +87,32 @@ int	check_path_child(char *path, t_token **tokens)
 	return (0);
 }
 
-void	handle_execve_fail(char *path)
+void	handle_execve_fail(char *path, t_context *context)
 {
 	struct stat	st;
 
 	if (errno == ENOENT)
 	{
 		err_printf("%s: No such file or directory\n", path);
-		exit(127);
+		context->status = 127;
+		cleanup_and_exit(context);
 	}
 	else if (errno == EACCES)
 	{
 		if (stat(path, &st) == 0 && S_ISDIR(st.st_mode))
 		{
 			err_printf("%s: Is a directory\n", path);
-			exit(126);
+			context->status = 126;
+			cleanup_and_exit(context);
 		}
 		else
 		{
 			err_printf("%s: Permission denied\n", path);
-			exit(126);
+			context->status = 126;
+			cleanup_and_exit(context);
 		}
 	}
 	perror("exec_terminal");
-	exit(1);
+	context->status = 1;
+	cleanup_and_exit(context);
 }

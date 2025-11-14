@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:09:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/11/13 09:22:16 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/14 09:23:31 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,21 +25,23 @@ static void	wait_and_set_status(pid_t pid, t_context *context)
 void	parse_and_execute(t_context *context, bool is_interactive)
 {
 	pid_t	pid;
+	t_token	*tmp;
 
 	if (is_interactive)
 		add_history(context->input);
 	context->tokens = lex(context->input);
 	if (!context->tokens)
 	{
-		free_node(context->tree);
+		free_context(context);
 		exit(context->status);
 	}
-	context->tree = parse(&context->tokens, 0);
+	tmp = context->tokens;
+	context->tree = parse(&tmp, 0);
 	if (!context->tree)
 	{
 		err_printf("syntax error\n");
 		g_status = 2;
-		free_tokens(context->tokens);
+		//free_tokens(context->tokens);
 		return ;
 	}
 	pid = traverse(context->tree, context);
@@ -55,6 +57,8 @@ static void	free_for_input(t_context *context)
 {
 	free(context->input);
 	context->input = NULL;
+	free_tokens(context->tokens);
+	context->tokens = NULL;
 	free_node(context->tree);
 	context->tree = NULL;
 	context->is_pipeline = false;

@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 11:49:07 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/11/12 13:30:44 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/14 08:37:42 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,7 @@ void	free_node(t_node *node)
 {
 	if (!node)
 		return ;
-	if (node->is_terminal)
-		free_tokens(node->data.tokens);
-	else
+	if (!node->is_terminal)
 	{
 		free_node(node->data.op.left);
 		free_node(node->data.op.right);
@@ -56,6 +54,8 @@ void	free_context(t_context *context)
 	context->local = NULL;
 	free(context->input);
 	context->input = NULL;
+	free_tokens(context->tokens);
+	context->tokens = NULL;
 	free_node(context->tree);
 	context->tree = NULL;
 }

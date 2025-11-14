@@ -6,40 +6,26 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 16:03:37 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/11/12 14:49:01 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/14 09:00:28 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/* delete len tokens starting with the token pointed to by token */
-/*
-void	delete_tokens(t_token **token, size_t len)
-{
-		t_token	*tmp;
-		t_token	*end;
-
-		tmp = *token;
-		if (!len)
-				return ;
-		end = *token;
-		while (len--)
-				end = end->next;
-		*token = end;
-		end = NULL;
-		free(tmp);
-}
-*/
-void delete_tokens(t_token **token, size_t len)
+void delete_tokens(t_token **token, t_token **head, size_t len)
 {
 	t_token *tmp;
+	bool	is_head;
 
+	is_head = (*token == *head);
 	if (!len)
 		return;
 	free((*token)->value);
 	tmp = *token;
 	*token = (*token)->next;
-	delete_tokens(token, len - 1);
+	delete_tokens(token, head, len - 1);
+	if (is_head)
+		*head = *token;
 	free(tmp);
 }
 
@@ -74,7 +60,7 @@ bool assign(t_token **token, t_context *context)
 			context->local = set_env(ft_strdup((*token)->value), context->local);
 			if (!context->local)
 				return (false);
-			delete_tokens(token, 1);
+			delete_tokens(token, &context->tokens, 1);
 		}
 		else
 			token = &((*token)->next->next);
@@ -116,7 +102,7 @@ bool redirect(t_token **token, t_context *context)
 		{
 			if ((*token)->type == HEREDOC)
 			{
-				delete_tokens(token, 2);
+				delete_tokens(token, &context->tokens, 2);
 				continue;
 			}
 			if (!reassign_fd(*token, context))
@@ -124,7 +110,7 @@ bool redirect(t_token **token, t_context *context)
 				context->status = 1;
 				return (false);
 			}
-			delete_tokens(token, 2);
+			delete_tokens(token, &context->tokens, 2);
 		}
 		else
 			token = &((*token)->next);

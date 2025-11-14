@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 16:13:34 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/03 13:32:01 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/14 09:05:03 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ bool	expand_tokens(t_token **token, t_context *context)
 				return (false);
 			if (ft_strlen((*token)->value) == 0)
 			{
-				delete_tokens(token, 1);
+				delete_tokens(token, &context->tokens, 1);
 				continue ;
 			}
 			token = separate_words(*token);

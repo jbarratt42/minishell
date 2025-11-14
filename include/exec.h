@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:30:37 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/11/12 14:50:22 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/14 09:03:37 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 /* prototypes */
 /* src/exec//assign.c */
-void	delete_tokens(t_token **token, size_t len);
+void	delete_tokens(t_token **token, t_token **head, size_t len);
 bool	is_command(t_token *token);
 bool	assign(t_token **token, t_context *context);
 bool	redirect(t_token **token, t_context *context);
@@ -31,7 +31,7 @@ bool	exec_sequential(t_node *node, t_context *context);
 /* src/exec//handle.c */
 pid_t	handle_builtins(t_token **tokens, t_context *context);
 int		check_path_child(char *path, t_token **tokens);
-void	handle_execve_fail(char *path);
+void	handle_execve_fail(char *path, t_context *context);
 /* src/exec//help.c */
 char	**get_args(t_token *tokens);
 bool	is_builtin(t_token *token);

@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 12:05:13 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/10/08 12:12:12 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/14 08:57:35 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ bool	set_exp_vars(t_token **tokens, t_context *context)
 	{
 		if (!set_env((*tokens)->value, context->env))
 			return (false);
-		delete_tokens(tokens, 1);
+		delete_tokens(tokens, &context->tokens, 1);
 	}
 	return (true);
 }

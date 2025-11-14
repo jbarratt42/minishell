@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:31:14 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/11/12 14:42:41 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/14 09:03:43 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ bool	exec_preprocess(t_token **tokens, t_context *context)
 				return (false);
 		t = t->next;
 	}
-	t->next = NULL;
+	//t->next = NULL;
 	if (!redirect(tokens, context))
 		return (false);
 	return (true);
@@ -55,7 +55,7 @@ static void	do_execve(t_token **tokens, t_context *context)
 	if (context->status != 0)
 		cleanup_and_exit(context);
 	execve(path, get_args(*tokens), context->env);
-	handle_execve_fail(path);
+	handle_execve_fail(path, context);
 }
 
 pid_t	exec_terminal(t_token **tokens, t_context *context)
