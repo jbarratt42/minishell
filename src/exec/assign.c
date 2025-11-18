@@ -6,20 +6,20 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 16:03:37 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/11/14 09:00:28 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/18 10:05:27 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void delete_tokens(t_token **token, t_token **head, size_t len)
+void	delete_tokens(t_token **token, t_token **head, size_t len)
 {
-	t_token *tmp;
+	t_token	*tmp;
 	bool	is_head;
 
 	is_head = (*token == *head);
 	if (!len)
-		return;
+		return ;
 	free((*token)->value);
 	tmp = *token;
 	*token = (*token)->next;
@@ -30,7 +30,7 @@ void delete_tokens(t_token **token, t_token **head, size_t len)
 }
 
 /* check if a token list contains a command */
-bool is_command(t_token *token)
+bool	is_command(t_token *token)
 {
 	if (token->type >= PIPE)
 		return (false);
@@ -40,8 +40,8 @@ bool is_command(t_token *token)
 			token = token->next->next;
 		else if (token->type == WORD && token->value && token->value[0] == '\0')
 			token = token->next;
-		else if (token->type == WORD && ft_strchr(token->value, '=') &&
-				 is_valid_identifier(token->value))
+		else if (token->type == WORD && ft_strchr(token->value, '=')
+			&& is_valid_identifier(token->value))
 			token = token->next;
 		else
 			return (true);
@@ -50,14 +50,15 @@ bool is_command(t_token *token)
 }
 
 /* implement and delete assignment tokens from left to right */
-bool assign(t_token **token, t_context *context)
+bool	assign(t_token **token, t_context *context)
 {
 	while (*token && (*token)->type != EOF_T)
 	{
-		if ((*token)->type == WORD && ft_strchr((*token)->value, '=') &&
-			is_valid_identifier((*token)->value))
+		if ((*token)->type == WORD && ft_strchr((*token)->value, '=')
+			&& is_valid_identifier((*token)->value))
 		{
-			context->local = set_env(ft_strdup((*token)->value), context->local);
+			context->local = set_env(ft_strdup((*token)->value),
+					context->local);
 			if (!context->local)
 				return (false);
 			delete_tokens(token, &context->tokens, 1);
@@ -68,18 +69,8 @@ bool assign(t_token **token, t_context *context)
 	return (true);
 }
 
-/* redirect file descriptors left to right and delete the corresponding tokens*/
-/*
- * First pass: collect ALL heredocs before trying to open files so that
- * heredoc input is read even if a later open() would fail (matches bash)
- * Second pass: perform normal reassigns; heredocs were already handled
- * so when encountering a HEREDOC token just remove the tokens.
- */
-bool redirect(t_token **token, t_context *context)
+static bool	check_for_heredocs(t_token *scan, t_context *context)
 {
-	t_token *scan;
-
-	scan = *token;
 	while (scan && scan->type < PIPE && scan->type != EOF_T)
 	{
 		if (scan->type == HEREDOC)
@@ -93,9 +84,22 @@ bool redirect(t_token **token, t_context *context)
 		if (scan->next)
 			scan = scan->next;
 		else
-			break;
+			break ;
 	}
+	return (true);
+}
 
+/* redirect file descriptors left to right and delete the corresponding tokens*/
+/*
+ * First pass: collect ALL heredocs before trying to open files so that
+ * heredoc input is read even if a later open() would fail (matches bash)
+ * Second pass: perform normal reassigns; heredocs were already handled
+ * so when encountering a HEREDOC token just remove the tokens.
+ */
+bool	redirect(t_token **token, t_context *context)
+{
+	if (!check_for_heredocs(*token, context))
+		return (false);
 	while (*token && (*token)->type < PIPE && (*token)->type != EOF_T)
 	{
 		if ((*token)->type >= REDIR_IN && (*token)->type <= REDIR_APPEND)
@@ -103,7 +107,7 @@ bool redirect(t_token **token, t_context *context)
 			if ((*token)->type == HEREDOC)
 			{
 				delete_tokens(token, &context->tokens, 2);
-				continue;
+				continue ;
 			}
 			if (!reassign_fd(*token, context))
 			{

@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 12:46:49 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/11/14 09:04:08 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/18 10:12:25 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,6 @@ void	handle_execve_fail(char *path, t_context *context)
 			cleanup_and_exit(context);
 		}
 	}
-	perror("exec_terminal");
 	context->status = 1;
 	cleanup_and_exit(context);
 }
