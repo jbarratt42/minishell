@@ -6,13 +6,13 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:09:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/11/18 09:46:32 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/18 10:30:03 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int			g_status = 0;
+volatile int	g_status = 0;
 
 static void	wait_and_set_status(pid_t pid, t_context *context)
 {

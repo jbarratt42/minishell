@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 10:46:56 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/10/08 17:45:01 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/11/18 10:30:48 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,7 @@
 # include "util.h"
 # include "ft_printf.h"
 
-//# define PATH_MAX 1024
-
-extern int		g_status;
+extern volatile int	g_status;
 
 typedef struct s_minishell
 {
