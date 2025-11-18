@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   assign.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
+/*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 16:03:37 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/11/18 10:05:27 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/18 12:58:31 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,19 +16,21 @@ void	delete_tokens(t_token **token, t_token **head, size_t len)
 {
 	t_token	*tmp;
 	bool	is_head;
+	size_t	i;
 
 	is_head = (*token == *head);
-	if (!len)
-		return ;
-	free((*token)->value);
-	tmp = *token;
-	*token = (*token)->next;
-	delete_tokens(token, head, len - 1);
+	i = 0;
+	while (i < len && *token)
+	{
+		free((*token)->value);
+		tmp = *token;
+		*token = (*token)->next;
+		free(tmp);
+		i++;
+	}
 	if (is_head)
 		*head = *token;
-	free(tmp);
 }
-
 /* check if a token list contains a command */
 bool	is_command(t_token *token)
 {
@@ -89,6 +91,52 @@ static bool	check_for_heredocs(t_token *scan, t_context *context)
 	return (true);
 }
 
+bool	scan_non_heredoc(t_context *context, t_token **token)
+{
+	t_token	*scan;
+	int		fd_index;
+	int		mode;
+	int		ofd;
+	int		tmp_fd[2];
+
+	scan = *token;
+	tmp_fd[0] = -1;
+	tmp_fd[1] = -1;
+	while (scan && scan->type < PIPE && scan->type != EOF_T)
+	{
+		if (scan->type >= REDIR_IN && scan->type <= REDIR_APPEND)
+		{
+			if (scan->type != HEREDOC)
+			{
+				fd_index = (scan->type >= REDIR_OUT);
+				if (scan->type == REDIR_IN)
+					mode = O_RDONLY;
+				else if (scan->type == REDIR_OUT)
+					mode = O_WRONLY | O_CREAT | O_TRUNC;
+				ofd = open(scan->next->value, mode,
+						S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+				if (ofd == -1)
+				{
+					if (tmp_fd[0] != -1)
+						close(tmp_fd[0]);
+					if (tmp_fd[1] != -1)
+						close(tmp_fd[1]);
+					perror("reassign_fd");
+					context->status = 1;
+					return (false);
+				}
+				if (tmp_fd[fd_index] != -1)
+					close(tmp_fd[fd_index]);
+				tmp_fd[fd_index] = ofd;
+			}
+		}
+		if (!scan->next)
+			break ;
+		scan = scan->next;
+	}
+	return (true);
+};
+
 /* redirect file descriptors left to right and delete the corresponding tokens*/
 /*
  * First pass: collect ALL heredocs before trying to open files so that
@@ -98,7 +146,10 @@ static bool	check_for_heredocs(t_token *scan, t_context *context)
  */
 bool	redirect(t_token **token, t_context *context)
 {
+
 	if (!check_for_heredocs(*token, context))
+		return (false);
+	if (!scan_non_heredoc(context, token))
 		return (false);
 	while (*token && (*token)->type < PIPE && (*token)->type != EOF_T)
 	{
