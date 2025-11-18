@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:30:37 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/11/14 09:03:37 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/18 14:29:19 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,4 +60,8 @@ bool	try_dup2(int open[3]);
 /* src/exec//utils.c */
 t_token	**separate_words(t_token *token);
 bool	dequote(char *str);
+
+bool	scan_non_heredoc(t_context *context, t_token **token);
+bool	open_redir_and_store(t_token *scan, int tmp_fd[2], t_context *context);
+
 #endif
