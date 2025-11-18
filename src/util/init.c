@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42.de>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 12:53:36 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/13 15:20:33 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/18 14:36:45 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,4 +113,5 @@ void	init_context(t_context *context, int argc, char **argv, char **env)
 	context->is_pipeline = false;
 	context->is_heredoc = false;
 	context->status = 0;
+	context->is_execve = false;
 }

@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 12:44:34 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/07 13:53:34 by chuezeri         ###   ########.fr       */
+/*   Updated: 2025/11/18 14:55:40 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ int	builtin_exit(t_token *tokens, t_context *context)
 	current = tokens;
 	if (current && current->type == WORD)
 		current = current->next;
-	exit_code = 0;
+	exit_code = context->status;
 	if (current && current->type == WORD)
 	{
 		if (has_too_many_args(current))

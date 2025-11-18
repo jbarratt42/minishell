@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:09:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/11/18 10:30:03 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/18 15:08:05 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,9 @@ static bool	process_input(t_context *context, bool is_interactive)
 {
 	char	*tmp;
 
+	if (g_status == 130 && context->is_execve)
+		write(STDOUT_FILENO, "!", 1);
+	context->is_execve = false;
 	tmp = readline(MINISHELL_PROMPT);
 	if (g_status)
 	{
@@ -83,10 +86,7 @@ static bool	process_input(t_context *context, bool is_interactive)
 		builtin_exit(NULL, context);
 	}
 	if (context->input && !ft_strlen(context->input))
-	{
-		free(context->input);
-		return (true);
-	}
+		return (free(context->input), true);
 	parse_and_execute(context, is_interactive);
 	free_for_input(context);
 	return (true);

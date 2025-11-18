@@ -5,7 +5,7 @@ EXEC = $(NAME)
 # Define compiler and flags
 CC = cc -g
 ifndef DEBUG
-CC += -O3
+//CC += -O3
 endif
 CFLAGS = -Wall -Wextra -Werror
 

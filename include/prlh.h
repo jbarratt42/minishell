@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 13:13:51 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/09 13:58:38 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/18 14:35:32 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ typedef struct s_context
 	bool				is_pipeline;
 	bool				is_heredoc;
 	int					status;
+	bool				is_execve;
 }						t_context;
 
 /*

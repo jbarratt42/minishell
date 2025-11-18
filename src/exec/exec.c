@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:31:14 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/11/18 10:09:50 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/18 14:38:33 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ pid_t	exec_terminal(t_token **tokens, t_context *context)
 	signal(SIGQUIT, SIG_DFL);
 	if (pid > 0)
 	{
+		context->is_execve = true;
 		signal(SIGINT, execve_handler);
 		if (!cleanup_parent(context))
 			return (-1);
