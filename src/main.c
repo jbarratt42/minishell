@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:09:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/11/19 13:32:31 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/19 14:06:48 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,8 @@ int	main(int argc, char **argv, char **env)
 	static t_context	context = {0};
 	bool				is_interactive;
 
-	is_interactive = isatty(STDIN_FILENO);
+	//is_interactive = isatty(STDIN_FILENO);
+	is_interactive = true;
 	init_context(&context, argc, argv, env);
 	if(!set_shell_levels(&context))
 	{
