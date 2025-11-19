@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   shlvl.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/19 18:00:00 by chuezeri          #+#    #+#             */
+/*   Updated: 2025/11/19 18:00:00 by chuezeri         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static bool	increment_shlvl(char *name, t_context *context)
@@ -6,8 +18,8 @@ static bool	increment_shlvl(char *name, t_context *context)
 	char	*shlvl_str;
 	char	*assign_str;
 	int		buf_size;
-	
-	if(ft_getenv(name, context->env))
+
+	if (ft_getenv(name, context->env))
 		shlvl = ft_atoi(ft_getenv(name, context->env));
 	else
 		shlvl = 0;
@@ -15,7 +27,7 @@ static bool	increment_shlvl(char *name, t_context *context)
 	shlvl_str = ft_itoa(shlvl);
 	if (!shlvl_str)
 		return (false);
-	buf_size = strlen(name) + 1 + ft_strlen(shlvl_str) + 1; 
+	buf_size = strlen(name) + 1 + ft_strlen(shlvl_str) + 1;
 	assign_str = malloc(buf_size);
 	if (!assign_str)
 		return (free(shlvl_str), false);

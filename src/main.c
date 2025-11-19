@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:09:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/11/19 14:06:48 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/19 17:59:16 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ static void	wait_and_set_status(pid_t pid, t_context *context)
 {
 	context->status = collect(pid);
 	signal(SIGINT, context->sigint_handler);
-	// context->status = WEXITSTATUS(context->status);
 }
 
 void	parse_and_execute(t_context *context, bool is_interactive)
@@ -101,10 +100,9 @@ int	main(int argc, char **argv, char **env)
 	static t_context	context = {0};
 	bool				is_interactive;
 
-	//is_interactive = isatty(STDIN_FILENO);
 	is_interactive = true;
 	init_context(&context, argc, argv, env);
-	if(!set_shell_levels(&context))
+	if (!set_shell_levels(&context))
 	{
 		perror("set_shell_levels");
 		context.status = 1;

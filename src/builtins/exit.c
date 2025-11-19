@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 12:44:34 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/11/19 12:22:07 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/19 18:02:50 by chuezeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,6 @@ static int	parse_exit_code(const char *value, int *out_code)
 static void	exit_shell(t_context *context, int exit_code)
 {
 	ft_printf("exit\n");
-	/*
-	if (ft_getenv("MINISHLVL", context->env)
-			&& ft_strncmp(ft_getenv("MINISHLVL", context->env), "1", 10) == 0)
-		write(1, "\n", 1);
-		*/
 	clear_history();
 	free_context(context);
 	exit(exit_code);
