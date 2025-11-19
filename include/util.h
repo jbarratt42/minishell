@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:06:47 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/10/06 11:24:47 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/19 11:56:42 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ void	free_node(t_node *node);
 void	free_env(char **env);
 void	free_context(t_context *context);
 void	cleanup_and_exit(t_context *context);
+/* src/util/shlvl.c */
+bool	set_shell_levels(t_context *context);
 /* src/util/ft_fprintf.c */
 int		err_printf(const char *format, ...);
 /* src/util/ft_isspace.c */

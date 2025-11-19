@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:09:35 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/11/18 15:08:05 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/19 13:32:31 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,9 @@ volatile int	g_status = 0;
 
 static void	wait_and_set_status(pid_t pid, t_context *context)
 {
-	if (waitpid(pid, &context->status, 0) == -1)
-		perror("main");
-	signal(SIGINT, signal_handler);
-	context->status = WEXITSTATUS(context->status);
+	context->status = collect(pid);
+	signal(SIGINT, context->sigint_handler);
+	// context->status = WEXITSTATUS(context->status);
 }
 
 void	parse_and_execute(t_context *context, bool is_interactive)
@@ -68,9 +67,14 @@ static bool	process_input(t_context *context, bool is_interactive)
 {
 	char	*tmp;
 
-	if (g_status == 130 && context->is_execve)
-		write(STDOUT_FILENO, "!", 1);
+	if (context->is_execve && WIFSIGNALED(context->status))
+	{
+		write(STDOUT_FILENO, "\n", 1);
+		context->status = 128 + WTERMSIG(context->status);
+	}
 	context->is_execve = false;
+	if (WIFEXITED(context->status))
+		context->status = WEXITSTATUS(context->status);
 	tmp = readline(MINISHELL_PROMPT);
 	if (g_status)
 	{
@@ -99,7 +103,13 @@ int	main(int argc, char **argv, char **env)
 
 	is_interactive = isatty(STDIN_FILENO);
 	init_context(&context, argc, argv, env);
-	signal(SIGINT, signal_handler);
+	if(!set_shell_levels(&context))
+	{
+		perror("set_shell_levels");
+		context.status = 1;
+		cleanup_and_exit(&context);
+	}
+	signal(SIGINT, context.sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 	signal(SIGTERM, SIG_IGN);
 	while (process_input(&context, is_interactive))

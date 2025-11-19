@@ -6,7 +6,7 @@
 /*   By: chuezeri <chuezeri@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/24 13:13:51 by chuezeri          #+#    #+#             */
-/*   Updated: 2025/11/18 14:35:32 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/19 11:45:44 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ typedef struct s_context
 	bool				is_heredoc;
 	int					status;
 	bool				is_execve;
+	void				(*sigint_handler)(int);
 }						t_context;
 
 /*

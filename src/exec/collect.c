@@ -6,7 +6,7 @@
 /*   By: jbarratt <jbarratt@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 11:45:07 by jbarratt          #+#    #+#             */
-/*   Updated: 2025/10/03 12:00:31 by jbarratt         ###   ########.fr       */
+/*   Updated: 2025/11/19 13:37:49 by jbarratt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,12 @@ int	collect(int pid)
 		perror("collect");
 		return (-1);
 	}
-	return (WEXITSTATUS(w_status));
+	/*
+	ft_printf("pid %d\nraw %d\nexited %d\nsignaled %d\ntermsig %d\nstatus %d\n",
+			pid, w_status, WIFEXITED(w_status), WIFSIGNALED(w_status), 
+			WTERMSIG(w_status), WEXITSTATUS(w_status));
+			*/
+	return (w_status);
 }
 
 int	collect2(int pids[2])
